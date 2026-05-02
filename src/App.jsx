@@ -271,25 +271,25 @@ export default function App() {
 // ==========================================
 
 function ViewBeranda() {
+  // Kita tidak butuh lagi useEffect yang rumit, kita pakai cara bawaan yang bersih!
+  
   return (
     <div className="w-full animate-fade-in">
       {/* Hero Section dengan Video Background */}
       <div className="relative w-full h-[85vh] bg-black overflow-hidden flex items-center justify-center">
-        {/* Menggunakan elemen Video HTML5 asli (Bebas blokir dan tanpa logo YouTube) */}
+        
+        {/* PERBAIKAN 1: Pindahkan src langsung ke tag <video>. React lebih suka cara ini! */}
         <video 
+          src="/tesvid.mp4"
           autoPlay 
           loop 
           muted 
           playsInline
           className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-        >
-          {/* Tautan video contoh (bisa diganti dengan video pesantrenmu sendiri nanti) */}
-          <source src="/tesvid.mp4" type="video/mp4" />
-          Maaf, browser Anda tidak mendukung pemutaran video latar belakang.
-        </video>
+        />
         
-        {/* Overlay Gelap agar teks mudah dibaca */}
-        <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+        {/* PERBAIKAN 2: Menggunakan format Tailwind v4 (bg-black/60) agar bisa transparan! */}
+        <div className="absolute inset-0 bg-black/60"></div>
 
         {/* Konten Hero */}
         <div className="relative z-10 text-center px-4">
