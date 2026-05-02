@@ -280,7 +280,7 @@ function ViewBeranda() {
         
         {/* PERBAIKAN 1: Pindahkan src langsung ke tag <video>. React lebih suka cara ini! */}
         <video 
-          src="/profil.mp4"
+          src="/vidkomp.mp4"
           autoPlay 
           loop 
           muted 
