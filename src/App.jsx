@@ -275,15 +275,15 @@ function ViewBeranda() {
     <div className="w-full animate-fade-in">
       {/* Hero Section dengan Video Background */}
       <div className="relative w-full h-[85vh] bg-black overflow-hidden flex items-center justify-center">
-        {/* Menggunakan elemen Video HTML5 asli (Bebas blokir dan tanpa logo YouTube) */}
+        {/* Menggunakan elemen Video HTML5 asli dengan Jurus Anti-Blank */}
         <video 
-          autoPlay 
-          loop 
-          muted 
-          playsInline
+          autoPlay={true} 
+          loop={true} 
+          muted={true} 
+          playsInline={true}
+          onCanPlay={(e) => e.target.play()} /* Ini kunci rahasianya! */
           className="absolute inset-0 w-full h-full object-cover pointer-events-none"
         >
-          {/* Tautan video contoh (bisa diganti dengan video pesantrenmu sendiri nanti) */}
           <source src="/tesvid.mp4" type="video/mp4" />
           Maaf, browser Anda tidak mendukung pemutaran video latar belakang.
         </video>
