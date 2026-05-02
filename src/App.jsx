@@ -277,16 +277,31 @@ function ViewBeranda() {
     <div className="w-full animate-fade-in">
       {/* Hero Section dengan Video Background */}
       <div className="relative w-full h-[85vh] bg-black overflow-hidden flex items-center justify-center">
+<<<<<<< HEAD
         
         {/* PERBAIKAN 1: Pindahkan src langsung ke tag <video>. React lebih suka cara ini! */}
         <video 
-          src="/tesvid.mp4"
+          src="/profil.mp4"
           autoPlay 
           loop 
           muted 
           playsInline
           className="absolute inset-0 w-full h-full object-cover pointer-events-none"
         />
+=======
+        {/* Menggunakan elemen Video HTML5 asli dengan Jurus Anti-Blank */}
+        <video 
+          autoPlay={true} 
+          loop={true} 
+          muted={true} 
+          playsInline={true}
+          onCanPlay={(e) => e.target.play()} /* Ini kunci rahasianya! */
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        >
+          <source src="/tesvid.mp4" type="video/mp4" />
+          Maaf, browser Anda tidak mendukung pemutaran video latar belakang.
+        </video>
+>>>>>>> e1950b97f15da0126b35ac8a8b644ee7c8090c81
         
         {/* PERBAIKAN 2: Menggunakan format Tailwind v4 (bg-black/60) agar bisa transparan! */}
         <div className="absolute inset-0 bg-black/60"></div>
