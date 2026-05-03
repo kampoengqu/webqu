@@ -28,7 +28,7 @@ const DiscussionEmbed = ({ shortname, config }) => {
     }
   }, [shortname, config.identifier, config.url, config.title, config.language]);
 
-  return <div id="disqus_thread"></div>;
+  return <div id="disqus_thread" className="w-full min-h-[200px]"></div>;
 };
 
 const CommentCount = ({ shortname, config, children }) => {
@@ -775,7 +775,7 @@ function ViewDetailArtikel({ article, changeView }) {
             <MessageCircle className="mr-3 text-green-600" />
             Tinggalkan Komentar
           </h3>
-          <div className="bg-white p-4 rounded-xl shadow-inner">
+          <div className="bg-white p-4 rounded-xl shadow-inner w-full min-h-[300px] overflow-hidden">
             <DiscussionEmbed
                 shortname='https-webqu-peach-vercel-app'
                 config={{
