@@ -9,6 +9,8 @@
     <style>
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Transisi halus saat pindah tab */
+        .tab-content { transition: opacity 0.3s ease-in-out; }
     </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col">
@@ -58,11 +60,11 @@
         </div>
     </div>
 
-    <!-- HALAMAN DASHBOARD (Disembunyikan secara default) -->
+    <!-- HALAMAN DASHBOARD -->
     <div id="dashboard-section" class="hidden flex-col min-h-screen">
         <!-- Topbar -->
         <nav class="bg-slate-900 text-white shadow-md p-4 sticky top-0 z-50">
-            <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div class="max-w-6xl mx-auto flex justify-between items-center">
                 <h1 class="text-xl font-bold flex items-center"><i class="fas fa-cogs mr-3 text-orange-500"></i> Panel CMS Pesantren</h1>
                 <div class="flex items-center space-x-4">
                     <a href="/" target="_blank" class="text-sm bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition-colors hidden sm:inline-block"><i class="fas fa-external-link-alt mr-2"></i>Lihat Web</a>
@@ -71,21 +73,21 @@
             </div>
         </nav>
 
-        <div class="max-w-5xl mx-auto p-6 mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 w-full flex-grow fade-in">
+        <div class="max-w-6xl mx-auto p-4 sm:p-6 mt-2 grid grid-cols-1 md:grid-cols-3 md:gap-8 w-full flex-grow fade-in">
             
-            <!-- KOLOM KIRI: Pengaturan Koneksi GitHub -->
+            <!-- KOLOM KIRI: Pengaturan Koneksi GitHub & Log -->
             <div class="md:col-span-1 space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fab fa-github mr-2"></i> Koneksi GitHub</h2>
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-slate-600 mb-1">GitHub Token (Classic)</label>
-                            <input type="password" id="gh-token" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm font-mono" placeholder="ghp_xxxx...">
-                            <p class="text-[10px] text-slate-400 mt-1">Token disimpan aman di LocalStorage browser ini.</p>
+                            <input type="password" id="gh-token" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-mono" placeholder="ghp_xxxx...">
+                            <p class="text-[10px] text-slate-400 mt-1">Token disimpan aman di LocalStorage browser.</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-600 mb-1">Repository (User/Repo)</label>
-                            <input type="text" id="gh-repo" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm font-mono" placeholder="username/web-pesantren">
+                            <input type="text" id="gh-repo" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-mono" placeholder="username/web-pesantren">
                         </div>
                         <button onclick="saveCredentials()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded-lg transition text-sm">Simpan Koneksi</button>
                     </div>
@@ -97,134 +99,138 @@
                 </div>
             </div>
 
-            <!-- KOLOM KANAN: Pengaturan Konten Web -->
-            <div class="md:col-span-2 space-y-6">
-                
-                <!-- BLOK 1: PENGATURAN TEMA GLOBAL -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center"><i class="fas fa-palette mr-3 text-emerald-500"></i> Pengaturan Tema Global</h2>
+            <!-- KOLOM KANAN: Pengaturan Konten Web dengan SISTEM TAB -->
+            <div class="md:col-span-2">
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <!-- Warna Dasar (Primary) -->
-                        <div class="space-y-2">
-                            <label class="block text-sm font-bold text-slate-700">Warna Dasar (Utama)</label>
-                            <div class="flex items-center space-x-3">
-                                <input type="color" id="color-primary" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#059669">
-                                <input type="text" id="hex-primary" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#059669" oninput="document.getElementById('color-primary').value = this.value">
-                            </div>
-                            <p class="text-xs text-slate-500">Warna dominan web (tombol utama, navbar, dll).</p>
-                        </div>
-
-                        <!-- Warna Hover -->
-                        <div class="space-y-2">
-                            <label class="block text-sm font-bold text-slate-700">Warna Aksen / Hover</label>
-                            <div class="flex items-center space-x-3">
-                                <input type="color" id="color-accent" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#f97316">
-                                <input type="text" id="hex-accent" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#f97316" oninput="document.getElementById('color-accent').value = this.value">
-                            </div>
-                            <p class="text-xs text-slate-500">Warna saat kursor diarahkan ke tombol.</p>
-                        </div>
-
-                        <!-- Warna Link -->
-                        <div class="space-y-2">
-                            <label class="block text-sm font-bold text-slate-700">Warna Teks Link</label>
-                            <div class="flex items-center space-x-3">
-                                <input type="color" id="color-link" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#15803d">
-                                <input type="text" id="hex-link" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#15803d" oninput="document.getElementById('color-link').value = this.value">
-                            </div>
-                            <p class="text-xs text-slate-500">Warna untuk teks tautan (link).</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- BLOK 2: PENGATURAN BERANDA -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center"><i class="fas fa-home mr-3 text-emerald-500"></i> Pengaturan Beranda</h2>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-                        <!-- Link Daftar -->
-                        <div class="space-y-2 sm:col-span-2">
-                            <label class="block text-sm font-bold text-slate-700">Link Tombol "Daftar Sekarang"</label>
-                            <input type="text" id="hero-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://wa.me/628... atau link Google Form">
-                            <p class="text-xs text-slate-500">Tautan yang akan terbuka saat tombol Daftar Sekarang di-klik.</p>
-                        </div>
-
-                        <!-- Warna Hover Card -->
-                        <div class="space-y-2">
-                            <label class="block text-sm font-bold text-slate-700">Warna Hover Card Fitur</label>
-                            <div class="flex items-center space-x-3">
-                                <input type="color" id="color-card-hover" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#dcfce7">
-                                <input type="text" id="hex-card-hover" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#dcfce7" oninput="document.getElementById('color-card-hover').value = this.value">
-                            </div>
-                            <p class="text-xs text-slate-500">Warna latar saat card disorot mouse (hover).</p>
-                        </div>
-                    </div>
-
-                    <div class="border-t pt-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-slate-700 text-lg">Daftar Card Info (Fitur)</h3>
-                            <button onclick="addCard()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-1.5 px-4 rounded-lg text-sm transition-colors flex items-center">
-                                <i class="fas fa-plus mr-1"></i> Tambah Card
-                            </button>
-                        </div>
-                        <p class="text-xs text-slate-500 mb-4">Pilih nama ikon dari library Lucide React (contoh: <i>BookOpen, Lightbulb, Home, Star, Heart</i>, dll).</p>
-                        
-                        <!-- Tempat Render Cards -->
-                        <div id="cards-container" class="space-y-4">
-                            <!-- Cards akan diisi oleh Javascript -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- BLOK 3: PENGATURAN PROGRAM UNGGULAN -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center"><i class="fas fa-graduation-cap mr-3 text-emerald-500"></i> Pengaturan Program</h2>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-                         <!-- Link Pendaftaran -->
-                        <div class="space-y-2">
-                            <label class="block text-sm font-bold text-slate-700">Link Pendaftaran</label>
-                            <input type="text" id="program-register-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://wa.me/628...">
-                            <p class="text-[10px] text-slate-500">Link untuk tombol "Hubungi Bagian Pendaftaran" (terbuka di tab baru).</p>
-                        </div>
-
-                        <!-- Link Brosur -->
-                        <div class="space-y-2">
-                            <label class="block text-sm font-bold text-slate-700">Link Download Brosur</label>
-                            <div class="flex items-center space-x-2">
-                                <input type="text" id="program-brochure-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none font-mono text-sm" placeholder="/assets/brosur.pdf">
-                                <!-- Tombol Upload File Brosur -->
-                                <label class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-2 px-3 rounded-lg cursor-pointer transition-colors" title="Upload Brosur PDF Baru">
-                                    <i class="fas fa-upload"></i>
-                                    <input type="file" class="hidden" accept=".pdf" onchange="handleFileUpload(this, 'program-brochure-link')">
-                                </label>
-                            </div>
-                            <p class="text-[10px] text-slate-500">Upload file PDF brosur untuk mendapatkan link otomatis.</p>
-                        </div>
-                    </div>
-
-                    <div class="border-t pt-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-slate-700 text-lg">Daftar Program</h3>
-                            <button onclick="addProgram()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-1.5 px-4 rounded-lg text-sm transition-colors flex items-center">
-                                <i class="fas fa-plus mr-1"></i> Tambah Program
-                            </button>
-                        </div>
-                        
-                        <!-- Tempat Render Programs -->
-                        <div id="programs-container" class="space-y-6">
-                            <!-- Programs akan diisi oleh Javascript -->
-                        </div>
-                    </div>
-
-                    <!-- Tombol Publish Utama -->
-                    <div class="mt-8 border-t pt-6 flex justify-end">
-                        <button onclick="publishTheme()" id="btn-publish" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all flex items-center">
-                            <i class="fas fa-cloud-upload-alt mr-2"></i> Publish Perubahan ke Web
+                    <!-- MENU TAB NAVIGASI -->
+                    <div class="flex overflow-x-auto bg-slate-50 border-b border-slate-200">
+                        <button onclick="switchTab('tab-tema')" id="btn-tab-tema" class="flex-1 py-4 px-4 text-sm font-bold text-center border-b-2 border-emerald-600 text-emerald-700 bg-white transition-all whitespace-nowrap">
+                            <i class="fas fa-palette mr-2"></i>Tema Global
+                        </button>
+                        <button onclick="switchTab('tab-beranda')" id="btn-tab-beranda" class="flex-1 py-4 px-4 text-sm font-bold text-center border-b-2 border-transparent text-slate-500 hover:text-emerald-600 hover:bg-white transition-all whitespace-nowrap">
+                            <i class="fas fa-home mr-2"></i>Beranda
+                        </button>
+                        <button onclick="switchTab('tab-program')" id="btn-tab-program" class="flex-1 py-4 px-4 text-sm font-bold text-center border-b-2 border-transparent text-slate-500 hover:text-emerald-600 hover:bg-white transition-all whitespace-nowrap">
+                            <i class="fas fa-graduation-cap mr-2"></i>Program
                         </button>
                     </div>
-                </div>
 
+                    <!-- KONTEN TAB -->
+                    <div class="p-6 md:p-8 flex-grow">
+                        
+                        <!-- 1. KONTEN TAB TEMA GLOBAL -->
+                        <div id="tab-tema" class="tab-content block fade-in">
+                            <h2 class="text-xl font-bold text-slate-800 mb-6">Penyesuaian Warna Dasar</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-bold text-slate-700">Warna Dasar (Utama)</label>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="color" id="color-primary" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#059669">
+                                        <input type="text" id="hex-primary" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#059669" oninput="document.getElementById('color-primary').value = this.value">
+                                    </div>
+                                    <p class="text-xs text-slate-500">Warna dominan web (tombol utama, navbar, dll).</p>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-bold text-slate-700">Warna Aksen / Hover</label>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="color" id="color-accent" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#f97316">
+                                        <input type="text" id="hex-accent" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#f97316" oninput="document.getElementById('color-accent').value = this.value">
+                                    </div>
+                                    <p class="text-xs text-slate-500">Warna saat kursor diarahkan ke tombol.</p>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-bold text-slate-700">Warna Teks Link</label>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="color" id="color-link" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#15803d">
+                                        <input type="text" id="hex-link" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#15803d" oninput="document.getElementById('color-link').value = this.value">
+                                    </div>
+                                    <p class="text-xs text-slate-500">Warna untuk teks tautan (link).</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. KONTEN TAB BERANDA -->
+                        <div id="tab-beranda" class="tab-content hidden fade-in">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                                <div class="space-y-2 sm:col-span-2">
+                                    <label class="block text-sm font-bold text-slate-700">Link Tombol "Daftar Sekarang"</label>
+                                    <input type="text" id="hero-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://wa.me/628... atau link Google Form">
+                                    <p class="text-xs text-slate-500">Tautan yang akan terbuka saat tombol Daftar Sekarang di-klik.</p>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-bold text-slate-700">Warna Hover Card Fitur</label>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="color" id="color-card-hover" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#dcfce7">
+                                        <input type="text" id="hex-card-hover" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#dcfce7" oninput="document.getElementById('color-card-hover').value = this.value">
+                                    </div>
+                                    <p class="text-xs text-slate-500">Warna latar saat card disorot mouse (hover).</p>
+                                </div>
+                            </div>
+
+                            <div class="border-t pt-6 border-slate-100">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="font-bold text-slate-700 text-lg">Daftar Card Info (Fitur)</h3>
+                                    <button onclick="addCard()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-1.5 px-4 rounded-lg text-sm transition-colors flex items-center">
+                                        <i class="fas fa-plus mr-1"></i> Tambah Card
+                                    </button>
+                                </div>
+                                <p class="text-xs text-slate-500 mb-4">Pilih nama ikon dari library Lucide React (contoh: <i>BookOpen, Lightbulb, Home, Star, Heart</i>, dll).</p>
+                                
+                                <div id="cards-container" class="space-y-4">
+                                    <!-- Cards akan diisi oleh Javascript -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. KONTEN TAB PROGRAM -->
+                        <div id="tab-program" class="tab-content hidden fade-in">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-bold text-slate-700">Link Pendaftaran</label>
+                                    <input type="text" id="program-register-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://wa.me/628...">
+                                    <p class="text-[10px] text-slate-500">Target URL tombol "Hubungi Bagian Pendaftaran".</p>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-bold text-slate-700">Link Download Brosur</label>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="text" id="program-brochure-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none font-mono text-sm" placeholder="/assets/brosur.pdf">
+                                        <label class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-2 px-3 rounded-lg cursor-pointer transition-colors" title="Upload Brosur PDF Baru">
+                                            <i class="fas fa-upload"></i>
+                                            <input type="file" class="hidden" accept=".pdf" onchange="handleFileUpload(this, 'program-brochure-link')">
+                                        </label>
+                                    </div>
+                                    <p class="text-[10px] text-slate-500">Upload file PDF brosur untuk mendapatkan link otomatis.</p>
+                                </div>
+                            </div>
+
+                            <div class="border-t pt-6 border-slate-100">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="font-bold text-slate-700 text-lg">Daftar Program Unggulan</h3>
+                                    <button onclick="addProgram()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-1.5 px-4 rounded-lg text-sm transition-colors flex items-center">
+                                        <i class="fas fa-plus mr-1"></i> Tambah Program
+                                    </button>
+                                </div>
+                                
+                                <div id="programs-container" class="space-y-6">
+                                    <!-- Programs akan diisi oleh Javascript -->
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- TOMBOL PUBLISH UTAMA (Selalu Tampil di Bawah Tab) -->
+                    <div class="p-6 md:p-8 bg-slate-50 border-t border-slate-200 flex justify-end">
+                        <button onclick="publishTheme()" id="btn-publish" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all flex items-center transform hover:-translate-y-0.5">
+                            <i class="fas fa-cloud-upload-alt mr-2 text-xl"></i> Publish Perubahan ke Web
+                        </button>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
@@ -235,14 +241,13 @@
         // ==========================================
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8fW44CzM7kzhXkqoF_4pcl7-9MqZEW7oV5DiCb3ec6QkmCx-4l52asd7APj9yiY4/exec'; 
 
-        // Data array untuk menyimpan pengaturan Card Beranda
+        // Data arrays
         let homeCards = [
             { icon: "BookOpen", title: "Tahfidz Bersanad", desc: "Metode hafalan intensif dengan pembimbing yang memiliki sanad keilmuan jelas." },
             { icon: "Lightbulb", title: "Kurikulum Modern", desc: "Perpaduan ilmu agama mendalam dan sains teknologi terkini." },
             { icon: "Home", title: "Asrama Nyaman", desc: "Fasilitas pendukung yang bersih, aman, dan asri untuk ketenangan belajar." }
         ];
 
-        // Data array untuk menyimpan pengaturan Program
         let programs = [
             { 
                 id: 'smp', 
@@ -257,6 +262,28 @@
                 ]
             }
         ];
+
+        // --- SISTEM TAB MENU ---
+        function switchTab(tabId) {
+            // Sembunyikan semua konten tab
+            document.getElementById('tab-tema').classList.add('hidden');
+            document.getElementById('tab-beranda').classList.add('hidden');
+            document.getElementById('tab-program').classList.add('hidden');
+            
+            // Reset gaya semua tombol tab
+            const btnIds = ['btn-tab-tema', 'btn-tab-beranda', 'btn-tab-program'];
+            btnIds.forEach(id => {
+                const btn = document.getElementById(id);
+                btn.classList.remove('border-emerald-600', 'text-emerald-700', 'bg-white');
+                btn.classList.add('border-transparent', 'text-slate-500');
+            });
+
+            // Tampilkan tab yang dipilih dan warnai tombolnya
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('border-transparent', 'text-slate-500');
+            activeBtn.classList.add('border-emerald-600', 'text-emerald-700', 'bg-white');
+        }
 
         // --- LOGIKA LOGIN ---
         async function handleLogin(e) {
@@ -340,7 +367,6 @@
             document.getElementById('color-card-hover').addEventListener('input', (e) => document.getElementById('hex-card-hover').value = e.target.value);
             document.getElementById('hex-card-hover').addEventListener('input', (e) => document.getElementById('color-card-hover').value = e.target.value);
 
-            // Render Card awal
             renderCards();
             renderPrograms();
 
@@ -360,7 +386,7 @@
             fetchCurrentTheme();
         }
 
-        // --- MANAJEMEN UPLOAD FILE KE GITHUB ---
+        // --- MANAJEMEN UPLOAD FILE ---
         async function handleFileUpload(inputElement, targetInputId, programIndex = null) {
             const file = inputElement.files[0];
             if (!file) return;
@@ -404,13 +430,11 @@
                     if (putRes.ok) {
                         const publicUrl = `/assets/uploads/${fileName}`;
                         
-                        // Memasukkan URL ke kolom input
                         const targetInput = document.getElementById(targetInputId);
                         if (targetInput) {
                             targetInput.value = publicUrl;
                         }
                         
-                        // Perbarui data program jika parameter index disertakan
                         if (programIndex !== null) {
                             updateProgram(programIndex, 'image', publicUrl);
                         }
@@ -426,7 +450,6 @@
                     log(`Error sistem: ${error.message}`, true);
                     alert("Terjadi kesalahan sistem saat mengunggah.");
                 } finally {
-                    // Mengembalikan bentuk icon pada tombol jika elemennya belum di-render ulang
                     if (document.body.contains(labelEl)) {
                         labelEl.innerHTML = originalHTML;
                     } else if (programIndex !== null) {
@@ -443,23 +466,23 @@
             container.innerHTML = '';
             homeCards.forEach((card, index) => {
                 container.innerHTML += `
-                    <div class="p-4 border border-slate-200 rounded-xl bg-slate-50 relative group">
-                        <button onclick="removeCard(${index})" class="absolute top-3 right-3 text-red-400 hover:text-red-600 bg-white border border-red-100 p-1.5 rounded-lg shadow-sm transition-colors opacity-0 group-hover:opacity-100" title="Hapus Card">
-                            <i class="fas fa-trash"></i>
+                    <div class="p-4 border border-slate-200 rounded-xl bg-white shadow-sm relative group transition hover:border-emerald-200 hover:shadow-md">
+                        <button onclick="removeCard(${index})" class="absolute -top-3 -right-3 text-white hover:bg-red-600 bg-red-500 p-2 rounded-full shadow-lg transition-transform transform scale-0 group-hover:scale-100" title="Hapus Card">
+                            <i class="fas fa-trash text-xs"></i>
                         </button>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
                             <div>
                                 <label class="block text-xs font-bold text-slate-600 mb-1">Nama Ikon (Lucide)</label>
-                                <input type="text" value="${card.icon}" onchange="updateCard(${index}, 'icon', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500 font-mono" placeholder="Contoh: Star">
+                                <input type="text" value="${card.icon}" onchange="updateCard(${index}, 'icon', this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500 font-mono bg-slate-50 focus:bg-white" placeholder="Contoh: Star">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-600 mb-1">Judul Card</label>
-                                <input type="text" value="${card.title}" onchange="updateCard(${index}, 'title', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500" placeholder="Masukkan judul">
+                                <input type="text" value="${card.title}" onchange="updateCard(${index}, 'title', this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500 bg-slate-50 focus:bg-white" placeholder="Masukkan judul">
                             </div>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi Fitur</label>
-                            <textarea onchange="updateCard(${index}, 'desc', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500" rows="2" placeholder="Tuliskan deksripsi singkat di sini...">${card.desc}</textarea>
+                            <textarea onchange="updateCard(${index}, 'desc', this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500 bg-slate-50 focus:bg-white" rows="2" placeholder="Tuliskan deksripsi singkat di sini...">${card.desc}</textarea>
                         </div>
                     </div>
                 `;
@@ -491,56 +514,56 @@
                 prog.benefits.forEach((benefit, bIndex) => {
                     benefitsHtml += `
                         <div class="flex items-center space-x-2 mb-2">
-                            <input type="text" value="${benefit}" onchange="updateProgramBenefit(${index}, ${bIndex}, this.value)" class="flex-1 px-3 py-1.5 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500">
-                            <button onclick="removeProgramBenefit(${index}, ${bIndex})" class="text-red-400 hover:text-red-600 p-1" title="Hapus Benefit"><i class="fas fa-times"></i></button>
+                            <input type="text" value="${benefit}" onchange="updateProgramBenefit(${index}, ${bIndex}, this.value)" class="flex-1 px-3 py-1.5 border border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 rounded-lg text-sm outline-none transition-colors">
+                            <button onclick="removeProgramBenefit(${index}, ${bIndex})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded transition-colors" title="Hapus Benefit"><i class="fas fa-times"></i></button>
                         </div>
                     `;
                 });
 
                 container.innerHTML += `
-                    <div class="p-4 border border-slate-200 rounded-xl bg-slate-50 relative group mb-4">
-                        <button onclick="removeProgram(${index})" class="absolute top-3 right-3 text-red-400 hover:text-red-600 bg-white border border-red-100 p-1.5 rounded-lg shadow-sm transition-colors opacity-0 group-hover:opacity-100" title="Hapus Program">
-                            <i class="fas fa-trash"></i>
+                    <div class="p-5 border border-slate-200 rounded-xl bg-white shadow-sm relative group mb-6 transition hover:border-emerald-200">
+                        <button onclick="removeProgram(${index})" class="absolute -top-3 -right-3 text-white hover:bg-red-600 bg-red-500 p-2 rounded-full shadow-lg transition-transform transform scale-0 group-hover:scale-100" title="Hapus Program">
+                            <i class="fas fa-trash text-xs"></i>
                         </button>
                         
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-600 mb-1">ID Program (Unik)</label>
-                                <input type="text" value="${prog.id}" onchange="updateProgram(${index}, 'id', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500 font-mono" placeholder="contoh: smp">
+                                <input type="text" value="${prog.id}" onchange="updateProgram(${index}, 'id', this.value)" class="w-full px-3 py-2 border border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 rounded-lg text-sm outline-none font-mono transition-colors" placeholder="contoh: smp">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-600 mb-1">Judul Program</label>
-                                <input type="text" value="${prog.title}" onchange="updateProgram(${index}, 'title', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500" placeholder="Masukkan judul">
+                                <input type="text" value="${prog.title}" onchange="updateProgram(${index}, 'title', this.value)" class="w-full px-3 py-2 border border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 rounded-lg text-sm outline-none transition-colors" placeholder="Masukkan judul">
                             </div>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label class="block text-xs font-bold text-slate-600 mb-1">URL Gambar</label>
                             <div class="flex items-center space-x-2">
-                                <input type="text" id="prog-image-${index}" value="${prog.image}" onchange="updateProgram(${index}, 'image', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500 font-mono" placeholder="https://...">
-                                <label class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-2 px-3 rounded-lg cursor-pointer transition-colors" title="Upload Gambar Program">
+                                <input type="text" id="prog-image-${index}" value="${prog.image}" onchange="updateProgram(${index}, 'image', this.value)" class="w-full px-3 py-2 border border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 rounded-lg text-sm outline-none font-mono transition-colors" placeholder="https://...">
+                                <label class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-2 px-3 rounded-lg cursor-pointer transition-colors shadow-sm" title="Upload Gambar Program">
                                     <i class="fas fa-upload"></i>
                                     <input type="file" class="hidden" accept="image/*" onchange="handleFileUpload(this, 'prog-image-${index}', ${index})">
                                 </label>
                             </div>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi Singkat (Card)</label>
-                            <textarea onchange="updateProgram(${index}, 'desc', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500" rows="2" placeholder="Deskripsi singkat untuk tampilan card...">${prog.desc}</textarea>
+                            <textarea onchange="updateProgram(${index}, 'desc', this.value)" class="w-full px-3 py-2 border border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 rounded-lg text-sm outline-none transition-colors" rows="2" placeholder="Deskripsi singkat untuk tampilan card...">${prog.desc}</textarea>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi Penuh (Halaman Detail)</label>
-                            <textarea onchange="updateProgram(${index}, 'fullDesc', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500" rows="4" placeholder="Deskripsi lengkap program...">${prog.fullDesc}</textarea>
+                            <textarea onchange="updateProgram(${index}, 'fullDesc', this.value)" class="w-full px-3 py-2 border border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 rounded-lg text-sm outline-none transition-colors" rows="4" placeholder="Deskripsi lengkap program...">${prog.fullDesc}</textarea>
                         </div>
 
-                        <div class="mt-4 border-t pt-4">
-                            <div class="flex justify-between items-center mb-2">
-                                <label class="block text-xs font-bold text-slate-600">Daftar Benefit</label>
-                                <button onclick="addProgramBenefit(${index})" class="text-emerald-600 hover:text-emerald-700 text-xs font-bold"><i class="fas fa-plus mr-1"></i> Tambah Benefit</button>
+                        <div class="mt-4 pt-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="flex justify-between items-center mb-3">
+                                <label class="block text-xs font-bold text-slate-700">Daftar Benefit (Keunggulan)</label>
+                                <button onclick="addProgramBenefit(${index})" class="bg-white border border-emerald-200 hover:bg-emerald-50 text-emerald-600 py-1 px-3 rounded text-xs font-bold shadow-sm transition-colors"><i class="fas fa-plus mr-1"></i> Tambah Benefit</button>
                             </div>
-                            <div id="benefits-container-${index}">
+                            <div id="benefits-container-${index}" class="space-y-2">
                                 ${benefitsHtml}
                             </div>
                         </div>
@@ -601,7 +624,6 @@
                     const data = await response.json();
                     const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
                     
-                    // Set Global Tema
                     if(content.primary) {
                         document.getElementById('color-primary').value = content.primary;
                         document.getElementById('hex-primary').value = content.primary;
@@ -615,7 +637,6 @@
                         document.getElementById('hex-link').value = content.link;
                     }
 
-                    // Set Beranda
                     if(content.beranda) {
                         if(content.beranda.daftarLink) document.getElementById('hero-link').value = content.beranda.daftarLink;
                         if(content.beranda.cardHoverColor) {
@@ -628,7 +649,6 @@
                         }
                     }
 
-                    // Set Program
                     if (content.programs) {
                          if (content.programs.registerLink) document.getElementById('program-register-link').value = content.programs.registerLink;
                          if (content.programs.brochureLink) document.getElementById('program-brochure-link').value = content.programs.brochureLink;
@@ -724,7 +744,7 @@
                 alert("Terjadi kesalahan sistem. Cek konsol browser.");
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> Publish Perubahan ke Web`;
+                btn.innerHTML = `<i class="fas fa-cloud-upload-alt mr-2 text-xl"></i> Publish Perubahan ke Web`;
             }
         }
     </script>
