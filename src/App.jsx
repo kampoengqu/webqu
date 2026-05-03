@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone, ChevronLeft, ChevronRight, MessageCircle, BookOpen, Lightbulb, Home } from 'lucide-react';
+import { Menu, X, Phone, ChevronLeft, ChevronRight, MessageCircle, BookOpen, Lightbulb, Home, Download, MapPin, Mail } from 'lucide-react';
 
 // --- DATA DUMMY ---
 const articleImages = [
@@ -19,13 +19,38 @@ const dummyArticles = Array.from({ length: 12 }, (_, i) => ({
   image: articleImages[i % articleImages.length]
 }));
 
+// Update Galeri: Ditambahkan Judul dan Caption
 const dummyGallery = [
-  "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800&h=600", // Anak sekolah
-  "https://images.unsplash.com/photo-1609599006353-e629aaab31ce?auto=format&fit=crop&q=80&w=800&h=600", // Quran
-  "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&q=80&w=800&h=600", // Gedung sekolah
-  "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800&h=600", // Wisuda/Kelulusan
-  "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=800&h=600", // Perpustakaan
-  "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800&h=600", // Estetik buku
+  {
+    url: "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800&h=600",
+    title: "Fokus Belajar di Kelas",
+    caption: "Santri sedang memperhatikan penjelasan ustaz dengan saksama di ruang kelas yang nyaman."
+  },
+  {
+    url: "https://images.unsplash.com/photo-1609599006353-e629aaab31ce?auto=format&fit=crop&q=80&w=800&h=600",
+    title: "Tahfidz Al-Quran",
+    caption: "Kegiatan rutin setoran hafalan Al-Quran bersama pembimbing yang memiliki sanad."
+  },
+  {
+    url: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&q=80&w=800&h=600",
+    title: "Fasilitas Gedung",
+    caption: "Lingkungan pesantren yang asri dan gedung belajar yang sangat mendukung produktivitas."
+  },
+  {
+    url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800&h=600",
+    title: "Momen Kelulusan",
+    caption: "Kebahagiaan santri dan wali santri saat prosesi wisuda dan pelepasan kelulusan."
+  },
+  {
+    url: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=800&h=600",
+    title: "Perpustakaan Lengkap",
+    caption: "Fasilitas literasi dengan ribuan koleksi buku bacaan referensi agama dan umum."
+  },
+  {
+    url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800&h=600",
+    title: "Kajian Kitab Kuning",
+    caption: "Pendalaman literasi Islam klasik melalui pembelajaran kitab kuning secara rutin."
+  }
 ];
 
 // DATA PROGRAM
@@ -53,6 +78,39 @@ const programData = [
   }
 ];
 
+// DATA TESTIMONI BARU DENGAN FOTO DUMMY
+const dummyTestimonials = [
+  {
+    id: 1,
+    name: "Bapak Abdullah",
+    role: "Wali Santri Angkatan 6",
+    content: "Alhamdulillah, sejak mondok di Kampoeng Quran, anak saya mengalami perubahan akhlak yang luar biasa. Kemandiriannya terbangun dan bacaan Al-Qurannya semakin tartil.",
+    img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100&h=100"
+  },
+  {
+    id: 2,
+    name: "Ibu Siti Aminah",
+    role: "Wali Santri Angkatan 7",
+    content: "Lingkungan pesantren sangat kondusif untuk menghafal. Ustaz dan ustazah sangat perhatian terhadap perkembangan santri.",
+    img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=100&h=100"
+  },
+  {
+    id: 3,
+    name: "Bapak Rahmat Hidayat",
+    role: "Wali Santri Angkatan 5",
+    content: "Program kurikulum modernnya sangat membantu anak saya bersaing di bidang akademik tanpa melupakan hafalan Qurannya.",
+    img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=100&h=100"
+  },
+  {
+    id: 4,
+    name: "Ibu Fatimah Zahra",
+    role: "Wali Santri Angkatan 8",
+    content: "Fasilitas asrama yang bersih dan nyaman membuat kami tenang menitipkan anak kami di sini. Sangat direkomendasikan.",
+    img: "https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=crop&q=80&w=100&h=100"
+  },
+];
+
+
 // --- KOMPONEN UTAMA ---
 export default function App() {
   const [currentView, setCurrentView] = useState('Beranda');
@@ -61,12 +119,6 @@ export default function App() {
   
   // State untuk Lightbox Galeri
   const [lightboxData, setLightboxData] = useState({ isOpen: false, currentIndex: 0 });
-
-  // Palet Warna Kustom
-  const colors = {
-    green: '#16a34a', // Hijau Logo
-    orange: '#f59e0b', // Oranye Logo
-  };
 
   const navItems = ['Beranda', 'Tentang', 'Program', 'Galeri', 'Testimoni', 'Artikel', 'Kontak'];
 
@@ -197,38 +249,50 @@ export default function App() {
         {currentView === 'DetailProgram' && <ViewDetailProgram program={selectedProgram} changeView={changeView} />}
       </main>
 
-      {/* LIGHTBOX / GALERI GESER MODAL */}
+      {/* LIGHTBOX / GALERI GESER MODAL (Dengan Judul dan Caption) */}
       {lightboxData.isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm animate-fade-in">
           <button 
             onClick={closeLightbox} 
-            className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors"
+            className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-50"
           >
             <X size={36} />
           </button>
           
           <button 
             onClick={prevImage}
-            className="absolute left-4 md:left-10 text-white/50 hover:text-white transition-colors p-2"
+            className="absolute left-4 md:left-10 text-white/50 hover:text-white transition-colors p-2 z-50"
           >
             <ChevronLeft size={48} />
           </button>
 
-          <img 
-            src={dummyGallery[lightboxData.currentIndex]} 
-            alt={`Galeri diperbesar ${lightboxData.currentIndex + 1}`} 
-            className="max-h-[85vh] max-w-[90vw] object-contain shadow-2xl rounded-sm"
-          />
+          {/* Wrapper Gambar */}
+          <div className="relative flex flex-col items-center justify-center max-h-[80vh] w-full px-16">
+            <img 
+              src={dummyGallery[lightboxData.currentIndex].url} 
+              alt={dummyGallery[lightboxData.currentIndex].title} 
+              className="max-h-[65vh] max-w-full object-contain shadow-2xl rounded-sm mb-6"
+            />
+          </div>
 
           <button 
             onClick={nextImage}
-            className="absolute right-4 md:right-10 text-white/50 hover:text-white transition-colors p-2"
+            className="absolute right-4 md:right-10 text-white/50 hover:text-white transition-colors p-2 z-50"
           >
             <ChevronRight size={48} />
           </button>
           
-          <div className="absolute bottom-6 text-white/70 font-medium tracking-widest">
-            {lightboxData.currentIndex + 1} / {dummyGallery.length}
+          {/* Judul dan Caption Foto */}
+          <div className="absolute bottom-0 left-0 right-0 pt-20 pb-8 px-4 bg-gradient-to-t from-black via-black/80 to-transparent text-center">
+            <h3 className="text-white font-bold text-2xl mb-2 drop-shadow-md">
+              {dummyGallery[lightboxData.currentIndex].title}
+            </h3>
+            <p className="text-white/80 text-base md:text-lg max-w-3xl mx-auto mb-3">
+              {dummyGallery[lightboxData.currentIndex].caption}
+            </p>
+            <div className="text-white/40 font-medium tracking-widest text-sm mt-2">
+              {lightboxData.currentIndex + 1} / {dummyGallery.length}
+            </div>
           </div>
         </div>
       )}
@@ -253,7 +317,7 @@ export default function App() {
         </div>
       </footer>
 
-      {/* FLOATING WHATSAPP */}
+      {/* FLOATING WHATSAPP (Dengan Link Nomor Terbaru) */}
       <a 
         href="https://wa.me/6281214880408?text=Assalamu'alaikum,%20saya%20ingin%20bertanya%20informasi%20pendaftaran%20Pesantren%20Kampoeng%20Quran." 
         target="_blank"
@@ -271,23 +335,23 @@ export default function App() {
 // ==========================================
 
 function ViewBeranda() {
-  // Kita tidak butuh lagi useEffect yang rumit, kita pakai cara bawaan yang bersih!
-  
   return (
     <div className="w-full animate-fade-in">
       {/* Hero Section dengan Video Background */}
       <div className="relative w-full h-[85vh] bg-black overflow-hidden flex items-center justify-center">
         
-        {/* PERBAIKAN 1: Pindahkan src langsung ke tag <video>. React lebih suka cara ini! */}
+        {/* Menggunakan elemen Video HTML5 asli dengan Jurus Anti-Blank (Dan path video baru) */}
         <video 
           src="/vidkomp.mp4"
-          autoPlay 
-          loop 
-          muted 
-          playsInline
+          autoPlay={true}
+          loop={true}
+          muted={true}
+          playsInline={true}
+          onCanPlay={(e) => e.target.play()}
           className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-        />     
-        {/* PERBAIKAN 2: Menggunakan format Tailwind v4 (bg-black/60) agar bisa transparan! */}
+        />
+        
+        {/* Overlay Gelap dengan Tailwind v4 (bg-black/60) */}
         <div className="absolute inset-0 bg-black/60"></div>
 
         {/* Konten Hero */}
@@ -425,20 +489,29 @@ function ViewGaleri({ onImageClick }) {
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-          {dummyGallery.map((img, idx) => (
+          {dummyGallery.map((item, idx) => (
             <div 
               key={idx} 
               onClick={() => onImageClick(idx)}
               className="aspect-[4/3] group overflow-hidden rounded-2xl bg-slate-100 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 relative"
             >
               <img 
-                src={img} 
-                alt={`Galeri ${idx + 1}`} 
+                src={item.url} 
+                alt={item.title} 
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
-              {/* Overlay halus hanya di dalam kotak gambar, tidak merusak layar penuh */}
-              <div className="absolute inset-0 bg-green-900/0 group-hover:bg-green-900/30 transition-colors duration-300 flex items-center justify-center">
-                <div className="bg-white/90 text-green-800 px-4 py-2 rounded-full font-semibold opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 flex items-center shadow-lg">
+              
+              {/* Overlay Hitam Gradasi Bawah untuk Judul (Muncul Sebelum Diklik) */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              {/* Judul Gambar (Muncul Sebelum Diklik) */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                <h3 className="text-white font-bold text-base md:text-lg drop-shadow-md">{item.title}</h3>
+              </div>
+
+              {/* Tombol Lihat (Muncul Saat di Hover) */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="bg-white/95 text-green-800 px-4 py-2 rounded-full font-bold flex items-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
                   Perbesar
                 </div>
@@ -461,19 +534,21 @@ function ViewTestimoni() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative">
+          {dummyTestimonials.map((item) => (
+            <div key={item.id} className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative flex flex-col">
               <div className="absolute top-4 right-4 text-orange-200 text-6xl font-serif">"</div>
-              <p className="text-slate-600 italic mb-6 relative z-10">
-                "Alhamdulillah, sejak mondok di Kampoeng Quran, anak saya mengalami perubahan akhlak yang luar biasa. Kemandiriannya terbangun dan bacaan Al-Qurannya semakin tartil."
+              <p className="text-slate-600 italic mb-6 relative z-10 flex-grow">
+                "{item.content}"
               </p>
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center text-green-700 font-bold text-xl mr-4">
-                  W
-                </div>
+              <div className="flex items-center mt-auto">
+                <img 
+                  src={item.img} 
+                  alt={item.name} 
+                  className="w-12 h-12 rounded-full object-cover mr-4 border-2 border-green-200"
+                />
                 <div>
-                  <h4 className="font-bold text-slate-800">Bapak Abdullah</h4>
-                  <p className="text-sm text-slate-500">Wali Santri Angkatan {i + 5}</p>
+                  <h4 className="font-bold text-slate-800">{item.name}</h4>
+                  <p className="text-sm text-slate-500">{item.role}</p>
                 </div>
               </div>
             </div>
@@ -569,51 +644,67 @@ function ViewKontak() {
         <div className="grid md:grid-cols-2 gap-12">
           {/* Peta & Info */}
           <div>
-            <div className="bg-slate-200 w-full h-64 rounded-2xl mb-8 overflow-hidden shadow-inner">
-              {/* Dummy Map */}
+            <div className="bg-slate-200 w-full h-80 rounded-2xl mb-8 overflow-hidden shadow-inner">
+              {/* Google Maps Embed dengan Alamat Baru */}
               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126938.97341381664!2d106.7593674!3d-6.155734!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e945e34b9d%3A0x100c5e82dd4b820!2sJakarta!5e0!3m2!1sen!2sid!4v1698246029177!5m2!1sen!2sid" 
+                src="https://www.google.com/maps?q=Perum.+Lembah+Hijau,+Jl.+Cihanjuang+Jl.+Cibaligo+5,+Cihanjuang,+Kec.+Parongpong,+Kabupaten+Bandung+Barat,+Jawa+Barat+40559&output=embed" 
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 
                 allowFullScreen="" 
                 loading="lazy" 
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Peta Lokasi"
+                title="Peta Lokasi Kampoeng Quran"
               ></iframe>
             </div>
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-slate-800">Kampus Pesantren Kampoeng Quran</h3>
-              <p className="text-slate-600 flex items-start">
-                <span className="mr-3 mt-1 text-green-600">📍</span>
-                Jl. Pendidikan No. 1, Desa Mulia, Kec. Damai, Kota Impian, 12345
-              </p>
-              <p className="text-slate-600 flex items-center">
-                <span className="mr-3 text-green-600"><Phone size={18}/></span>
-                (021) 1234-5678 / 0812-3456-7890
-              </p>
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-bold text-slate-800 flex items-center mb-2">
+                  <MapPin size={20} className="text-green-600 mr-2" /> Alamat Kampus
+                </h3>
+                <p className="text-slate-600 ml-7 leading-relaxed">
+                  Perum. Lembah Hijau, Jl. Cihanjuang Jl. Cibaligo 5, Cihanjuang, Kec. Parongpong, Kabupaten Bandung Barat, Jawa Barat 40559
+                </p>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-800 flex items-center mb-2">
+                  <Phone size={20} className="text-green-600 mr-2" /> Kontak & WhatsApp
+                </h3>
+                <p className="text-slate-600 ml-7 font-semibold">
+                  0812-1488-0408
+                </p>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-800 flex items-center mb-2">
+                  <Mail size={20} className="text-green-600 mr-2" /> Email
+                </h3>
+                <p className="text-slate-600 ml-7">
+                  kampoengqurancendekia@gmail.com
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Form */}
+          {/* Form (Sekarang berfungsi dengan mailto) */}
           <div className="bg-slate-50 p-8 rounded-2xl border border-slate-100 shadow-sm">
             <h3 className="text-2xl font-bold text-slate-800 mb-6">Kirim Pesan</h3>
-            <form className="space-y-4">
+            <form action="mailto:kampoengqurancendekia@gmail.com" method="post" encType="text/plain" className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
-                <input type="text" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all" placeholder="Masukkan nama" />
+                <input type="text" name="nama" required className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all" placeholder="Masukkan nama" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Nomor WhatsApp</label>
-                <input type="tel" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all" placeholder="08xx..." />
+                <input type="tel" name="whatsapp" required className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all" placeholder="08xx..." />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Pesan / Pertanyaan</label>
-                <textarea rows="4" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all" placeholder="Tulis pesan Anda di sini..."></textarea>
+                <textarea rows="4" name="pesan" required className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all" placeholder="Tulis pesan Anda di sini..."></textarea>
               </div>
-              <button type="button" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors">
-                Kirim Pesan
+              <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors">
+                Kirim Pesan via Email
               </button>
+              <p className="text-xs text-slate-500 text-center mt-2">*Akan membuka aplikasi email Anda.</p>
             </form>
           </div>
         </div>
@@ -684,16 +775,27 @@ function ViewDetailProgram({ program, changeView }) {
           </div>
         </div>
 
-        {/* Call to Action Pendaftaran */}
+        {/* Call to Action Pendaftaran (Dengan Button Download) */}
         <div className="mt-12 text-center bg-white p-8 border border-slate-100 rounded-2xl shadow-sm">
           <h4 className="text-xl font-bold text-slate-800 mb-2">Tertarik dengan {program.title}?</h4>
           <p className="text-slate-500 mb-6">Jangan ragu untuk bertanya terkait biaya, jadwal masuk, atau kurikulum secara mendetail.</p>
-          <button 
-            onClick={() => changeView('Kontak')}
-            className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full shadow-md transition-all inline-flex items-center"
-          >
-            Hubungi Bagian Pendaftaran <ChevronRight size={18} className="ml-1" />
-          </button>
+          
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <button 
+              onClick={() => changeView('Kontak')}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full shadow-md transition-all inline-flex items-center justify-center w-full sm:w-auto"
+            >
+              Hubungi Bagian Pendaftaran <ChevronRight size={18} className="ml-1" />
+            </button>
+            
+            {/* Tombol Download Brosur */}
+            <button 
+              onClick={() => alert('Fitur unduh brosur PDF sedang disiapkan.')}
+              className="bg-white hover:bg-green-50 text-green-700 border-2 border-green-600 font-bold py-3 px-8 rounded-full shadow-sm transition-all inline-flex items-center justify-center w-full sm:w-auto"
+            >
+              <Download size={18} className="mr-2" /> Download Brosur
+            </button>
+          </div>
         </div>
       </div>
     </div>
