@@ -1,61 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, ChevronLeft, ChevronRight, MessageCircle, BookOpen, Lightbulb, Home, Download, MapPin, Mail, UserCircle } from 'lucide-react';
 
-// --- KOMPONEN DISQUS KUSTOM (PERBAIKAN PAMUNGKAS) ---
 const DiscussionEmbed = ({ shortname, config }) => {
   useEffect(() => {
-    let timer;
-
+    window.disqus_config = function () {
+      this.page.url = config.url; 
+      this.page.identifier = config.identifier;
+      this.page.title = config.title;
+      this.language = config.language || 'id';
+    };
     const loadDisqus = () => {
-      // 1. Bersihkan sisa iframe/kotak lama agar Disqus tidak bingung
       const disqusContainer = document.getElementById('disqus_thread');
-      if (disqusContainer) {
-        disqusContainer.innerHTML = '';
-      }
-
-      // 2. Tentukan konfigurasi URL artikel yang sedang dibuka
-      window.disqus_config = function () {
-        this.page.url = config.url; 
-        this.page.identifier = config.identifier;
-        this.page.title = config.title;
-        this.language = 'id';
-      };
-
-      // 3. Muat atau Reset Disqus
+      if (disqusContainer && !window.DISQUS) disqusContainer.innerHTML = ''; 
       if (window.DISQUS) {
-        window.DISQUS.reset({
-          reload: true,
-          config: window.disqus_config
-        });
+        window.DISQUS.reset({ reload: true, config: window.disqus_config });
       } else {
         const d = document;
-        const scriptId = 'disqus-embed-script';
-        if (!d.getElementById(scriptId)) {
+        if (!d.getElementById('disqus-embed-script')) {
           const s = d.createElement('script');
-          s.id = scriptId;
+          s.id = 'disqus-embed-script';
           s.src = `https://${shortname}.disqus.com/embed.js`;
           s.setAttribute('data-timestamp', +new Date());
-          s.async = true;
           (d.head || d.body).appendChild(s);
         }
       }
     };
-
-    // Jeda 300ms untuk memastikan React selesai me-render UI secara utuh
-    timer = setTimeout(loadDisqus, 300);
-
+    const timer = setTimeout(loadDisqus, 500);
     return () => clearTimeout(timer);
-  }, [shortname, config.identifier, config.url, config.title]);
+  }, [shortname, config.identifier, config.url, config.title, config.language]);
 
-  return (
-    <div className="w-full mt-6">
-      {/* Kotak disqus_thread wajib ada */}
-      <div id="disqus_thread" className="min-h-[250px] w-full"></div>
-    </div>
-  );
+  return <div className="w-full mt-4"><div id="disqus_thread" className="min-h-[300px] w-full"></div></div>;
 };
 
-// --- KOMPONEN COMMENT COUNT KUSTOM ---
 const CommentCount = ({ shortname, config, children }) => {
   useEffect(() => {
     const initCount = () => {
@@ -65,24 +41,18 @@ const CommentCount = ({ shortname, config, children }) => {
         const d = document, scriptId = 'dsq-count-scr';
         if (!d.getElementById(scriptId)) {
           const s = d.createElement('script');
-          s.src = `https://${shortname}.disqus.com/count.js`;
-          s.id = scriptId;
-          s.async = true;
+          s.src = `https://${shortname}.disqus.com/count.js`; s.id = scriptId; s.async = true;
           (d.head || d.body).appendChild(s);
         }
       }
     };
-    
     const timer = setTimeout(initCount, 500);
     return () => clearTimeout(timer);
   }, [shortname, config.identifier]);
-
-  return (
-    <span className="disqus-comment-count" data-disqus-identifier={config.identifier}>
-      {children || '0'}
-    </span>
-  );
+  return <span className="disqus-comment-count" data-disqus-identifier={config.identifier}>{children || '0'}</span>;
 };
+
+const DISQUS_SHORTNAME = 'kelasngaji'; 
 
 // --- DATA DUMMY ---
 const articleImages = [
@@ -121,7 +91,6 @@ const programData = [
   { id: 'tahfidz', title: "Tahfidz Intensif", desc: "Program khusus hafalan 30 Juz dengan target waktu terukur.", image: "https://images.unsplash.com/photo-1609599006353-e629aaab31ce?auto=format&fit=crop&q=80&w=600&h=400", fullDesc: "Program unggulan bagi santri yang memiliki azam kuat untuk menghafal Al-Quran 30 Juz. Didampingi oleh asatidz bersanad, santri akan mengikuti program mutaba'ah harian, tasmi' pekanan, hingga ujian tahfidz berjenjang untuk memastikan kualitas hafalan." }
 ];
 
-// FOTO DUMMY TESTIMONI TELAH DIPERBAIKI
 const dummyTestimonials = [
   { id: 1, name: "Bapak Abdullah", role: "Wali Santri Angkatan 6", content: "Alhamdulillah, sejak mondok di Kampoeng Quran, anak saya mengalami perubahan akhlak yang luar biasa. Kemandiriannya terbangun dan bacaan Al-Qurannya semakin tartil.", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" },
   { id: 2, name: "Ibu Siti Aminah", role: "Wali Santri Angkatan 7", content: "Lingkungan pesantren sangat kondusif untuk menghafal. Ustaz dan ustazah sangat perhatian terhadap perkembangan santri.", img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" },
@@ -162,8 +131,6 @@ export default function App() {
               {navItems.map((item) => (
                 <button key={item} onClick={() => changeView(item)} className={`text-sm font-semibold transition-colors duration-200 ${currentView === item ? 'text-green-600 border-b-2 border-orange-500 pb-1' : 'text-slate-600 hover:text-green-600'}`}>{item}</button>
               ))}
-              
-              {/* IKON MEDSOS ASLI TELAH DIKEMBALIKAN */}
               <div className="flex items-center space-x-3 ml-4 border-l pl-4 border-slate-200">
                 <a href="#" className="text-slate-400 hover:text-green-600"><svg className="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
                 <a href="#" className="text-slate-400 hover:text-orange-500"><svg className="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
@@ -182,8 +149,6 @@ export default function App() {
               {navItems.map((item) => (
                 <button key={item} onClick={() => changeView(item)} className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${currentView === item ? 'text-green-600 bg-green-50' : 'text-slate-600 hover:text-green-600 hover:bg-slate-50'}`}>{item}</button>
               ))}
-              
-              {/* IKON MEDSOS ASLI DI MENU MOBILE JUGA DIKEMBALIKAN */}
               <div className="flex items-center space-x-4 px-3 py-4 mt-2 border-t border-slate-100">
                 <a href="#" className="text-slate-400"><svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
                 <a href="#" className="text-slate-400"><svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
@@ -397,7 +362,7 @@ function ViewArtikel({ changeView }) {
                 <button onClick={() => changeView('DetailArtikel', article)} className="text-green-700 font-bold text-left hover:text-orange-500 transition-colors">Baca Selengkapnya &rarr;</button>
                 <div className="text-slate-400 text-sm flex items-center bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
                   <MessageCircle size={14} className="mr-1.5" />
-                  <CommentCount shortname='https-webqu-peach-vercel-app' config={{ url: `https://webqu-peach.vercel.app/artikel/${article.id}`, identifier: `article-${article.id}`, title: article.title }}>0</CommentCount>
+                  <CommentCount shortname={DISQUS_SHORTNAME} config={{ url: `https://webqu-peach.vercel.app/artikel/${article.id}`, identifier: `article-${article.id}`, title: article.title }}>0</CommentCount>
                 </div>
               </div>
             </div>
@@ -431,8 +396,8 @@ function ViewDetailArtikel({ article, changeView }) {
         <div className="bg-slate-50 p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
           <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center"><MessageCircle className="mr-3 text-green-600" />Tinggalkan Komentar</h3>
           <div className="bg-white p-4 rounded-xl shadow-inner w-full min-h-[300px]">
-             {/* Kotak komentar disqus-nya dipastikan di luar kelas overflow-hidden */}
-             <DiscussionEmbed shortname='https-webqu-peach-vercel-app' config={{ url: `https://webqu-peach.vercel.app/artikel/${article.id}`, identifier: `article-${article.id}`, title: article.title, language: 'id' }} />
+             {/* Menggunakan DiscussionEmbed dari disqus-react */}
+             <DiscussionEmbed shortname={DISQUS_SHORTNAME} config={{ url: `https://webqu-peach.vercel.app/artikel/${article.id}`, identifier: `article-${article.id}`, title: article.title, language: 'id' }} />
           </div>
         </div>
       </div>
