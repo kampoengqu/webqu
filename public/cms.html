@@ -114,6 +114,9 @@
                         <button onclick="switchTab('tab-program')" id="btn-tab-program" class="flex-1 py-4 px-4 text-sm font-bold text-center border-b-2 border-transparent text-slate-500 hover:text-emerald-600 hover:bg-white transition-all whitespace-nowrap">
                             <i class="fas fa-graduation-cap mr-2"></i>Program
                         </button>
+                        <button onclick="switchTab('tab-galeri')" id="btn-tab-galeri" class="flex-1 py-4 px-4 text-sm font-bold text-center border-b-2 border-transparent text-slate-500 hover:text-emerald-600 hover:bg-white transition-all whitespace-nowrap">
+                            <i class="fas fa-images mr-2"></i>Galeri
+                        </button>
                     </div>
 
                     <!-- KONTEN TAB -->
@@ -221,6 +224,23 @@
                             </div>
                         </div>
 
+                        <!-- 4. KONTEN TAB GALERI -->
+                        <div id="tab-galeri" class="tab-content hidden fade-in">
+                            <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+                                <div>
+                                    <h2 class="text-xl font-bold text-slate-800 flex items-center"><i class="fas fa-images mr-3 text-emerald-500"></i> Pengaturan Galeri</h2>
+                                    <p class="text-xs text-slate-500 mt-1">Kelola foto kegiatan pesantren. Gunakan ikon panah naik/turun untuk mengatur urutan.</p>
+                                </div>
+                                <button onclick="addGalleryItem()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-2 px-4 rounded-lg text-sm transition-colors flex items-center shrink-0">
+                                    <i class="fas fa-plus mr-2"></i> Tambah Foto Baru
+                                </button>
+                            </div>
+                            
+                            <div id="gallery-container" class="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                                <!-- Gallery items akan diisi oleh Javascript -->
+                            </div>
+                        </div>
+
                     </div>
 
                     <!-- TOMBOL PUBLISH UTAMA (Selalu Tampil di Bawah Tab) -->
@@ -234,6 +254,14 @@
             </div>
         </div>
     </div>
+
+    <style>
+        /* Custom scrollbar untuk container galeri agar tetap rapi */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
 
     <script>
         // ==========================================
@@ -263,26 +291,38 @@
             }
         ];
 
+        // 25 Dummy Foto untuk awalan
+        let galleryItems = Array.from({ length: 25 }, (_, i) => ({
+            url: `https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800&h=600&sig=${i}`,
+            title: `Kegiatan Pesantren ${i + 1}`,
+            caption: `Deskripsi singkat kegiatan santri nomor ${i + 1} di lingkungan pesantren Kampoeng Quran.`
+        }));
+
         // --- SISTEM TAB MENU ---
         function switchTab(tabId) {
             // Sembunyikan semua konten tab
             document.getElementById('tab-tema').classList.add('hidden');
             document.getElementById('tab-beranda').classList.add('hidden');
             document.getElementById('tab-program').classList.add('hidden');
+            document.getElementById('tab-galeri').classList.add('hidden');
             
             // Reset gaya semua tombol tab
-            const btnIds = ['btn-tab-tema', 'btn-tab-beranda', 'btn-tab-program'];
+            const btnIds = ['btn-tab-tema', 'btn-tab-beranda', 'btn-tab-program', 'btn-tab-galeri'];
             btnIds.forEach(id => {
                 const btn = document.getElementById(id);
-                btn.classList.remove('border-emerald-600', 'text-emerald-700', 'bg-white');
-                btn.classList.add('border-transparent', 'text-slate-500');
+                if(btn) {
+                    btn.classList.remove('border-emerald-600', 'text-emerald-700', 'bg-white');
+                    btn.classList.add('border-transparent', 'text-slate-500');
+                }
             });
 
             // Tampilkan tab yang dipilih dan warnai tombolnya
             document.getElementById(tabId).classList.remove('hidden');
             const activeBtn = document.getElementById('btn-' + tabId);
-            activeBtn.classList.remove('border-transparent', 'text-slate-500');
-            activeBtn.classList.add('border-emerald-600', 'text-emerald-700', 'bg-white');
+            if(activeBtn) {
+                activeBtn.classList.remove('border-transparent', 'text-slate-500');
+                activeBtn.classList.add('border-emerald-600', 'text-emerald-700', 'bg-white');
+            }
         }
 
         // --- LOGIKA LOGIN ---
@@ -369,6 +409,7 @@
 
             renderCards();
             renderPrograms();
+            renderGallery();
 
             if (token && repo) fetchCurrentTheme();
         }
@@ -387,7 +428,7 @@
         }
 
         // --- MANAJEMEN UPLOAD FILE ---
-        async function handleFileUpload(inputElement, targetInputId, programIndex = null) {
+        async function handleFileUpload(inputElement, targetInputId, programIndex = null, galleryIndex = null) {
             const file = inputElement.files[0];
             if (!file) return;
 
@@ -437,6 +478,8 @@
                         
                         if (programIndex !== null) {
                             updateProgram(programIndex, 'image', publicUrl);
+                        } else if (galleryIndex !== null) {
+                            updateGalleryItem(galleryIndex, 'url', publicUrl);
                         }
                         
                         log(`✅ Berhasil mengunggah: ${fileName}`);
@@ -454,6 +497,8 @@
                         labelEl.innerHTML = originalHTML;
                     } else if (programIndex !== null) {
                         renderPrograms();
+                    } else if (galleryIndex !== null) {
+                        renderGallery();
                     }
                 }
             };
@@ -609,6 +654,98 @@
             programs[programIndex].benefits[benefitIndex] = value;
         }
 
+        // --- MANAJEMEN GALERI KONTEN ---
+        function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = '';
+
+            galleryItems.forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="p-3 md:p-4 border border-slate-200 rounded-xl bg-white shadow-sm flex flex-col md:flex-row gap-4 relative group transition hover:border-emerald-200 hover:shadow-md">
+                        
+                        <!-- Kontrol Pindah Posisi (Naik/Turun) -->
+                        <div class="flex flex-row md:flex-col justify-center items-center gap-1 sm:gap-2 absolute top-2 left-2 md:relative md:top-auto md:left-auto bg-white/90 md:bg-transparent backdrop-blur-sm p-1 rounded-lg z-10 shadow-sm md:shadow-none border border-slate-100 md:border-none">
+                            <button onclick="moveGalleryItem(${index}, -1)" class="p-1 sm:p-2 text-slate-400 hover:text-emerald-600 bg-slate-50 hover:bg-emerald-50 rounded transition-colors ${index === 0 ? 'opacity-30 cursor-not-allowed' : ''}" ${index === 0 ? 'disabled' : ''} title="Geser ke Atas">
+                                <i class="fas fa-arrow-up text-xs sm:text-base"></i>
+                            </button>
+                            <span class="text-[10px] sm:text-xs font-bold text-slate-400 w-4 text-center">${index + 1}</span>
+                            <button onclick="moveGalleryItem(${index}, 1)" class="p-1 sm:p-2 text-slate-400 hover:text-emerald-600 bg-slate-50 hover:bg-emerald-50 rounded transition-colors ${index === galleryItems.length - 1 ? 'opacity-30 cursor-not-allowed' : ''}" ${index === galleryItems.length - 1 ? 'disabled' : ''} title="Geser ke Bawah">
+                                <i class="fas fa-arrow-down text-xs sm:text-base"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Preview Gambar -->
+                        <div class="w-full md:w-32 h-32 md:h-24 bg-slate-100 rounded-lg overflow-hidden shrink-0 border border-slate-200 mt-8 md:mt-0">
+                            <img src="${item.url}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150?text=Tanpa+Gambar'">
+                        </div>
+                        
+                        <!-- Input Data -->
+                        <div class="flex-grow grid grid-cols-1 gap-2.5">
+                            <div>
+                                <input type="text" value="${item.title}" onchange="updateGalleryItem(${index}, 'title', this.value)" class="w-full px-3 py-1.5 border border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 rounded-lg text-sm outline-none transition-colors font-semibold text-slate-800" placeholder="Judul Foto">
+                            </div>
+                            <div>
+                                <input type="text" value="${item.caption}" onchange="updateGalleryItem(${index}, 'caption', this.value)" class="w-full px-3 py-1.5 border border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 rounded-lg text-sm outline-none transition-colors text-slate-600" placeholder="Deskripsi/Caption Singkat">
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <input type="text" id="gal-image-${index}" value="${item.url}" onchange="updateGalleryItem(${index}, 'url', this.value)" class="flex-grow px-3 py-1.5 border border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 rounded-lg text-xs outline-none font-mono transition-colors text-slate-500" placeholder="URL / Link Gambar">
+                                <label class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-1.5 px-3 rounded-lg cursor-pointer transition-colors shadow-sm shrink-0" title="Upload Gambar Galeri">
+                                    <i class="fas fa-upload text-xs mr-1"></i> <span class="text-xs">Upload</span>
+                                    <input type="file" class="hidden" accept="image/*" onchange="handleFileUpload(this, 'gal-image-${index}', null, ${index})">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Hapus -->
+                        <button onclick="removeGalleryItem(${index})" class="absolute -top-3 -right-3 text-white hover:bg-red-600 bg-red-500 p-2 rounded-full shadow-lg transition-transform transform scale-0 md:group-hover:scale-100 lg:scale-0 scale-100 z-20" title="Hapus Foto">
+                            <i class="fas fa-trash text-xs"></i>
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function addGalleryItem() {
+            // Tambah di awal agar yang baru muncul di posisi teratas
+            galleryItems.unshift({
+                url: '',
+                title: 'Foto Kegiatan Baru',
+                caption: 'Deskripsi singkat foto.'
+            });
+            renderGallery();
+            
+            // Scroll ke atas container
+            const container = document.getElementById('gallery-container');
+            if(container) container.scrollTop = 0;
+        }
+
+        function removeGalleryItem(index) {
+            if(confirm("Apakah Anda yakin ingin menghapus foto ini dari galeri?")) {
+                galleryItems.splice(index, 1);
+                renderGallery();
+            }
+        }
+
+        function updateGalleryItem(index, field, value) {
+            galleryItems[index][field] = value;
+            // Jika yang diupdate adalah URL gambar, render ulang agar preview gambar ikut berubah
+            if (field === 'url') {
+                renderGallery();
+            }
+        }
+
+        function moveGalleryItem(index, direction) {
+            const newIndex = index + direction;
+            // Pastikan tidak out of bounds
+            if (newIndex >= 0 && newIndex < galleryItems.length) {
+                // Tukar elemen di array
+                const temp = galleryItems[index];
+                galleryItems[index] = galleryItems[newIndex];
+                galleryItems[newIndex] = temp;
+                renderGallery();
+            }
+        }
+
         // --- FETCH DARI GITHUB ---
         async function fetchCurrentTheme() {
             const token = localStorage.getItem('gh_token');
@@ -658,6 +795,12 @@
                          }
                     }
 
+                    // Terapkan data Galeri dari Github jika ada
+                    if (content.galeri && Array.isArray(content.galeri)) {
+                        galleryItems = content.galeri;
+                        renderGallery();
+                    }
+
                     log("Tema berhasil dimuat dari GitHub.");
                 } else if (response.status === 404) {
                     log("File theme.json belum ada. Siap membuat baru.");
@@ -694,6 +837,7 @@
                     brochureLink: document.getElementById('program-brochure-link').value,
                     list: programs
                 },
+                galeri: galleryItems, // Data galeri ditambahkan untuk disimpan
                 updatedAt: new Date().toISOString()
             };
 
@@ -715,7 +859,7 @@
                 const encodedContent = btoa(unescape(encodeURIComponent(JSON.stringify(newTheme, null, 2))));
                 
                 const bodyData = {
-                    message: "CMS: Update Pengaturan Tema, Beranda & Program",
+                    message: "CMS: Update Pengaturan Tema, Beranda, Program, dan Galeri",
                     content: encodedContent
                 };
                 if (sha) bodyData.sha = sha;
