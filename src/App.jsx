@@ -52,7 +52,8 @@ const CommentCount = ({ shortname, config, children }) => {
   return <span className="disqus-comment-count" data-disqus-identifier={config.identifier}>{children || '0'}</span>;
 };
 
-const DISQUS_SHORTNAME = 'kelasngaji'; 
+// PERBAIKAN 1: Menggunakan Shortname asli Disqus milikmu
+const DISQUS_SHORTNAME = 'https-webqu-peach-vercel-app'; 
 
 // --- DATA DUMMY ---
 const articleImages = [
@@ -76,14 +77,12 @@ const dummyArticles = Array.from({ length: 14 }, (_, i) => ({
   ]
 }));
 
-const dummyGallery = [
-  { url: "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800&h=600", title: "Fokus Belajar di Kelas", caption: "Santri sedang memperhatikan penjelasan ustaz dengan saksama di ruang kelas yang nyaman." },
-  { url: "https://images.unsplash.com/photo-1609599006353-e629aaab31ce?auto=format&fit=crop&q=80&w=800&h=600", title: "Tahfidz Al-Quran", caption: "Kegiatan rutin setoran hafalan Al-Quran bersama pembimbing yang memiliki sanad." },
-  { url: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&q=80&w=800&h=600", title: "Fasilitas Gedung", caption: "Lingkungan pesantren yang asri dan gedung belajar yang sangat mendukung produktivitas." },
-  { url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800&h=600", title: "Momen Kelulusan", caption: "Kebahagiaan santri dan wali santri saat prosesi wisuda dan pelepasan kelulusan." },
-  { url: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=800&h=600", title: "Perpustakaan Lengkap", caption: "Fasilitas literasi dengan ribuan koleksi buku bacaan referensi agama dan umum." },
-  { url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800&h=600", title: "Kajian Kitab Kuning", caption: "Pendalaman literasi Islam klasik melalui pembelajaran kitab kuning secara rutin." }
-];
+// Tambahkan data dummy galeri agar lebih dari 12 untuk menguji paginasi
+const dummyGallery = Array.from({ length: 25 }, (_, i) => ({
+  url: `https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800&h=600&sig=${i}`, // Menggunakan sig agar gambar unik jika API mendukung, atau biarkan sama untuk dummy
+  title: `Kegiatan Pesantren ${i + 1}`,
+  caption: `Deskripsi singkat untuk kegiatan pesantren ke-${i + 1} di Kampoeng Quran.`
+}));
 
 const programData = [
   { id: 'smp', title: "SMP Islam Terpadu", desc: "Pendidikan menengah dengan kurikulum diknas dan diniyah terpadu.", image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=600&h=400", fullDesc: "Program SMP Islam Terpadu kami mengedepankan pembentukan karakter Islami di usia remaja. Kami memadukan kurikulum nasional dengan pemahaman agama yang mendalam. Fasilitas laboratorium, perpustakaan, dan asrama yang nyaman disiapkan untuk menunjang tumbuh kembang santri." },
@@ -129,13 +128,7 @@ export default function App() {
             </div>
             <div className="hidden md:flex md:items-center md:space-x-6">
               {navItems.map((item) => (
-                item === 'Artikel' ? (
-                  <a key={item} href="/blog.html" className="text-sm font-semibold transition-colors duration-200 text-slate-600 hover:text-green-600">
-                    {item}
-                  </a>
-                ) : (
-                  <button key={item} onClick={() => changeView(item)} className={`text-sm font-semibold transition-colors duration-200 ${currentView === item ? 'text-green-600 border-b-2 border-orange-500 pb-1' : 'text-slate-600 hover:text-green-600'}`}>{item}</button>
-                )
+                <button key={item} onClick={() => changeView(item)} className={`text-sm font-semibold transition-colors duration-200 ${currentView === item ? 'text-green-600 border-b-2 border-orange-500 pb-1' : 'text-slate-600 hover:text-green-600'}`}>{item}</button>
               ))}
               <div className="flex items-center space-x-3 ml-4 border-l pl-4 border-slate-200">
                 <a href="#" className="text-slate-400 hover:text-green-600"><svg className="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
@@ -153,13 +146,7 @@ export default function App() {
           <div className="md:hidden bg-white border-t border-slate-100">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               {navItems.map((item) => (
-                item === 'Artikel' ? (
-                   <a key={item} href="/blog.html" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-green-600 hover:bg-slate-50">
-                    {item}
-                  </a>
-                ) : (
-                  <button key={item} onClick={() => changeView(item)} className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${currentView === item ? 'text-green-600 bg-green-50' : 'text-slate-600 hover:text-green-600 hover:bg-slate-50'}`}>{item}</button>
-                )
+                <button key={item} onClick={() => changeView(item)} className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${currentView === item ? 'text-green-600 bg-green-50' : 'text-slate-600 hover:text-green-600 hover:bg-slate-50'}`}>{item}</button>
               ))}
               <div className="flex items-center space-x-4 px-3 py-4 mt-2 border-t border-slate-100">
                 <a href="#" className="text-slate-400"><svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
@@ -296,26 +283,71 @@ function ViewProgram({ changeView }) {
 }
 
 function ViewGaleri({ onImageClick }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+  const totalPages = Math.ceil(dummyGallery.length / itemsPerPage);
+  
+  // Menghitung gambar mana saja yang harus ditampilkan di halaman saat ini
+  const currentImages = dummyGallery.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
     <div className="w-full py-16 bg-white animate-fade-in">
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-green-700 mb-4">Galeri Kegiatan</h2><div className="w-24 h-1 bg-orange-500 mx-auto rounded-full"></div>
         </div>
+        
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-          {dummyGallery.map((item, idx) => (
-            <div key={idx} onClick={() => onImageClick(idx)} className="aspect-[4/3] group overflow-hidden rounded-2xl bg-slate-100 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 relative">
-              <img src={item.url} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                <h3 className="text-white font-bold text-base md:text-lg drop-shadow-md">{item.title}</h3>
+          {currentImages.map((item, idx) => {
+            // Karena kita memotong array (slice), kita butuh index asli (global index) 
+            // agar saat gambar di-klik, lightbox menampilkan gambar yang benar dari seluruh galeri.
+            const globalIndex = (currentPage - 1) * itemsPerPage + idx;
+            
+            return (
+              <div key={globalIndex} onClick={() => onImageClick(globalIndex)} className="aspect-[4/3] group overflow-hidden rounded-2xl bg-slate-100 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 relative">
+                <img src={item.url} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                  <h3 className="text-white font-bold text-base md:text-lg drop-shadow-md">{item.title}</h3>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="bg-white/95 text-green-800 px-4 py-2 rounded-full font-bold flex items-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">Perbesar</div>
+                </div>
               </div>
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="bg-white/95 text-green-800 px-4 py-2 rounded-full font-bold flex items-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">Perbesar</div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
+
+        {/* Kontrol Paginasi */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center space-x-2 mt-12">
+            <button 
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))} 
+              disabled={currentPage === 1} 
+              className={`p-2 rounded-lg ${currentPage === 1 ? 'text-slate-300' : 'text-green-700 hover:bg-green-50'}`}
+            >
+              <ChevronLeft size={24} />
+            </button>
+            
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <button 
+                key={page} 
+                onClick={() => setCurrentPage(page)} 
+                className={`w-10 h-10 rounded-lg font-bold transition-colors ${currentPage === page ? 'bg-green-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}
+              >
+                {page}
+              </button>
+            ))}
+            
+            <button 
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} 
+              disabled={currentPage === totalPages} 
+              className={`p-2 rounded-lg ${currentPage === totalPages ? 'text-slate-300' : 'text-green-700 hover:bg-green-50'}`}
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -355,6 +387,7 @@ function ViewArtikel({ changeView }) {
     <div className="w-full max-w-7xl mx-auto px-4 py-16 animate-fade-in">
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold text-green-700 mb-4">Kabar & Artikel</h2><div className="w-24 h-1 bg-orange-500 mx-auto rounded-full mb-4"></div>
+        <p className="text-slate-500">Informasi terbaru seputar kegiatan pesantren dan tulisan Islami.</p>
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {currentArticles.map((article) => (
@@ -398,17 +431,17 @@ function ViewDetailArtikel({ article, changeView }) {
   if (!article) return null;
   return (
     <div className="w-full animate-fade-in bg-white pb-16 pt-8">
-      <div className="max-w-4xl mx-auto px-4">
+      {/* PERBAIKAN MARGIN: Dipersempit max-w-nya dan ditambah px-6 md:px-10 agar tidak mepet */}
+      <div className="max-w-3xl mx-auto px-6 md:px-10">
         <button onClick={() => changeView('Artikel')} className="flex items-center text-green-700 hover:text-orange-500 font-semibold mb-8 transition-colors group"><ChevronLeft size={20} className="mr-1 transform group-hover:-translate-x-1 transition-transform" /> Kembali ke Daftar Artikel</button>
         <h1 className="text-3xl md:text-5xl font-bold text-slate-800 mb-4 leading-tight">{article.title}</h1>
         <div className="flex items-center text-slate-500 mb-8 border-b border-slate-100 pb-4"><span className="text-orange-500 font-semibold mr-4">{article.date}</span><span>Ditulis oleh <strong>Admin Kampoeng Quran</strong></span></div>
         <img src={article.image} alt={article.title} className="w-full h-[300px] md:h-[500px] object-cover rounded-2xl mb-10 shadow-md" />
-        <div className="prose prose-lg max-w-none text-slate-700 space-y-6">{article.fullContent.map((paragraph, idx) => <p key={idx} className="leading-relaxed">{paragraph}</p>)}</div>
+        <div className="prose prose-lg max-w-none text-slate-700 space-y-6">{article.fullContent.map((paragraph, idx) => <p key={idx} className="leading-relaxed text-justify">{paragraph}</p>)}</div>
         <div className="mt-12 pt-8 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center mb-12"><p className="text-slate-500 font-medium mb-4 sm:mb-0">Bagikan artikel ini ke keluarga dan sahabat.</p><button onClick={() => alert('Link artikel berhasil disalin! (Fitur sedang disiapkan)')} className="bg-green-50 text-green-700 hover:bg-green-100 font-semibold py-2 px-6 rounded-full transition-colors">Salin Link Tautan</button></div>
         <div className="bg-slate-50 p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
           <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center"><MessageCircle className="mr-3 text-green-600" />Tinggalkan Komentar</h3>
           <div className="bg-white p-4 rounded-xl shadow-inner w-full min-h-[300px]">
-             {/* Menggunakan DiscussionEmbed dari disqus-react */}
              <DiscussionEmbed shortname={DISQUS_SHORTNAME} config={{ url: `https://webqu-peach.vercel.app/artikel/${article.id}`, identifier: `article-${article.id}`, title: article.title, language: 'id' }} />
           </div>
         </div>
