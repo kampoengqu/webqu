@@ -99,6 +99,8 @@
 
             <!-- KOLOM KANAN: Pengaturan Konten Web -->
             <div class="md:col-span-2 space-y-6">
+                
+                <!-- BLOK 1: PENGATURAN TEMA GLOBAL -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center"><i class="fas fa-palette mr-3 text-emerald-500"></i> Pengaturan Tema Global</h2>
                     
@@ -120,7 +122,7 @@
                                 <input type="color" id="color-accent" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#f97316">
                                 <input type="text" id="hex-accent" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#f97316" oninput="document.getElementById('color-accent').value = this.value">
                             </div>
-                            <p class="text-xs text-slate-500">Warna saat kursor diarahkan ke tombol / ornamen.</p>
+                            <p class="text-xs text-slate-500">Warna saat kursor diarahkan ke tombol.</p>
                         </div>
 
                         <!-- Warna Link -->
@@ -133,25 +135,72 @@
                             <p class="text-xs text-slate-500">Warna untuk teks tautan (link).</p>
                         </div>
                     </div>
+                </div>
 
+                <!-- BLOK 2: PENGATURAN BERANDA -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center"><i class="fas fa-home mr-3 text-emerald-500"></i> Pengaturan Beranda</h2>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                        <!-- Link Daftar -->
+                        <div class="space-y-2 sm:col-span-2">
+                            <label class="block text-sm font-bold text-slate-700">Link Tombol "Daftar Sekarang"</label>
+                            <input type="text" id="hero-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://wa.me/628... atau link Google Form">
+                            <p class="text-xs text-slate-500">Tautan yang akan terbuka saat tombol Daftar Sekarang di-klik.</p>
+                        </div>
+
+                        <!-- Warna Hover Card -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700">Warna Hover Card Fitur</label>
+                            <div class="flex items-center space-x-3">
+                                <input type="color" id="color-card-hover" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#dcfce7">
+                                <input type="text" id="hex-card-hover" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#dcfce7" oninput="document.getElementById('color-card-hover').value = this.value">
+                            </div>
+                            <p class="text-xs text-slate-500">Warna latar saat card disorot mouse (hover).</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-slate-700 text-lg">Daftar Card Info (Fitur)</h3>
+                            <button onclick="addCard()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-1.5 px-4 rounded-lg text-sm transition-colors flex items-center">
+                                <i class="fas fa-plus mr-1"></i> Tambah Card
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-4">Pilih nama ikon dari library Lucide React (contoh: <i>BookOpen, Lightbulb, Home, Star, Heart</i>, dll).</p>
+                        
+                        <!-- Tempat Render Cards -->
+                        <div id="cards-container" class="space-y-4">
+                            <!-- Cards akan diisi oleh Javascript -->
+                        </div>
+                    </div>
+
+                    <!-- Tombol Publish Utama -->
                     <div class="mt-8 border-t pt-6 flex justify-end">
                         <button onclick="publishTheme()" id="btn-publish" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all flex items-center">
                             <i class="fas fa-cloud-upload-alt mr-2"></i> Publish Perubahan ke Web
                         </button>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
 
     <script>
         // ==========================================
-        // ⚠️ MASUKKAN URL GOOGLE APPS SCRIPT DI SINI
+        // URL GOOGLE APPS SCRIPT
         // ==========================================
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8fW44CzM7kzhXkqoF_4pcl7-9MqZEW7oV5DiCb3ec6QkmCx-4l52asd7APj9yiY4/exec'; 
 
-        // --- LOGIKA LOGIN (Terhubung ke Google Sheets) ---
+        // Data array untuk menyimpan pengaturan Card Beranda
+        let homeCards = [
+            { icon: "BookOpen", title: "Tahfidz Bersanad", desc: "Metode hafalan intensif dengan pembimbing yang memiliki sanad keilmuan jelas." },
+            { icon: "Lightbulb", title: "Kurikulum Modern", desc: "Perpaduan ilmu agama mendalam dan sains teknologi terkini." },
+            { icon: "Home", title: "Asrama Nyaman", desc: "Fasilitas pendukung yang bersih, aman, dan asri untuk ketenangan belajar." }
+        ];
+
+        // --- LOGIKA LOGIN ---
         async function handleLogin(e) {
             e.preventDefault();
             const user = document.getElementById('username').value;
@@ -159,12 +208,6 @@
             const errorBox = document.getElementById('login-error');
             const submitBtn = document.getElementById('btn-login-submit');
 
-            if (GOOGLE_SCRIPT_URL === 'PASTE_URL_WEB_APP_KAMU_DISINI') {
-                alert("Harap masukkan URL Google Apps Script terlebih dahulu di dalam kode cms.html!");
-                return;
-            }
-
-            // Tampilkan animasi loading di tombol
             const originalBtnText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Memeriksa data...';
             submitBtn.disabled = true;
@@ -172,7 +215,6 @@
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    // Menggunakan text/plain agar Google Script tidak memblokir CORS
                     headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify({ username: user, password: pass }),
                     redirect: 'follow'
@@ -181,15 +223,11 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    // Sembunyikan halaman login, tampilkan dashboard
                     document.getElementById('login-section').classList.add('hidden');
                     document.getElementById('dashboard-section').classList.remove('hidden');
                     document.getElementById('dashboard-section').classList.add('flex');
-                    
-                    // Inisialisasi CMS setelah login sukses
                     initCMS();
                 } else {
-                    // Tampilkan error
                     errorBox.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> ${result.message}`;
                     errorBox.classList.remove('hidden');
                     setTimeout(() => errorBox.classList.add('hidden'), 3000);
@@ -200,7 +238,6 @@
                 errorBox.classList.remove('hidden');
                 setTimeout(() => errorBox.classList.add('hidden'), 3000);
             } finally {
-                // Kembalikan tombol seperti semula
                 submitBtn.innerHTML = originalBtnText;
                 submitBtn.disabled = false;
             }
@@ -216,8 +253,7 @@
             }
         }
 
-
-        // --- LOGIKA CMS (Dipanggil setelah login) ---
+        // --- LOGIKA CMS KONTEN ---
         const logBox = document.getElementById('log-box');
         
         function log(message, isError = false) {
@@ -233,16 +269,25 @@
             if (token) document.getElementById('gh-token').value = token;
             if (repo) document.getElementById('gh-repo').value = repo;
 
-            // Singkronkan input color dengan hex saat diklik
+            // Sinkronisasi Color Pickers
             document.getElementById('color-primary').addEventListener('input', (e) => document.getElementById('hex-primary').value = e.target.value);
+            document.getElementById('hex-primary').addEventListener('input', (e) => document.getElementById('color-primary').value = e.target.value);
+            
             document.getElementById('color-accent').addEventListener('input', (e) => document.getElementById('hex-accent').value = e.target.value);
+            document.getElementById('hex-accent').addEventListener('input', (e) => document.getElementById('color-accent').value = e.target.value);
+            
             document.getElementById('color-link').addEventListener('input', (e) => document.getElementById('hex-link').value = e.target.value);
+            document.getElementById('hex-link').addEventListener('input', (e) => document.getElementById('color-link').value = e.target.value);
 
-            // Coba ambil data theme.json yang sudah ada di GitHub
+            document.getElementById('color-card-hover').addEventListener('input', (e) => document.getElementById('hex-card-hover').value = e.target.value);
+            document.getElementById('hex-card-hover').addEventListener('input', (e) => document.getElementById('color-card-hover').value = e.target.value);
+
+            // Render Card awal
+            renderCards();
+
             if (token && repo) fetchCurrentTheme();
         }
 
-        // Simpan Kredensial ke LocalStorage
         function saveCredentials() {
             const token = document.getElementById('gh-token').value.trim();
             const repo = document.getElementById('gh-repo').value.trim();
@@ -256,7 +301,52 @@
             fetchCurrentTheme();
         }
 
-        // Ambil konfigurasi saat ini dari GitHub API
+        // --- MANAJEMEN CARD BERANDA ---
+        function renderCards() {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = '';
+            homeCards.forEach((card, index) => {
+                container.innerHTML += `
+                    <div class="p-4 border border-slate-200 rounded-xl bg-slate-50 relative group">
+                        <button onclick="removeCard(${index})" class="absolute top-3 right-3 text-red-400 hover:text-red-600 bg-white border border-red-100 p-1.5 rounded-lg shadow-sm transition-colors opacity-0 group-hover:opacity-100" title="Hapus Card">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Nama Ikon (Lucide)</label>
+                                <input type="text" value="${card.icon}" onchange="updateCard(${index}, 'icon', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500 font-mono" placeholder="Contoh: Star">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Judul Card</label>
+                                <input type="text" value="${card.title}" onchange="updateCard(${index}, 'title', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500" placeholder="Masukkan judul">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi Fitur</label>
+                            <textarea onchange="updateCard(${index}, 'desc', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500" rows="2" placeholder="Tuliskan deksripsi singkat di sini...">${card.desc}</textarea>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function addCard() {
+            homeCards.push({ icon: 'Star', title: 'Fitur Baru', desc: 'Deskripsi fitur tambahan.' });
+            renderCards();
+        }
+
+        function removeCard(index) {
+            if(confirm("Hapus card ini?")) {
+                homeCards.splice(index, 1);
+                renderCards();
+            }
+        }
+
+        function updateCard(index, field, value) {
+            homeCards[index][field] = value;
+        }
+
+        // --- FETCH DARI GITHUB ---
         async function fetchCurrentTheme() {
             const token = localStorage.getItem('gh_token');
             const repo = localStorage.getItem('gh_repo');
@@ -271,6 +361,7 @@
                     const data = await response.json();
                     const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
                     
+                    // Set Global Tema
                     if(content.primary) {
                         document.getElementById('color-primary').value = content.primary;
                         document.getElementById('hex-primary').value = content.primary;
@@ -283,6 +374,20 @@
                         document.getElementById('color-link').value = content.link;
                         document.getElementById('hex-link').value = content.link;
                     }
+
+                    // Set Beranda
+                    if(content.beranda) {
+                        if(content.beranda.daftarLink) document.getElementById('hero-link').value = content.beranda.daftarLink;
+                        if(content.beranda.cardHoverColor) {
+                            document.getElementById('color-card-hover').value = content.beranda.cardHoverColor;
+                            document.getElementById('hex-card-hover').value = content.beranda.cardHoverColor;
+                        }
+                        if(content.beranda.cards && Array.isArray(content.beranda.cards)) {
+                            homeCards = content.beranda.cards;
+                            renderCards();
+                        }
+                    }
+
                     log("Tema berhasil dimuat dari GitHub.");
                 } else if (response.status === 404) {
                     log("File theme.json belum ada. Siap membuat baru.");
@@ -294,14 +399,14 @@
             }
         }
 
-        // Publish Perubahan (Commit ke GitHub)
+        // --- PUBLISH KE GITHUB ---
         async function publishTheme() {
             const token = localStorage.getItem('gh_token');
             const repo = localStorage.getItem('gh_repo');
             const btn = document.getElementById('btn-publish');
 
             if(!token || !repo) {
-                alert("Harap isi dan simpan Koneksi GitHub terlebih dahulu!");
+                alert("Harap isi dan simpan Koneksi GitHub di kolom kiri terlebih dahulu!");
                 return;
             }
 
@@ -309,6 +414,11 @@
                 primary: document.getElementById('hex-primary').value,
                 accent: document.getElementById('hex-accent').value,
                 link: document.getElementById('hex-link').value,
+                beranda: {
+                    daftarLink: document.getElementById('hero-link').value,
+                    cardHoverColor: document.getElementById('hex-card-hover').value,
+                    cards: homeCards
+                },
                 updatedAt: new Date().toISOString()
             };
 
@@ -330,7 +440,7 @@
                 const encodedContent = btoa(unescape(encodeURIComponent(JSON.stringify(newTheme, null, 2))));
                 
                 const bodyData = {
-                    message: "CMS: Update Tema Global (Warna)",
+                    message: "CMS: Update Pengaturan Tema & Beranda",
                     content: encodedContent
                 };
                 if (sha) bodyData.sha = sha;
@@ -345,9 +455,9 @@
                 });
 
                 if (putRes.ok) {
-                    log("✅ BERHASIL! Tema telah disimpan ke GitHub.");
+                    log("✅ BERHASIL! Konfigurasi telah disimpan ke GitHub.");
                     log("Vercel akan otomatis melakukan proses Build (tunggu 1-2 menit).");
-                    alert("Perubahan warna berhasil di-publish! Silakan tunggu 1-2 menit agar Vercel selesai memproses, lalu refresh web Anda.");
+                    alert("Perubahan berhasil di-publish! Silakan tunggu 1-2 menit agar Vercel selesai memproses, lalu refresh web Anda.");
                 } else {
                     const errData = await putRes.json();
                     log(`Gagal menyimpan: ${errData.message}`, true);
