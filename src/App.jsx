@@ -129,7 +129,13 @@ export default function App() {
             </div>
             <div className="hidden md:flex md:items-center md:space-x-6">
               {navItems.map((item) => (
-                <button key={item} onClick={() => changeView(item)} className={`text-sm font-semibold transition-colors duration-200 ${currentView === item ? 'text-green-600 border-b-2 border-orange-500 pb-1' : 'text-slate-600 hover:text-green-600'}`}>{item}</button>
+                item === 'Artikel' ? (
+                  <a key={item} href="/blog.html" className="text-sm font-semibold transition-colors duration-200 text-slate-600 hover:text-green-600">
+                    {item}
+                  </a>
+                ) : (
+                  <button key={item} onClick={() => changeView(item)} className={`text-sm font-semibold transition-colors duration-200 ${currentView === item ? 'text-green-600 border-b-2 border-orange-500 pb-1' : 'text-slate-600 hover:text-green-600'}`}>{item}</button>
+                )
               ))}
               <div className="flex items-center space-x-3 ml-4 border-l pl-4 border-slate-200">
                 <a href="#" className="text-slate-400 hover:text-green-600"><svg className="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
@@ -147,7 +153,13 @@ export default function App() {
           <div className="md:hidden bg-white border-t border-slate-100">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               {navItems.map((item) => (
-                <button key={item} onClick={() => changeView(item)} className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${currentView === item ? 'text-green-600 bg-green-50' : 'text-slate-600 hover:text-green-600 hover:bg-slate-50'}`}>{item}</button>
+                item === 'Artikel' ? (
+                   <a key={item} href="/blog.html" className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-green-600 hover:bg-slate-50">
+                    {item}
+                  </a>
+                ) : (
+                  <button key={item} onClick={() => changeView(item)} className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${currentView === item ? 'text-green-600 bg-green-50' : 'text-slate-600 hover:text-green-600 hover:bg-slate-50'}`}>{item}</button>
+                )
               ))}
               <div className="flex items-center space-x-4 px-3 py-4 mt-2 border-t border-slate-100">
                 <a href="#" className="text-slate-400"><svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
