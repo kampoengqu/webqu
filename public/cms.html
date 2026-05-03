@@ -191,8 +191,15 @@
                         <!-- Link Brosur -->
                         <div class="space-y-2">
                             <label class="block text-sm font-bold text-slate-700">Link Download Brosur</label>
-                            <input type="text" id="program-brochure-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="/assets/brosur.pdf">
-                            <p class="text-[10px] text-slate-500">Link file PDF brosur (bisa link dari repositori Github atau link eksternal).</p>
+                            <div class="flex items-center space-x-2">
+                                <input type="text" id="program-brochure-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none font-mono text-sm" placeholder="/assets/brosur.pdf">
+                                <!-- Tombol Upload File Brosur -->
+                                <label class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-2 px-3 rounded-lg cursor-pointer transition-colors" title="Upload Brosur PDF Baru">
+                                    <i class="fas fa-upload"></i>
+                                    <input type="file" class="hidden" accept=".pdf" onchange="handleFileUpload(this, 'program-brochure-link')">
+                                </label>
+                            </div>
+                            <p class="text-[10px] text-slate-500">Upload file PDF brosur untuk mendapatkan link otomatis.</p>
                         </div>
                     </div>
 
@@ -353,6 +360,83 @@
             fetchCurrentTheme();
         }
 
+        // --- MANAJEMEN UPLOAD FILE KE GITHUB ---
+        async function handleFileUpload(inputElement, targetInputId, programIndex = null) {
+            const file = inputElement.files[0];
+            if (!file) return;
+
+            const token = localStorage.getItem('gh_token');
+            const repo = localStorage.getItem('gh_repo');
+            if(!token || !repo) {
+                alert("Harap isi dan simpan Koneksi GitHub di kolom kiri terlebih dahulu!");
+                inputElement.value = '';
+                return;
+            }
+
+            const labelEl = inputElement.parentElement;
+            const originalHTML = labelEl.innerHTML;
+            labelEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const base64Data = e.target.result.split(',')[1];
+                    const safeName = file.name.replace(/[^a-zA-Z0-9.\-]/g, '_');
+                    const fileName = `${Date.now()}_${safeName}`;
+                    const path = `public/assets/uploads/${fileName}`;
+
+                    log(`Mengunggah ${file.name}...`);
+
+                    const bodyData = {
+                        message: `CMS: Upload aset ${file.name}`,
+                        content: base64Data
+                    };
+
+                    const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(bodyData)
+                    });
+
+                    if (putRes.ok) {
+                        const publicUrl = `/assets/uploads/${fileName}`;
+                        
+                        // Memasukkan URL ke kolom input
+                        const targetInput = document.getElementById(targetInputId);
+                        if (targetInput) {
+                            targetInput.value = publicUrl;
+                        }
+                        
+                        // Perbarui data program jika parameter index disertakan
+                        if (programIndex !== null) {
+                            updateProgram(programIndex, 'image', publicUrl);
+                        }
+                        
+                        log(`✅ Berhasil mengunggah: ${fileName}`);
+                        alert("Berhasil mengunggah file! Link otomatis dimasukkan. Jangan lupa tekan Publish nanti.");
+                    } else {
+                        const err = await putRes.json();
+                        log(`Gagal mengunggah: ${err.message}`, true);
+                        alert(`Gagal mengunggah file: ${err.message}`);
+                    }
+                } catch (error) {
+                    log(`Error sistem: ${error.message}`, true);
+                    alert("Terjadi kesalahan sistem saat mengunggah.");
+                } finally {
+                    // Mengembalikan bentuk icon pada tombol jika elemennya belum di-render ulang
+                    if (document.body.contains(labelEl)) {
+                        labelEl.innerHTML = originalHTML;
+                    } else if (programIndex !== null) {
+                        renderPrograms();
+                    }
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
         // --- MANAJEMEN CARD BERANDA ---
         function renderCards() {
             const container = document.getElementById('cards-container');
@@ -432,7 +516,13 @@
 
                         <div class="mb-3">
                             <label class="block text-xs font-bold text-slate-600 mb-1">URL Gambar</label>
-                            <input type="text" value="${prog.image}" onchange="updateProgram(${index}, 'image', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500" placeholder="https://...">
+                            <div class="flex items-center space-x-2">
+                                <input type="text" id="prog-image-${index}" value="${prog.image}" onchange="updateProgram(${index}, 'image', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500 font-mono" placeholder="https://...">
+                                <label class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-2 px-3 rounded-lg cursor-pointer transition-colors" title="Upload Gambar Program">
+                                    <i class="fas fa-upload"></i>
+                                    <input type="file" class="hidden" accept="image/*" onchange="handleFileUpload(this, 'prog-image-${index}', ${index})">
+                                </label>
+                            </div>
                         </div>
 
                         <div class="mb-3">
