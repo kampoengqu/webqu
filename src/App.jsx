@@ -4,32 +4,42 @@ import { Menu, X, Phone, ChevronLeft, ChevronRight, MessageCircle, BookOpen, Lig
 // --- KOMPONEN DISQUS KUSTOM (MENGGUNAKAN UNIVERSAL CODE) ---
 const DiscussionEmbed = ({ shortname, config }) => {
   useEffect(() => {
-    // Definisi konfigurasi global sesuai instruksi Universal Code
-    window.disqus_config = function () {
-      this.page.url = config.url; 
-      this.page.identifier = config.identifier;
-      this.page.title = config.title;
+    const initDisqus = () => {
+      // Definisi konfigurasi global sesuai instruksi Universal Code
+      window.disqus_config = function () {
+        this.page.url = config.url; 
+        this.page.identifier = config.identifier;
+        this.page.title = config.title;
+        this.language = config.language || 'id';
+      };
+
+      if (window.DISQUS) {
+        // Jika Disqus sudah pernah dimuat (user pindah artikel), cukup reset saja
+        window.DISQUS.reset({
+          reload: true,
+          config: window.disqus_config
+        });
+      } else {
+        // Jika pertama kali dimuat, jalankan Universal Code persis seperti instruksi
+        const d = document;
+        if (!d.getElementById('disqus-embed-script')) {
+          const s = d.createElement('script');
+          s.id = 'disqus-embed-script';
+          s.src = `https://${shortname}.disqus.com/embed.js`;
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        }
+      }
     };
 
-    if (window.DISQUS) {
-      // Jika Disqus sudah pernah dimuat (user pindah artikel), cukup reset saja
-      window.DISQUS.reset({
-        reload: true,
-        config: window.disqus_config
-      });
-    } else {
-      // Jika pertama kali dimuat, jalankan Universal Code persis seperti instruksi
-      const d = document;
-      const s = d.createElement('script');
-      s.src = `https://${shortname}.disqus.com/embed.js`;
-      s.setAttribute('data-timestamp', +new Date());
-      (d.head || d.body).appendChild(s);
-    }
-  }, [shortname, config.identifier, config.url, config.title]);
+    // Jeda 150ms agar React selesai merender div #disqus_thread (Jurus Anti-Blank)
+    const timer = setTimeout(initDisqus, 150);
+    return () => clearTimeout(timer);
+  }, [shortname, config.identifier, config.url, config.title, config.language]);
 
   return (
     <div className="w-full">
-      <div id="disqus_thread" className="min-h-[300px]"></div>
+      <div id="disqus_thread" className="min-h-[300px] w-full bg-transparent"></div>
     </div>
   );
 };
@@ -37,19 +47,25 @@ const DiscussionEmbed = ({ shortname, config }) => {
 // --- KOMPONEN COMMENT COUNT KUSTOM (MENGGUNAKAN UNIVERSAL CODE) ---
 const CommentCount = ({ shortname, config, children }) => {
   useEffect(() => {
-    if (window.DISQUSWIDGETS) {
-      window.DISQUSWIDGETS.getCount({ reset: true });
-    } else {
-      const d = document;
-      const scriptId = 'dsq-count-scr';
-      if (!d.getElementById(scriptId)) {
-        const s = d.createElement('script');
-        s.src = `https://${shortname}.disqus.com/count.js`;
-        s.id = scriptId;
-        s.async = true;
-        (d.head || d.body).appendChild(s);
+    const initCount = () => {
+      if (window.DISQUSWIDGETS) {
+        window.DISQUSWIDGETS.getCount({ reset: true });
+      } else {
+        const d = document;
+        const scriptId = 'dsq-count-scr';
+        if (!d.getElementById(scriptId)) {
+          const s = d.createElement('script');
+          s.src = `https://${shortname}.disqus.com/count.js`;
+          s.id = scriptId;
+          s.async = true;
+          (d.head || d.body).appendChild(s);
+        }
       }
-    }
+    };
+    
+    // Jeda sedikit untuk memastikan Disqus Embed belum berebut load
+    const timer = setTimeout(initCount, 300);
+    return () => clearTimeout(timer);
   }, [shortname, config.identifier]);
 
   return (
@@ -671,7 +687,7 @@ function ViewArtikel({ changeView }) {
                   <CommentCount
                       shortname='https-webqu-peach-vercel-app'
                       config={{
-                          url: `https://kampoengqurancendekia.com/artikel/${article.id}`, // Dummy URL yang stabil untuk Disqus
+                          url: `https://webqu-peach.vercel.app/artikel/${article.id}`, // Menggunakan URL Vercel asli
                           identifier: `article-${article.id}`,
                           title: article.title,
                       }}
@@ -786,7 +802,7 @@ function ViewDetailArtikel({ article, changeView }) {
             <DiscussionEmbed
                 shortname='https-webqu-peach-vercel-app'
                 config={{
-                    url: `https://kampoengqurancendekia.com/artikel/${article.id}`, // Harus berupa URL statis agar Disqus tidak bingung
+                    url: `https://webqu-peach.vercel.app/artikel/${article.id}`, // Menggunakan URL Vercel asli
                     identifier: `article-${article.id}`,
                     title: article.title,
                     language: 'id' // Memaksa bahasa Indonesia
