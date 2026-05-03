@@ -123,12 +123,26 @@
                         </div>
                         <h3 class="text-xl font-bold text-slate-800 mb-3 leading-snug hover:text-green-600">${post.title}</h3>
                         <p class="text-slate-600 text-sm mb-6 flex-grow">${post.excerpt}</p>
-                        <div class="mt-auto pt-4 border-t border-slate-100">
+                        
+                        <!-- FITUR PENGHITUNG KOMENTAR DIKEMBALIKAN -->
+                        <div class="mt-auto pt-4 border-t border-slate-100 flex justify-between items-center">
                             <span class="text-green-700 font-bold">Baca Selengkapnya &rarr;</span>
+                            <div class="text-slate-400 text-sm flex items-center bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
+                                <i class="far fa-comments mr-1.5"></i>
+                                <span class="disqus-comment-count font-semibold" data-disqus-identifier="article-${post.id}">0</span>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             `).join('');
+
+            // Memicu ulang sistem penghitung komentar Disqus setiap kali daftar artikel dimuat
+            setTimeout(() => {
+                if (typeof window.DISQUSWIDGETS !== 'undefined') {
+                    window.DISQUSWIDGETS.getCount({ reset: true });
+                }
+            }, 500);
         }
 
         function openArticle(index) {
@@ -153,6 +167,13 @@
             document.getElementById('blog-detail-view').classList.add('hidden');
             document.getElementById('blog-list-view').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Refresh angka komentar setelah artikel ditutup
+            setTimeout(() => {
+                if (typeof window.DISQUSWIDGETS !== 'undefined') {
+                    window.DISQUSWIDGETS.getCount({ reset: true });
+                }
+            }, 500);
         }
 
         function loadDisqus(post) {
@@ -182,8 +203,17 @@
             }
         }
 
-        // Inisialisasi
-        document.addEventListener('DOMContentLoaded', renderBlogList);
+        // Inisialisasi awal saat web dibuka
+        document.addEventListener('DOMContentLoaded', () => {
+            renderBlogList();
+
+            // Memasukkan script penghitung (count.js) Disqus
+            const countScript = document.createElement('script');
+            countScript.id = 'dsq-count-scr';
+            countScript.src = `https://${disqusShortname}.disqus.com/count.js`;
+            countScript.async = true;
+            document.body.appendChild(countScript);
+        });
     </script>
 </body>
 </html>
