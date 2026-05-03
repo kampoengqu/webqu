@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, ChevronLeft, ChevronRight, MessageCircle, BookOpen, Lightbulb, Home, Download, MapPin, Mail, UserCircle } from 'lucide-react';
 
-// --- KOMPONEN DISQUS KUSTOM (MENGGUNAKAN UNIVERSAL CODE MURNI) ---
+// --- KOMPONEN DISQUS KUSTOM (MENGGUNAKAN UNIVERSAL CODE ANTI-BLANK) ---
 const DiscussionEmbed = ({ shortname, config }) => {
   useEffect(() => {
+    // Siapkan konfigurasi untuk artikel yang sedang dibuka
     window.disqus_config = function () {
       this.page.url = config.url; 
       this.page.identifier = config.identifier;
@@ -12,39 +13,44 @@ const DiscussionEmbed = ({ shortname, config }) => {
     };
 
     const loadDisqus = () => {
+      // Pastikan ada kotak penampung
       const disqusContainer = document.getElementById('disqus_thread');
-      if (disqusContainer && !window.DISQUS) {
-        disqusContainer.innerHTML = ''; 
-      }
+      if (!disqusContainer) return;
 
+      // Jika Disqus sudah pernah termuat, reset ulang untuk artikel baru
       if (window.DISQUS) {
         window.DISQUS.reset({
           reload: true,
           config: window.disqus_config
         });
       } else {
+        // Jika ini pertama kali dimuat, panggil script bawaan Disqus
         const d = document;
-        if (!d.getElementById('disqus-embed-script')) {
+        const scriptId = 'disqus-embed-script';
+        if (!d.getElementById(scriptId)) {
           const s = d.createElement('script');
-          s.id = 'disqus-embed-script';
+          s.id = scriptId;
           s.src = `https://${shortname}.disqus.com/embed.js`;
           s.setAttribute('data-timestamp', +new Date());
+          s.async = true;
           (d.head || d.body).appendChild(s);
         }
       }
     };
 
-    const timer = setTimeout(loadDisqus, 100);
+    // Jeda sedikit untuk memastikan div React terpasang sempurna di layar
+    const timer = setTimeout(loadDisqus, 300);
     return () => clearTimeout(timer);
   }, [shortname, config.identifier, config.url, config.title, config.language]);
 
   return (
-    <div className="w-full mt-4">
+    <div className="w-full mt-6">
       <div id="disqus_thread" className="min-h-[300px] w-full"></div>
     </div>
   );
 };
 
+// --- KOMPONEN COMMENT COUNT KUSTOM ---
 const CommentCount = ({ shortname, config, children }) => {
   useEffect(() => {
     const initCount = () => {
@@ -63,7 +69,7 @@ const CommentCount = ({ shortname, config, children }) => {
       }
     };
     
-    const timer = setTimeout(initCount, 300);
+    const timer = setTimeout(initCount, 500);
     return () => clearTimeout(timer);
   }, [shortname, config.identifier]);
 
@@ -74,6 +80,7 @@ const CommentCount = ({ shortname, config, children }) => {
   );
 };
 
+// --- DATA DUMMY ---
 const articleImages = [
   "https://images.unsplash.com/photo-1543857778-c4a1a3e0b2eb?auto=format&fit=crop&q=80&w=400&h=250", 
   "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=400&h=250", 
@@ -151,7 +158,10 @@ export default function App() {
                 <button key={item} onClick={() => changeView(item)} className={`text-sm font-semibold transition-colors duration-200 ${currentView === item ? 'text-green-600 border-b-2 border-orange-500 pb-1' : 'text-slate-600 hover:text-green-600'}`}>{item}</button>
               ))}
               <div className="flex items-center space-x-3 ml-4 border-l pl-4 border-slate-200">
-                {[...Array(4)].map((_, i) => <a key={i} href="#" className="text-slate-400 hover:text-green-600"><div className="w-[18px] h-[18px] bg-slate-300 rounded-full"></div></a>)}
+                <a href="#" className="text-slate-400 hover:text-green-600"><svg className="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                <a href="#" className="text-slate-400 hover:text-orange-500"><svg className="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+                <a href="#" className="text-slate-400 hover:text-red-600"><svg className="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+                <a href="#" className="text-slate-400 hover:text-black"><svg className="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 15.68a6.34 6.34 0 006.33 6.33 6.33 6.33 0 006.33-6.33V8.42a8.05 8.05 0 004.34 1.25V6.23a4.52 4.52 0 01-2.41-.54z"/></svg></a>
               </div>
             </div>
             <div className="flex items-center md:hidden">
@@ -165,6 +175,12 @@ export default function App() {
               {navItems.map((item) => (
                 <button key={item} onClick={() => changeView(item)} className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${currentView === item ? 'text-green-600 bg-green-50' : 'text-slate-600 hover:text-green-600 hover:bg-slate-50'}`}>{item}</button>
               ))}
+              <div className="flex items-center space-x-4 px-3 py-4 mt-2 border-t border-slate-100">
+                <a href="#" className="text-slate-400"><svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                <a href="#" className="text-slate-400"><svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+                <a href="#" className="text-slate-400"><svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+                <a href="#" className="text-slate-400"><svg className="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 15.68a6.34 6.34 0 006.33 6.33 6.33 6.33 0 006.33-6.33V8.42a8.05 8.05 0 004.34 1.25V6.23a4.52 4.52 0 01-2.41-.54z"/></svg></a>
+              </div>
             </div>
           </div>
         )}
@@ -201,7 +217,7 @@ export default function App() {
       <footer className="bg-slate-900 text-slate-400 py-10 border-t-4 border-green-600 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
           <div className="mb-6 md:mb-0 flex flex-col items-center md:items-start">
-            <img src="https://lh3.googleusercontent.com/pw/AP1GczP_Kfkdxc3bS41NKjvCOUb3WzLL7EXJN7KkNZRrTRW7xI5kWbHCfEqTl4ID0zHV68jHAbZioXa4dytdtBqQaNYrzclMrLqZVh94NVJb0HNty5y0L6l33W_DrtGdxVr5LuCd2OQ7QZapLDPhYSQJgV1w=w435-h100-s-no-gm?authuser=0" alt="Logo" className="h-10 w-auto opacity-70 grayscale hover:grayscale-0 transition-all mb-4 bg-white/10 p-1 rounded" />
+            <img src="https://lh3.googleusercontent.com/pw/AP1GczP_Kfkdxc3bS41NKjvCOUb3WzLL7EXJN7KkNZRrTRW7xI5kWbHCfEqTl4ID0zHV68jHAbZioXa4dytdtBqQaNYrzclMrLqZVh94NVJb0HNty5y0L6l33W_DrtGdxVr5LuCd2OQ7QZapLDPhYSQJgV1w=w435-h100-s-no-gm?authuser=0" alt="Logo Kampoeng Quran" className="h-10 w-auto opacity-70 grayscale hover:grayscale-0 transition-all mb-4 bg-white/10 p-1 rounded" />
             <p className="text-sm">© {new Date().getFullYear()} Pesantren Kampoeng Quran.</p>
           </div>
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8 text-sm">
@@ -372,7 +388,6 @@ function ViewArtikel({ changeView }) {
                 <button onClick={() => changeView('DetailArtikel', article)} className="text-green-700 font-bold text-left hover:text-orange-500 transition-colors">Baca Selengkapnya &rarr;</button>
                 <div className="text-slate-400 text-sm flex items-center bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
                   <MessageCircle size={14} className="mr-1.5" />
-                  {/* Gunakan komponen CommentCount resmi dari disqus-react */}
                   <CommentCount shortname='https-webqu-peach-vercel-app' config={{ url: `https://webqu-peach.vercel.app/artikel/${article.id}`, identifier: `article-${article.id}`, title: article.title }}>0</CommentCount>
                 </div>
               </div>
@@ -407,7 +422,6 @@ function ViewDetailArtikel({ article, changeView }) {
         <div className="bg-slate-50 p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
           <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center"><MessageCircle className="mr-3 text-green-600" />Tinggalkan Komentar</h3>
           <div className="bg-white p-4 rounded-xl shadow-inner w-full min-h-[300px] overflow-hidden">
-             {/* Gunakan komponen DiscussionEmbed resmi dari disqus-react */}
              <DiscussionEmbed shortname='https-webqu-peach-vercel-app' config={{ url: `https://webqu-peach.vercel.app/artikel/${article.id}`, identifier: `article-${article.id}`, title: article.title, language: 'id' }} />
           </div>
         </div>
