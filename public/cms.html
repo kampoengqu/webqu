@@ -174,6 +174,41 @@
                             <!-- Cards akan diisi oleh Javascript -->
                         </div>
                     </div>
+                </div>
+
+                <!-- BLOK 3: PENGATURAN PROGRAM UNGGULAN -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center"><i class="fas fa-graduation-cap mr-3 text-emerald-500"></i> Pengaturan Program</h2>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                         <!-- Link Pendaftaran -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700">Link Pendaftaran</label>
+                            <input type="text" id="program-register-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://wa.me/628...">
+                            <p class="text-[10px] text-slate-500">Link untuk tombol "Hubungi Bagian Pendaftaran" (terbuka di tab baru).</p>
+                        </div>
+
+                        <!-- Link Brosur -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-bold text-slate-700">Link Download Brosur</label>
+                            <input type="text" id="program-brochure-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="/assets/brosur.pdf">
+                            <p class="text-[10px] text-slate-500">Link file PDF brosur (bisa link dari repositori Github atau link eksternal).</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-slate-700 text-lg">Daftar Program</h3>
+                            <button onclick="addProgram()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-1.5 px-4 rounded-lg text-sm transition-colors flex items-center">
+                                <i class="fas fa-plus mr-1"></i> Tambah Program
+                            </button>
+                        </div>
+                        
+                        <!-- Tempat Render Programs -->
+                        <div id="programs-container" class="space-y-6">
+                            <!-- Programs akan diisi oleh Javascript -->
+                        </div>
+                    </div>
 
                     <!-- Tombol Publish Utama -->
                     <div class="mt-8 border-t pt-6 flex justify-end">
@@ -198,6 +233,22 @@
             { icon: "BookOpen", title: "Tahfidz Bersanad", desc: "Metode hafalan intensif dengan pembimbing yang memiliki sanad keilmuan jelas." },
             { icon: "Lightbulb", title: "Kurikulum Modern", desc: "Perpaduan ilmu agama mendalam dan sains teknologi terkini." },
             { icon: "Home", title: "Asrama Nyaman", desc: "Fasilitas pendukung yang bersih, aman, dan asri untuk ketenangan belajar." }
+        ];
+
+        // Data array untuk menyimpan pengaturan Program
+        let programs = [
+            { 
+                id: 'smp', 
+                title: "SMP Islam Terpadu", 
+                desc: "Pendidikan menengah dengan kurikulum diknas dan diniyah terpadu.", 
+                image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=600&h=400", 
+                fullDesc: "Program SMP Islam Terpadu kami mengedepankan pembentukan karakter Islami di usia remaja. Kami memadukan kurikulum nasional dengan pemahaman agama yang mendalam. Fasilitas laboratorium, perpustakaan, dan asrama yang nyaman disiapkan untuk menunjang tumbuh kembang santri.",
+                benefits: [
+                    "Kurikulum Terintegrasi: Pemaduan seimbang antara ilmu din (agama) dan sains modern.",
+                    "Fasilitas Representatif: Ruang kelas nyaman, laboratorium, dan asrama yang bersih dan rapi.",
+                    "Pengawasan 24 Jam: Pembinaan adab dan karakter melalui musyrif/musyrifah yang kompeten."
+                ]
+            }
         ];
 
         // --- LOGIKA LOGIN ---
@@ -284,6 +335,7 @@
 
             // Render Card awal
             renderCards();
+            renderPrograms();
 
             if (token && repo) fetchCurrentTheme();
         }
@@ -346,6 +398,104 @@
             homeCards[index][field] = value;
         }
 
+        // --- MANAJEMEN PROGRAM UNGGULAN ---
+        function renderPrograms() {
+            const container = document.getElementById('programs-container');
+            container.innerHTML = '';
+            programs.forEach((prog, index) => {
+                let benefitsHtml = '';
+                prog.benefits.forEach((benefit, bIndex) => {
+                    benefitsHtml += `
+                        <div class="flex items-center space-x-2 mb-2">
+                            <input type="text" value="${benefit}" onchange="updateProgramBenefit(${index}, ${bIndex}, this.value)" class="flex-1 px-3 py-1.5 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500">
+                            <button onclick="removeProgramBenefit(${index}, ${bIndex})" class="text-red-400 hover:text-red-600 p-1" title="Hapus Benefit"><i class="fas fa-times"></i></button>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML += `
+                    <div class="p-4 border border-slate-200 rounded-xl bg-slate-50 relative group mb-4">
+                        <button onclick="removeProgram(${index})" class="absolute top-3 right-3 text-red-400 hover:text-red-600 bg-white border border-red-100 p-1.5 rounded-lg shadow-sm transition-colors opacity-0 group-hover:opacity-100" title="Hapus Program">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">ID Program (Unik)</label>
+                                <input type="text" value="${prog.id}" onchange="updateProgram(${index}, 'id', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500 font-mono" placeholder="contoh: smp">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Judul Program</label>
+                                <input type="text" value="${prog.title}" onchange="updateProgram(${index}, 'title', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500" placeholder="Masukkan judul">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-slate-600 mb-1">URL Gambar</label>
+                            <input type="text" value="${prog.image}" onchange="updateProgram(${index}, 'image', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500" placeholder="https://...">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi Singkat (Card)</label>
+                            <textarea onchange="updateProgram(${index}, 'desc', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500" rows="2" placeholder="Deskripsi singkat untuk tampilan card...">${prog.desc}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi Penuh (Halaman Detail)</label>
+                            <textarea onchange="updateProgram(${index}, 'fullDesc', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-1 focus:ring-emerald-500" rows="4" placeholder="Deskripsi lengkap program...">${prog.fullDesc}</textarea>
+                        </div>
+
+                        <div class="mt-4 border-t pt-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="block text-xs font-bold text-slate-600">Daftar Benefit</label>
+                                <button onclick="addProgramBenefit(${index})" class="text-emerald-600 hover:text-emerald-700 text-xs font-bold"><i class="fas fa-plus mr-1"></i> Tambah Benefit</button>
+                            </div>
+                            <div id="benefits-container-${index}">
+                                ${benefitsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function addProgram() {
+            programs.push({ 
+                id: `program-${Date.now()}`, 
+                title: 'Program Baru', 
+                desc: 'Deskripsi singkat program.', 
+                image: '', 
+                fullDesc: 'Deskripsi lengkap program.',
+                benefits: ['Benefit 1']
+            });
+            renderPrograms();
+        }
+
+        function removeProgram(index) {
+            if(confirm("Hapus program ini?")) {
+                programs.splice(index, 1);
+                renderPrograms();
+            }
+        }
+
+        function updateProgram(index, field, value) {
+            programs[index][field] = value;
+        }
+
+        function addProgramBenefit(programIndex) {
+            programs[programIndex].benefits.push('Benefit baru');
+            renderPrograms();
+        }
+
+        function removeProgramBenefit(programIndex, benefitIndex) {
+             programs[programIndex].benefits.splice(benefitIndex, 1);
+             renderPrograms();
+        }
+
+        function updateProgramBenefit(programIndex, benefitIndex, value) {
+            programs[programIndex].benefits[benefitIndex] = value;
+        }
+
         // --- FETCH DARI GITHUB ---
         async function fetchCurrentTheme() {
             const token = localStorage.getItem('gh_token');
@@ -388,6 +538,16 @@
                         }
                     }
 
+                    // Set Program
+                    if (content.programs) {
+                         if (content.programs.registerLink) document.getElementById('program-register-link').value = content.programs.registerLink;
+                         if (content.programs.brochureLink) document.getElementById('program-brochure-link').value = content.programs.brochureLink;
+                         if (content.programs.list && Array.isArray(content.programs.list)) {
+                             programs = content.programs.list;
+                             renderPrograms();
+                         }
+                    }
+
                     log("Tema berhasil dimuat dari GitHub.");
                 } else if (response.status === 404) {
                     log("File theme.json belum ada. Siap membuat baru.");
@@ -419,6 +579,11 @@
                     cardHoverColor: document.getElementById('hex-card-hover').value,
                     cards: homeCards
                 },
+                programs: {
+                    registerLink: document.getElementById('program-register-link').value,
+                    brochureLink: document.getElementById('program-brochure-link').value,
+                    list: programs
+                },
                 updatedAt: new Date().toISOString()
             };
 
@@ -440,7 +605,7 @@
                 const encodedContent = btoa(unescape(encodeURIComponent(JSON.stringify(newTheme, null, 2))));
                 
                 const bodyData = {
-                    message: "CMS: Update Pengaturan Tema & Beranda",
+                    message: "CMS: Update Pengaturan Tema, Beranda & Program",
                     content: encodedContent
                 };
                 if (sha) bodyData.sha = sha;
