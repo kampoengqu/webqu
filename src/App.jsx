@@ -1,26 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, ChevronLeft, ChevronRight, MessageCircle, BookOpen, Lightbulb, Home, Download, MapPin, Mail, UserCircle } from 'lucide-react';
 
-// --- KOMPONEN DISQUS KUSTOM (MENGGUNAKAN UNIVERSAL CODE) ---
+// --- KOMPONEN DISQUS KUSTOM (MENGGUNAKAN UNIVERSAL CODE MURNI) ---
 const DiscussionEmbed = ({ shortname, config }) => {
   useEffect(() => {
-    const initDisqus = () => {
-      // Definisi konfigurasi global sesuai instruksi Universal Code
-      window.disqus_config = function () {
-        this.page.url = config.url; 
-        this.page.identifier = config.identifier;
-        this.page.title = config.title;
-        this.language = config.language || 'id';
-      };
+    // Definisi konfigurasi global
+    window.disqus_config = function () {
+      this.page.url = config.url; 
+      this.page.identifier = config.identifier;
+      this.page.title = config.title;
+      this.language = config.language || 'id';
+    };
+
+    const loadDisqus = () => {
+      // Pastikan kotak benar-benar kosong sebelum Disqus masuk (Sangat Penting!)
+      const disqusContainer = document.getElementById('disqus_thread');
+      if (disqusContainer && !window.DISQUS) {
+        disqusContainer.innerHTML = ''; 
+      }
 
       if (window.DISQUS) {
-        // Jika Disqus sudah pernah dimuat (user pindah artikel), cukup reset saja
+        // Jika sudah dimuat sebelumnya, cukup reset datanya
         window.DISQUS.reset({
           reload: true,
           config: window.disqus_config
         });
       } else {
-        // Jika pertama kali dimuat, jalankan Universal Code persis seperti instruksi
+        // Jika belum, suntikkan script Disqus ke dalam website
         const d = document;
         if (!d.getElementById('disqus-embed-script')) {
           const s = d.createElement('script');
@@ -32,19 +38,21 @@ const DiscussionEmbed = ({ shortname, config }) => {
       }
     };
 
-    // Jeda 150ms agar React selesai merender div #disqus_thread (Jurus Anti-Blank)
-    const timer = setTimeout(initDisqus, 150);
+    // Beri jeda sangat singkat agar React selesai merender div
+    const timer = setTimeout(loadDisqus, 100);
+
     return () => clearTimeout(timer);
   }, [shortname, config.identifier, config.url, config.title, config.language]);
 
   return (
-    <div className="w-full">
-      <div id="disqus_thread" className="min-h-[300px] w-full bg-transparent"></div>
+    <div className="w-full mt-4">
+      {/* Kotak Disqus WAJIB kosong melompong (tidak boleh ada elemen/teks di dalamnya) */}
+      <div id="disqus_thread" className="min-h-[300px] w-full"></div>
     </div>
   );
 };
 
-// --- KOMPONEN COMMENT COUNT KUSTOM (MENGGUNAKAN UNIVERSAL CODE) ---
+// --- KOMPONEN COMMENT COUNT KUSTOM ---
 const CommentCount = ({ shortname, config, children }) => {
   useEffect(() => {
     const initCount = () => {
@@ -63,7 +71,6 @@ const CommentCount = ({ shortname, config, children }) => {
       }
     };
     
-    // Jeda sedikit untuk memastikan Disqus Embed belum berebut load
     const timer = setTimeout(initCount, 300);
     return () => clearTimeout(timer);
   }, [shortname, config.identifier]);
@@ -76,17 +83,15 @@ const CommentCount = ({ shortname, config, children }) => {
 };
 
 // --- DATA DUMMY ---
-// Menggunakan gambar dengan sentuhan artistik/watercolor kesukaanmu!
 const articleImages = [
-  "https://images.unsplash.com/photo-1543857778-c4a1a3e0b2eb?auto=format&fit=crop&q=80&w=400&h=250", // Watercolor abstract
-  "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=400&h=250", // Artistic illustration
-  "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&q=80&w=400&h=250", // Colorful art
-  "https://images.unsplash.com/photo-1580136608260-4eb11f4b24fe?auto=format&fit=crop&q=80&w=400&h=250", // Paint texture
-  "https://images.unsplash.com/photo-1578301978693-85fa9c03fa75?auto=format&fit=crop&q=80&w=400&h=250", // Oil crayon vibe
-  "https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&q=80&w=400&h=250"  // Painted landscape
+  "https://images.unsplash.com/photo-1543857778-c4a1a3e0b2eb?auto=format&fit=crop&q=80&w=400&h=250", 
+  "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=400&h=250", 
+  "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&q=80&w=400&h=250", 
+  "https://images.unsplash.com/photo-1580136608260-4eb11f4b24fe?auto=format&fit=crop&q=80&w=400&h=250", 
+  "https://images.unsplash.com/photo-1578301978693-85fa9c03fa75?auto=format&fit=crop&q=80&w=400&h=250", 
+  "https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&q=80&w=400&h=250"  
 ];
 
-// Dibuat 14 Artikel agar halaman 1 pas 9 kotak, halaman 2 berisi 5 kotak
 const dummyArticles = Array.from({ length: 14 }, (_, i) => ({
   id: i + 1,
   title: `Membangun Generasi Qur'ani di Era Digital (Bagian ${i + 1})`,
@@ -101,7 +106,6 @@ const dummyArticles = Array.from({ length: 14 }, (_, i) => ({
   ]
 }));
 
-// Galeri dengan Judul dan Caption
 const dummyGallery = [
   {
     url: "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800&h=600",
@@ -135,7 +139,6 @@ const dummyGallery = [
   }
 ];
 
-// DATA PROGRAM
 const programData = [
   { 
     id: 'smp',
@@ -160,7 +163,6 @@ const programData = [
   }
 ];
 
-// DATA TESTIMONI
 const dummyTestimonials = [
   {
     id: 1,
@@ -200,7 +202,6 @@ export default function App() {
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [selectedArticle, setSelectedArticle] = useState(null);
   
-  // State untuk Lightbox Galeri
   const [lightboxData, setLightboxData] = useState({ isOpen: false, currentIndex: 0 });
 
   const navItems = ['Beranda', 'Tentang', 'Program', 'Galeri', 'Testimoni', 'Artikel', 'Kontak'];
@@ -210,10 +211,9 @@ export default function App() {
     if (view === 'DetailProgram' && data) setSelectedProgram(data);
     if (view === 'DetailArtikel' && data) setSelectedArticle(data);
     setIsMenuOpen(false);
-    window.scrollTo(0, 0); // Selalu kembali ke atas saat pindah menu SPA
+    window.scrollTo(0, 0); 
   };
 
-  // Fungsi kontrol Lightbox
   const openLightbox = (index) => {
     setLightboxData({ isOpen: true, currentIndex: index });
   };
@@ -313,7 +313,9 @@ export default function App() {
                   <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                 </a>
                 <a href="#" className="text-slate-400">
-                  <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 15.68a6.34 6.34 0 006.33 6.33 6.33 6.33 0 006.33-6.33V8.42a8.05 8.05 0 004.34 1.25V6.23a4.52 4.52 0 01-2.41-.54z"/></svg>
+                  <svg className="w-[18px] h-[18px] fill-current" viewBox="0 0 24 24">
+                    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 15.68a6.34 6.34 0 006.33 6.33 6.33 6.33 0 006.33-6.33V8.42a8.05 8.05 0 004.34 1.25V6.23a4.52 4.52 0 01-2.41-.54z"/>
+                  </svg>
                 </a>
               </div>
             </div>
@@ -658,7 +660,6 @@ function ViewArtikel({ changeView }) {
             <img src={article.image} alt={article.title} className="w-full h-48 object-cover" />
             <div className="p-6 flex-grow flex flex-col">
               
-              {/* PENAMBAHAN: Ikon Penulis/Admin dan Tanggal */}
               <div className="flex items-center justify-between text-sm text-slate-500 mb-4">
                 <div className="flex items-center space-x-2">
                   <img 
@@ -674,7 +675,6 @@ function ViewArtikel({ changeView }) {
               <h3 className="text-xl font-bold text-slate-800 mb-3 leading-snug">{article.title}</h3>
               <p className="text-slate-600 text-sm mb-6 flex-grow">{article.excerpt}</p>
               
-              {/* PENAMBAHAN: Tombol Selengkapnya & Penghitung Komentar Disqus */}
               <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
                 <button 
                   onClick={() => changeView('DetailArtikel', article)}
@@ -687,7 +687,7 @@ function ViewArtikel({ changeView }) {
                   <CommentCount
                       shortname='https-webqu-peach-vercel-app'
                       config={{
-                          url: `https://webqu-peach.vercel.app/artikel/${article.id}`, // Menggunakan URL Vercel asli
+                          url: `https://webqu-peach.vercel.app/artikel/${article.id}`,
                           identifier: `article-${article.id}`,
                           title: article.title,
                       }}
@@ -702,7 +702,6 @@ function ViewArtikel({ changeView }) {
         ))}
       </div>
 
-      {/* Paginasi Render */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center space-x-2 mt-12">
           <button 
@@ -740,14 +739,13 @@ function ViewArtikel({ changeView }) {
   );
 }
 
-// TAMPILAN DETAIL ARTIKEL (Sekarang dilengkapi Kolom Komentar Disqus)
+// TAMPILAN DETAIL ARTIKEL 
 function ViewDetailArtikel({ article, changeView }) {
   if (!article) return null;
 
   return (
     <div className="w-full animate-fade-in bg-white pb-16 pt-8">
       <div className="max-w-4xl mx-auto px-4">
-        {/* Tombol Kembali */}
         <button 
           onClick={() => changeView('Artikel')}
           className="flex items-center text-green-700 hover:text-orange-500 font-semibold mb-8 transition-colors group"
@@ -756,7 +754,6 @@ function ViewDetailArtikel({ article, changeView }) {
           Kembali ke Daftar Artikel
         </button>
 
-        {/* Header Judul Artikel */}
         <h1 className="text-3xl md:text-5xl font-bold text-slate-800 mb-4 leading-tight">
           {article.title}
         </h1>
@@ -765,14 +762,12 @@ function ViewDetailArtikel({ article, changeView }) {
           <span>Ditulis oleh <strong>Admin Kampoeng Quran</strong></span>
         </div>
 
-        {/* Gambar Utama Artikel */}
         <img 
           src={article.image} 
           alt={article.title} 
           className="w-full h-[300px] md:h-[500px] object-cover rounded-2xl mb-10 shadow-md" 
         />
 
-        {/* Isi Konten Artikel */}
         <div className="prose prose-lg max-w-none text-slate-700 space-y-6">
           {article.fullContent.map((paragraph, idx) => (
             <p key={idx} className="leading-relaxed">
@@ -781,7 +776,6 @@ function ViewDetailArtikel({ article, changeView }) {
           ))}
         </div>
         
-        {/* Tombol Share */}
         <div className="mt-12 pt-8 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center mb-12">
           <p className="text-slate-500 font-medium mb-4 sm:mb-0">Bagikan artikel ini ke keluarga dan sahabat.</p>
           <button 
@@ -792,7 +786,6 @@ function ViewDetailArtikel({ article, changeView }) {
           </button>
         </div>
 
-        {/* PENAMBAHAN: Area Kolom Komentar Disqus */}
         <div className="bg-slate-50 p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-sm">
           <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center">
             <MessageCircle className="mr-3 text-green-600" />
@@ -802,10 +795,10 @@ function ViewDetailArtikel({ article, changeView }) {
             <DiscussionEmbed
                 shortname='https-webqu-peach-vercel-app'
                 config={{
-                    url: `https://webqu-peach.vercel.app/artikel/${article.id}`, // Menggunakan URL Vercel asli
+                    url: `https://webqu-peach.vercel.app/artikel/${article.id}`, 
                     identifier: `article-${article.id}`,
                     title: article.title,
-                    language: 'id' // Memaksa bahasa Indonesia
+                    language: 'id'
                 }}
             />
           </div>
