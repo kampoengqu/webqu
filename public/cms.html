@@ -3,9 +3,16 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CMS - Kampoeng Quran</title>
 <script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>.fade-in{animation:fadeIn .4s ease-out forwards}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.tab-content{transition:opacity .3s ease-in-out}.scrollbar-hide::-webkit-scrollbar{display:none}.scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:#f1f5f9;border-radius:8px}.custom-scrollbar::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:#94a3b8}</style>
+<style>
+.fade-in{animation:fadeIn .4s ease-out forwards}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.tab-content{transition:opacity .3s ease-in-out}.scrollbar-hide::-webkit-scrollbar{display:none}.scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
+.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:#f1f5f9;border-radius:8px}.custom-scrollbar::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:#94a3b8}
+#editor{min-height:300px;outline:none}#editor p{margin-bottom:1em;line-height:1.6}#editor h2{font-size:1.5em;font-weight:bold;margin-top:1em;margin-bottom:.5em}#editor blockquote{border-left:4px solid #cbd5e1;padding-left:1rem;color:#64748b;font-style:italic}#editor img{max-width:100%;height:auto;border-radius:.5rem;margin:1.5rem auto;display:block}
+.toast{transition:all .3s ease;transform:translateY(100%);opacity:0}.toast.show{transform:translateY(0);opacity:1}
+</style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col">
+<!-- HALAMAN LOGIN -->
 <div id="login-section" class="flex-grow flex items-center justify-center p-4 relative z-50">
 <div class="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md border border-slate-200 fade-in">
 <div class="text-center mb-8"><div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 transform rotate-3"><i class="fas fa-lock text-3xl"></i></div><h2 class="text-3xl font-bold text-slate-800">Login CMS</h2><p class="text-slate-500 text-sm mt-2">Masuk untuk mengelola Kampoeng Quran</p></div>
@@ -17,152 +24,346 @@
 </form>
 <div class="mt-6 text-center"><a href="/" class="text-sm text-slate-400 hover:text-emerald-600 transition-colors"><i class="fas fa-home mr-1"></i> Kembali ke Web Utama</a></div>
 </div></div>
+
+<!-- HALAMAN DASHBOARD -->
 <div id="dashboard-section" class="hidden flex-col min-h-screen">
-<nav class="bg-slate-900 text-white shadow-md p-4 sticky top-0 z-50"><div class="max-w-6xl mx-auto flex justify-between items-center"><h1 class="text-lg sm:text-xl font-bold flex items-center truncate"><i class="fas fa-cogs mr-3 text-orange-500 shrink-0"></i> <span class="truncate">Panel CMS</span></h1><div class="flex items-center space-x-4 shrink-0"><a href="/" target="_blank" class="text-sm bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition-colors hidden sm:inline-flex items-center"><i class="fas fa-external-link-alt mr-2"></i>Lihat Web</a><button onclick="handleLogout()" class="text-sm text-red-400 hover:text-red-300 font-bold flex items-center"><i class="fas fa-sign-out-alt sm:mr-1"></i><span class="hidden sm:inline">Keluar</span></button></div></div></nav>
-<div class="max-w-6xl mx-auto p-4 sm:p-6 mt-2 grid grid-cols-1 md:grid-cols-3 md:gap-8 w-full flex-grow fade-in">
+<nav class="bg-slate-900 text-white shadow-md p-4 sticky top-0 z-50"><div class="max-w-7xl mx-auto flex justify-between items-center"><h1 class="text-lg sm:text-xl font-bold flex items-center truncate"><i class="fas fa-cogs mr-3 text-orange-500 shrink-0"></i> <span class="truncate">Panel CMS</span></h1><div class="flex items-center space-x-4 shrink-0"><a href="/" target="_blank" class="text-sm bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition-colors hidden sm:inline-flex items-center"><i class="fas fa-external-link-alt mr-2"></i>Lihat Web</a><button onclick="handleLogout()" class="text-sm text-red-400 hover:text-red-300 font-bold flex items-center"><i class="fas fa-sign-out-alt sm:mr-1"></i><span class="hidden sm:inline">Keluar</span></button></div></div></nav>
+<div class="max-w-7xl mx-auto p-4 sm:p-6 mt-2 grid grid-cols-1 md:grid-cols-4 md:gap-8 w-full flex-grow fade-in">
 <div class="md:col-span-1 space-y-6">
-<div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200"><h2 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2"><i class="fab fa-github mr-2"></i> Koneksi GitHub</h2><div class="space-y-4"><div><label class="block text-sm font-medium text-slate-600 mb-1">GitHub Token (Classic)</label><input type="password" id="gh-token" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-mono" placeholder="ghp_xxxx..."><p class="text-[10px] text-slate-400 mt-1">Token disimpan aman di LocalStorage browser.</p></div><div><label class="block text-sm font-medium text-slate-600 mb-1">Repository (User/Repo)</label><input type="text" id="gh-repo" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-mono" placeholder="username/web-pesantren"></div><button onclick="saveCredentials()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded-lg transition text-sm">Simpan Koneksi</button></div></div>
-<div class="bg-slate-900 p-4 rounded-2xl shadow-sm text-green-400 font-mono text-xs h-48 overflow-y-auto" id="log-box">> Sistem CMS siap...<br></div></div>
-<div class="md:col-span-2 mt-4 md:mt-0"><div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+<div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200"><h2 class="text-sm font-bold text-slate-800 mb-3 border-b pb-2"><i class="fab fa-github mr-2"></i> Koneksi GitHub</h2><div class="space-y-3"><div><label class="block text-[11px] font-bold text-slate-600 mb-1">GitHub Token</label><input type="password" id="gh-token" class="w-full px-2 py-1.5 border rounded focus:ring-1 focus:ring-emerald-500 outline-none text-xs font-mono" placeholder="ghp_xxxx..."></div><div><label class="block text-[11px] font-bold text-slate-600 mb-1">Repository (User/Repo)</label><input type="text" id="gh-repo" class="w-full px-2 py-1.5 border rounded focus:ring-1 focus:ring-emerald-500 outline-none text-xs font-mono" placeholder="username/web"></div><button onclick="saveCredentials()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-1.5 rounded transition text-xs">Simpan</button></div></div>
+<div class="bg-slate-900 p-3 rounded-2xl shadow-sm text-green-400 font-mono text-[10px] h-48 overflow-y-auto" id="log-box">> CMS siap...<br></div></div>
+<div class="md:col-span-3 mt-4 md:mt-0"><div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
 <div class="flex overflow-x-auto scrollbar-hide bg-slate-50 border-b border-slate-200 snap-x">
-<button onclick="switchTab('tab-tema')" id="btn-tab-tema" class="shrink-0 sm:flex-1 py-4 px-6 text-sm font-bold text-center border-b-2 border-emerald-600 text-emerald-700 bg-white transition-all whitespace-nowrap snap-start"><i class="fas fa-palette mr-2"></i>Tema Global</button>
-<button onclick="switchTab('tab-beranda')" id="btn-tab-beranda" class="shrink-0 sm:flex-1 py-4 px-6 text-sm font-bold text-center border-b-2 border-transparent text-slate-500 hover:text-emerald-600 hover:bg-white transition-all whitespace-nowrap snap-start"><i class="fas fa-home mr-2"></i>Beranda</button>
-<button onclick="switchTab('tab-program')" id="btn-tab-program" class="shrink-0 sm:flex-1 py-4 px-6 text-sm font-bold text-center border-b-2 border-transparent text-slate-500 hover:text-emerald-600 hover:bg-white transition-all whitespace-nowrap snap-start"><i class="fas fa-graduation-cap mr-2"></i>Program</button>
-<button onclick="switchTab('tab-galeri')" id="btn-tab-galeri" class="shrink-0 sm:flex-1 py-4 px-6 text-sm font-bold text-center border-b-2 border-transparent text-slate-500 hover:text-emerald-600 hover:bg-white transition-all whitespace-nowrap snap-start"><i class="fas fa-images mr-2"></i>Galeri</button>
-<button onclick="switchTab('tab-testimoni')" id="btn-tab-testimoni" class="shrink-0 sm:flex-1 py-4 px-6 text-sm font-bold text-center border-b-2 border-transparent text-slate-500 hover:text-emerald-600 hover:bg-white transition-all whitespace-nowrap snap-start"><i class="fas fa-quote-left mr-2"></i>Testimoni</button>
+<button onclick="switchTab('tab-tema')" id="btn-tab-tema" class="shrink-0 sm:flex-1 py-3 px-5 text-sm font-bold text-center border-b-2 border-emerald-600 text-emerald-700 bg-white transition-all whitespace-nowrap snap-start"><i class="fas fa-palette mr-2"></i>Tema</button>
+<button onclick="switchTab('tab-beranda')" id="btn-tab-beranda" class="shrink-0 sm:flex-1 py-3 px-5 text-sm font-bold text-center border-b-2 border-transparent text-slate-500 hover:text-emerald-600 hover:bg-white transition-all whitespace-nowrap snap-start"><i class="fas fa-home mr-2"></i>Beranda</button>
+<button onclick="switchTab('tab-program')" id="btn-tab-program" class="shrink-0 sm:flex-1 py-3 px-5 text-sm font-bold text-center border-b-2 border-transparent text-slate-500 hover:text-emerald-600 hover:bg-white transition-all whitespace-nowrap snap-start"><i class="fas fa-graduation-cap mr-2"></i>Program</button>
+<button onclick="switchTab('tab-galeri')" id="btn-tab-galeri" class="shrink-0 sm:flex-1 py-3 px-5 text-sm font-bold text-center border-b-2 border-transparent text-slate-500 hover:text-emerald-600 hover:bg-white transition-all whitespace-nowrap snap-start"><i class="fas fa-images mr-2"></i>Galeri</button>
+<button onclick="switchTab('tab-testimoni')" id="btn-tab-testimoni" class="shrink-0 sm:flex-1 py-3 px-5 text-sm font-bold text-center border-b-2 border-transparent text-slate-500 hover:text-emerald-600 hover:bg-white transition-all whitespace-nowrap snap-start"><i class="fas fa-quote-left mr-2"></i>Testimoni</button>
+<button onclick="switchTab('tab-artikel'); fetchArticlesList();" id="btn-tab-artikel" class="shrink-0 sm:flex-1 py-3 px-5 text-sm font-bold text-center border-b-2 border-transparent text-slate-500 hover:text-emerald-600 hover:bg-white transition-all whitespace-nowrap snap-start"><i class="fas fa-newspaper mr-2"></i>Artikel</button>
 </div>
-<div class="p-5 md:p-8 flex-grow overflow-hidden">
-<div id="tab-tema" class="tab-content block fade-in"><h2 class="text-xl font-bold text-slate-800 mb-6">Penyesuaian Warna Dasar</h2><div class="grid grid-cols-1 sm:grid-cols-2 gap-6"><div class="space-y-2"><label class="block text-sm font-bold text-slate-700">Warna Dasar (Utama)</label><div class="flex items-center space-x-3"><input type="color" id="color-primary" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#059669"><input type="text" id="hex-primary" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#059669" oninput="document.getElementById('color-primary').value = this.value"></div></div><div class="space-y-2"><label class="block text-sm font-bold text-slate-700">Warna Aksen / Hover</label><div class="flex items-center space-x-3"><input type="color" id="color-accent" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#f97316"><input type="text" id="hex-accent" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#f97316" oninput="document.getElementById('color-accent').value = this.value"></div></div><div class="space-y-2"><label class="block text-sm font-bold text-slate-700">Warna Teks Link</label><div class="flex items-center space-x-3"><input type="color" id="color-link" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#15803d"><input type="text" id="hex-link" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#15803d" oninput="document.getElementById('color-link').value = this.value"></div></div></div></div>
-<div id="tab-beranda" class="tab-content hidden fade-in"><div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8"><div class="space-y-2 sm:col-span-2"><label class="block text-sm font-bold text-slate-700">Link Tombol "Daftar Sekarang"</label><input type="text" id="hero-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://wa.me/628... atau link Google Form"></div><div class="space-y-2"><label class="block text-sm font-bold text-slate-700">Warna Hover Card Fitur</label><div class="flex items-center space-x-3"><input type="color" id="color-card-hover" class="w-12 h-12 rounded cursor-pointer border-0 p-0" value="#dcfce7"><input type="text" id="hex-card-hover" class="flex-1 px-3 py-2 border rounded-lg font-mono text-sm uppercase" value="#dcfce7" oninput="document.getElementById('color-card-hover').value = this.value"></div></div></div><div class="border-t pt-6 border-slate-100"><div class="flex justify-between items-center mb-4"><h3 class="font-bold text-slate-700 text-lg">Daftar Card Info (Fitur)</h3><button onclick="addCard()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-1.5 px-3 md:px-4 rounded-lg text-xs md:text-sm transition-colors flex items-center"><i class="fas fa-plus mr-1"></i> <span class="hidden sm:inline">Tambah</span> Card</button></div><div id="cards-container" class="space-y-4"></div></div></div>
-<div id="tab-program" class="tab-content hidden fade-in"><div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8"><div class="space-y-2"><label class="block text-sm font-bold text-slate-700">Link Pendaftaran</label><input type="text" id="program-register-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://wa.me/628..."></div><div class="space-y-2"><label class="block text-sm font-bold text-slate-700">Link Download Brosur</label><div class="flex items-center space-x-2"><input type="text" id="program-brochure-link" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none font-mono text-sm" placeholder="/assets/brosur.pdf"><label class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-2 px-3 rounded-lg cursor-pointer transition-colors"><i class="fas fa-upload"></i><input type="file" class="hidden" accept=".pdf" onchange="handleFileUpload(this, 'program-brochure-link')"></label></div></div></div><div class="border-t pt-6 border-slate-100"><div class="flex justify-between items-center mb-4"><h3 class="font-bold text-slate-700 text-lg">Daftar Program Unggulan</h3><button onclick="addProgram()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-1.5 px-3 md:px-4 rounded-lg text-xs md:text-sm transition-colors flex items-center"><i class="fas fa-plus mr-1"></i> <span class="hidden sm:inline">Tambah</span> Program</button></div><div id="programs-container" class="space-y-6"></div></div></div>
-<div id="tab-galeri" class="tab-content hidden fade-in"><div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4"><div><h2 class="text-xl font-bold text-slate-800 flex items-center"><i class="fas fa-images mr-3 text-emerald-500"></i> Pengaturan Galeri</h2><p class="text-xs text-slate-500 mt-1">Kelola foto kegiatan. Gunakan ikon naik/turun untuk mengatur urutan.</p></div><button onclick="addGalleryItem()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0"><i class="fas fa-plus mr-2"></i> Tambah Foto Baru</button></div><div id="gallery-container" class="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar"></div></div>
-<div id="tab-testimoni" class="tab-content hidden fade-in"><div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4"><div><h2 class="text-xl font-bold text-slate-800 flex items-center"><i class="fas fa-quote-left mr-3 text-emerald-500"></i> Pengaturan Testimoni</h2></div><button onclick="addTestimonial()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0"><i class="fas fa-plus mr-2"></i> Tambah Testimoni</button></div><div id="testimonials-container" class="space-y-6"></div></div>
+
+<div class="p-4 md:p-6 flex-grow overflow-hidden custom-scrollbar overflow-y-auto" style="max-height: 75vh;">
+<!-- TAB TEMA -->
+<div id="tab-tema" class="tab-content block fade-in"><h2 class="text-lg font-bold text-slate-800 mb-4">Penyesuaian Warna Dasar</h2><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div class="space-y-1"><label class="block text-xs font-bold text-slate-700">Warna Utama</label><div class="flex items-center space-x-2"><input type="color" id="color-primary" class="w-8 h-8 rounded cursor-pointer border-0 p-0"><input type="text" id="hex-primary" class="flex-1 px-3 py-1.5 border rounded font-mono text-sm uppercase"></div></div><div class="space-y-1"><label class="block text-xs font-bold text-slate-700">Warna Hover</label><div class="flex items-center space-x-2"><input type="color" id="color-accent" class="w-8 h-8 rounded cursor-pointer border-0 p-0"><input type="text" id="hex-accent" class="flex-1 px-3 py-1.5 border rounded font-mono text-sm uppercase"></div></div><div class="space-y-1"><label class="block text-xs font-bold text-slate-700">Warna Link</label><div class="flex items-center space-x-2"><input type="color" id="color-link" class="w-8 h-8 rounded cursor-pointer border-0 p-0"><input type="text" id="hex-link" class="flex-1 px-3 py-1.5 border rounded font-mono text-sm uppercase"></div></div></div></div>
+
+<!-- TAB BERANDA -->
+<div id="tab-beranda" class="tab-content hidden fade-in"><div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6"><div class="space-y-1 sm:col-span-2"><label class="block text-xs font-bold text-slate-700">Link "Daftar Sekarang"</label><input type="text" id="hero-link" class="w-full px-3 py-2 border rounded outline-none text-sm"></div><div class="space-y-1"><label class="block text-xs font-bold text-slate-700">Hover Card Fitur</label><div class="flex items-center space-x-2"><input type="color" id="color-card-hover" class="w-8 h-8 rounded border-0 p-0"><input type="text" id="hex-card-hover" class="flex-1 px-3 py-1.5 border rounded font-mono text-sm uppercase"></div></div></div><div class="border-t pt-4"><div class="flex justify-between items-center mb-3"><h3 class="font-bold text-sm">Card Fitur</h3><button onclick="addCard()" class="bg-emerald-100 text-emerald-700 font-bold py-1 px-3 rounded text-xs"><i class="fas fa-plus"></i> Tambah</button></div><div id="cards-container" class="space-y-3"></div></div></div>
+
+<!-- TAB PROGRAM -->
+<div id="tab-program" class="tab-content hidden fade-in"><div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6"><div class="space-y-1"><label class="block text-xs font-bold text-slate-700">Link Pendaftaran</label><input type="text" id="program-register-link" class="w-full px-3 py-2 border rounded text-sm"></div><div class="space-y-1"><label class="block text-xs font-bold text-slate-700">Link Brosur (PDF)</label><div class="flex space-x-2"><input type="text" id="program-brochure-link" class="w-full px-3 py-2 border rounded text-xs font-mono"><label class="bg-emerald-100 text-emerald-700 py-1.5 px-3 rounded cursor-pointer"><i class="fas fa-upload text-xs"></i><input type="file" class="hidden" accept=".pdf" onchange="handleFileUpload(this, 'program-brochure-link')"></label></div></div></div><div class="border-t pt-4"><div class="flex justify-between items-center mb-3"><h3 class="font-bold text-sm">Daftar Program</h3><button onclick="addProgram()" class="bg-emerald-100 text-emerald-700 font-bold py-1 px-3 rounded text-xs"><i class="fas fa-plus"></i> Tambah</button></div><div id="programs-container" class="space-y-4"></div></div></div>
+
+<!-- TAB GALERI -->
+<div id="tab-galeri" class="tab-content hidden fade-in"><div class="flex justify-between items-center mb-4"><h3 class="font-bold text-sm">Pengaturan Galeri</h3><button onclick="addGalleryItem()" class="bg-emerald-100 text-emerald-700 font-bold py-1 px-3 rounded text-xs"><i class="fas fa-plus"></i> Tambah Foto</button></div><div id="gallery-container" class="space-y-3"></div></div>
+
+<!-- TAB TESTIMONI -->
+<div id="tab-testimoni" class="tab-content hidden fade-in"><div class="flex justify-between items-center mb-4"><h3 class="font-bold text-sm">Testimoni</h3><button onclick="addTestimonial()" class="bg-emerald-100 text-emerald-700 font-bold py-1 px-3 rounded text-xs"><i class="fas fa-plus"></i> Tambah</button></div><div id="testimonials-container" class="space-y-3"></div></div>
+
+<!-- TAB ARTIKEL (BARU) -->
+<div id="tab-artikel" class="tab-content hidden fade-in">
+    <div class="flex space-x-4 mb-4 border-b border-slate-200 pb-2">
+        <button onclick="switchArticleView('daftar')" id="btn-view-daftar" class="text-sm font-bold text-emerald-600 border-b-2 border-emerald-600 pb-1">Daftar Artikel</button>
+        <button onclick="switchArticleView('tulis')" id="btn-view-tulis" class="text-sm font-bold text-slate-500 hover:text-emerald-600 pb-1">Tulis / Edit Artikel</button>
+    </div>
+    
+    <!-- Sub-tab: Daftar Artikel -->
+    <div id="view-daftar" class="block">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-sm">Manajemen Artikel</h3>
+            <div class="bg-slate-100 rounded-lg p-1 text-xs font-medium">
+                <button onclick="renderArticleList('published')" id="tab-published" class="px-3 py-1 rounded bg-white shadow-sm text-emerald-700">Terpublikasi</button>
+                <button onclick="renderArticleList('trash')" id="tab-trash" class="px-3 py-1 rounded text-slate-500 hover:text-slate-700">Tempat Sampah</button>
+            </div>
+        </div>
+        <div class="bg-white border rounded-xl overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left min-w-[600px]">
+                <thead class="bg-slate-50 border-b text-slate-500 text-xs uppercase"><th class="p-3 text-center">No</th><th class="p-3">Judul</th><th class="p-3">Kategori</th><th class="p-3">Tanggal</th><th class="p-3 text-right">Aksi</th></thead>
+                <tbody id="article-list-body" class="text-sm divide-y divide-slate-100"><td colspan="5" class="p-6 text-center text-slate-400">Memuat artikel...</td></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Sub-tab: Tulis Artikel -->
+    <div id="view-tulis" class="hidden space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="md:col-span-2"><label class="block text-xs font-bold text-slate-700 mb-1">Judul Artikel</label><input type="text" id="post-title" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:border-emerald-500" placeholder="Contoh: 10 Amalan Setara..."></div>
+            <div><label class="block text-xs font-bold text-slate-700 mb-1">Kategori</label><input type="text" id="post-category" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:border-emerald-500" placeholder="Fiqih"></div>
+        </div>
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <label class="block text-xs font-bold text-slate-700 mb-2"><i class="fas fa-image text-emerald-600 mr-1"></i> Gambar Cover Artikel</label>
+            <div class="flex items-center space-x-2 mb-2">
+                <input type="text" id="post-cover-url" class="flex-grow px-3 py-2 border rounded-lg text-xs font-mono outline-none" placeholder="https://...">
+                <label class="bg-emerald-100 text-emerald-700 font-bold py-2 px-3 rounded-lg cursor-pointer text-xs"><i class="fas fa-upload mr-1"></i>Upload<input type="file" id="cover-file" class="hidden" accept="image/*" onchange="handleArticleUpload(this, 'post-cover-url')"></label>
+            </div>
+            <p class="text-[10px] text-slate-500">Gambar digunakan untuk thumbnail WA dan Header postingan.</p>
+        </div>
+        
+        <!-- Toolbar Editor -->
+        <div class="border border-slate-300 rounded-xl overflow-hidden bg-white shadow-sm">
+            <div class="bg-slate-100 border-b px-2 py-1.5 flex flex-wrap gap-1 items-center text-sm">
+                <button onclick="execCmd('bold')" class="w-7 h-7 rounded hover:bg-slate-200 font-bold">B</button>
+                <button onclick="execCmd('italic')" class="w-7 h-7 rounded hover:bg-slate-200 italic">I</button>
+                <button onclick="execCmd('underline')" class="w-7 h-7 rounded hover:bg-slate-200 underline">U</button>
+                <div class="w-px h-5 bg-slate-300 mx-1"></div>
+                <button onclick="execCmd('justifyLeft')" class="w-7 h-7 rounded hover:bg-slate-200"><i class="fas fa-align-left"></i></button>
+                <button onclick="execCmd('justifyCenter')" class="w-7 h-7 rounded hover:bg-slate-200"><i class="fas fa-align-center"></i></button>
+                <button onclick="execCmd('justifyRight')" class="w-7 h-7 rounded hover:bg-slate-200"><i class="fas fa-align-right"></i></button>
+                <div class="w-px h-5 bg-slate-300 mx-1"></div>
+                <button onclick="insertLink()" class="w-7 h-7 rounded hover:bg-slate-200"><i class="fas fa-link"></i></button>
+                <button onclick="openInsertImageModal()" class="w-7 h-7 rounded hover:bg-slate-200"><i class="far fa-image"></i></button>
+                <button onclick="openInsertYoutubeModal()" class="w-7 h-7 rounded hover:bg-slate-200 text-red-600"><i class="fab fa-youtube"></i></button>
+                <div class="w-px h-5 bg-slate-300 mx-1"></div>
+                <button onclick="execCmd('insertUnorderedList')" class="w-7 h-7 rounded hover:bg-slate-200"><i class="fas fa-list-ul"></i></button>
+                <button onclick="execCmd('insertOrderedList')" class="w-7 h-7 rounded hover:bg-slate-200"><i class="fas fa-list-ol"></i></button>
+            </div>
+            <div id="editor" class="p-4 overflow-y-auto custom-scrollbar text-sm text-slate-700" contenteditable="true"></div>
+        </div>
+        <div class="flex justify-end pt-2">
+            <button onclick="cancelEdit()" id="btn-cancel-edit" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold py-2 px-4 rounded-lg mr-2">Batal Edit</button>
+            <button onclick="publishArticle()" id="btn-publish-artikel" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-6 rounded-lg shadow-md transition-all"><i class="fas fa-paper-plane mr-1"></i> <span id="publish-text">Publish Artikel</span></button>
+        </div>
+    </div>
 </div>
-<div class="p-4 md:p-6 bg-slate-50 border-t border-slate-200 flex justify-end"><button onclick="publishTheme()" id="btn-publish" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-all flex items-center justify-center transform hover:-translate-y-0.5"><i class="fas fa-cloud-upload-alt mr-2 md:text-xl"></i> Publish Perubahan ke Web</button></div>
+
+</div>
+<!-- TOMBOL PUBLISH TEMA GLOBAL -->
+<div id="global-publish-bar" class="p-4 bg-slate-50 border-t flex justify-end">
+<button onclick="publishTheme()" id="btn-publish" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2.5 px-6 rounded-xl shadow-lg transition-all"><i class="fas fa-cloud-upload-alt mr-2"></i> Simpan & Publish Tema</button>
+</div>
 </div></div></div></div>
+
+<!-- MODALS & TOAST -->
+<div id="toast" class="toast fixed bottom-6 right-6 bg-slate-800 text-white px-5 py-3 rounded-lg shadow-xl flex items-center z-50"><i id="toast-icon" class="fas fa-check-circle text-emerald-400 mr-2 text-lg"></i><span id="toast-msg" class="text-sm font-medium">Berhasil!</span></div>
+
+<div id="confirm-modal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center backdrop-blur-sm transition-opacity"><div class="bg-white rounded-xl p-6 max-w-xs w-full mx-4 shadow-2xl scale-95 opacity-0 transition-all" id="confirm-box"><h3 class="text-lg font-bold mb-2" id="confirm-title">Konfirmasi</h3><p class="text-sm text-slate-600 mb-5" id="confirm-msg">Yakin?</p><div class="flex justify-end space-x-2"><button onclick="closeConfirm()" class="px-4 py-1.5 bg-slate-100 rounded text-sm font-bold">Batal</button><button id="confirm-yes-btn" class="px-4 py-1.5 text-white rounded text-sm font-bold">Ya</button></div></div></div>
+
+<div id="insert-image-modal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center backdrop-blur-sm transition-opacity"><div class="bg-white rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl scale-95 opacity-0 transition-all" id="insert-image-box"><h3 class="font-bold mb-4"><i class="far fa-image mr-2"></i>Sisipkan Gambar</h3><div class="space-y-3"><div><label class="block text-xs font-bold mb-1">Pilih Gambar</label><input type="file" id="inline-image-file" accept="image/*" class="w-full text-xs"></div><div class="text-center text-xs text-slate-400">ATAU</div><div><label class="block text-xs font-bold mb-1">URL Gambar</label><input type="text" id="inline-image-url" class="w-full border rounded px-3 py-1.5 text-xs outline-none"></div></div><div class="mt-5 flex justify-end space-x-2"><button onclick="closeInsertImageModal()" class="px-4 py-1.5 bg-slate-100 rounded text-xs font-bold">Batal</button><button onclick="processInsertImage()" id="btn-insert-img" class="px-4 py-1.5 bg-emerald-600 text-white rounded text-xs font-bold">Sisipkan</button></div></div></div>
+
+<div id="insert-youtube-modal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center backdrop-blur-sm transition-opacity"><div class="bg-white rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl scale-95 opacity-0 transition-all" id="insert-youtube-box"><h3 class="font-bold mb-4"><i class="fab fa-youtube text-red-600 mr-2"></i>Video YouTube</h3><div><label class="block text-xs font-bold mb-1">Link Video</label><input type="text" id="inline-youtube-url" class="w-full border rounded px-3 py-1.5 text-xs outline-none" placeholder="https://youtu.be/xxx"></div><div class="mt-5 flex justify-end space-x-2"><button onclick="closeInsertYoutubeModal()" class="px-4 py-1.5 bg-slate-100 rounded text-xs font-bold">Batal</button><button onclick="processInsertYoutube()" class="px-4 py-1.5 bg-emerald-600 text-white rounded text-xs font-bold">Sisipkan</button></div></div></div>
+
 <script>
 const GOOGLE_SCRIPT_URL='https://script.google.com/macros/s/AKfycby8fW44CzM7kzhXkqoF_4pcl7-9MqZEW7oV5DiCb3ec6QkmCx-4l52asd7APj9yiY4/exec';
-let homeCards=[{icon:"BookOpen",title:"Tahfidz Bersanad",desc:"Metode hafalan intensif dengan pembimbing yang memiliki sanad keilmuan jelas."},{icon:"Lightbulb",title:"Kurikulum Modern",desc:"Perpaduan ilmu agama mendalam dan sains teknologi terkini."},{icon:"Home",title:"Asrama Nyaman",desc:"Fasilitas pendukung yang bersih, aman, dan asri untuk ketenangan belajar."}];
-let programs=[{id:'smp',title:"SMP Islam Terpadu",desc:"Pendidikan menengah dengan kurikulum diknas dan diniyah terpadu.",image:"https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=600&h=400",fullDesc:"Program SMP Islam Terpadu kami mengedepankan pembentukan karakter Islami di usia remaja. Kami memadukan kurikulum nasional dengan pemahaman agama yang mendalam. Fasilitas laboratorium, perpustakaan, dan asrama yang nyaman disiapkan untuk menunjang tumbuh kembang santri.",benefits:["Kurikulum Terintegrasi: Pemaduan seimbang antara ilmu din (agama) dan sains modern.","Fasilitas Representatif: Ruang kelas nyaman, laboratorium, dan asrama yang bersih dan rapi.","Pengawasan 24 Jam: Pembinaan adab dan karakter melalui musyrif/musyrifah yang kompeten."]}];
-let galleryItems=Array.from({length:25},(_,i)=>({url:`https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800&h=600&sig=${i}`,title:`Kegiatan Pesantren ${i+1}`,caption:`Deskripsi singkat kegiatan santri nomor ${i+1} di lingkungan pesantren Kampoeng Quran.`}));
-let testimonials=[{id:1,name:"Bapak Abdullah",role:"Wali Santri Angkatan 6",content:"Alhamdulillah, sejak mondok di Kampoeng Quran, anak saya mengalami perubahan akhlak yang luar biasa. Kemandiriannya terbangun dan bacaan Al-Qurannya semakin tartil.",img:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80"},{id:2,name:"Ibu Siti Aminah",role:"Wali Santri Angkatan 7",content:"Lingkungan pesantren sangat kondusif untuk menghafal. Ustaz dan ustazah sangat perhatian terhadap perkembangan santri.",img:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80"},{id:3,name:"Bapak Rahmat Hidayat",role:"Wali Santri Angkatan 5",content:"Program kurikulum modernnya sangat membantu anak saya bersaing di bidang akademik tanpa melupakan hafalan Qurannya.",img:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80"},{id:4,name:"Ibu Fatimah Zahra",role:"Wali Santri Angkatan 8",content:"Fasilitas asrama yang bersih dan nyaman membuat kami tenang menitipkan anak kami di sini. Sangat direkomendasikan.",img:"https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80"}];
+let homeCards=[{icon:"BookOpen",title:"Tahfidz Bersanad",desc:"Metode hafalan intensif..."}], programs=[], galleryItems=[], testimonials=[];
+let cachedBlogData={items:[],trash:[]}, blogFileSha=null, currentListTab='published', editingOriginalSlug=null, savedEditorSelection=null;
+const gId=(id)=>document.getElementById(id);
 
-function switchTab(tabId){
-    ['tab-tema','tab-beranda','tab-program','tab-galeri','tab-testimoni'].forEach(id=>document.getElementById(id).classList.add('hidden'));
-    ['btn-tab-tema','btn-tab-beranda','btn-tab-program','btn-tab-galeri','btn-tab-testimoni'].forEach(id=>{
-        const btn=document.getElementById(id);
-        if(btn){btn.classList.remove('border-emerald-600','text-emerald-700','bg-white');btn.classList.add('border-transparent','text-slate-500');}
-    });
-    document.getElementById(tabId).classList.remove('hidden');
-    const activeBtn=document.getElementById('btn-'+tabId);
-    if(activeBtn){
-        activeBtn.classList.remove('border-transparent','text-slate-500');activeBtn.classList.add('border-emerald-600','text-emerald-700','bg-white');
-        activeBtn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
-    }
+// INIT & UI
+function switchTab(tId){
+    ['tab-tema','tab-beranda','tab-program','tab-galeri','tab-testimoni','tab-artikel'].forEach(id=>gId(id).classList.add('hidden'));
+    ['btn-tab-tema','btn-tab-beranda','btn-tab-program','btn-tab-galeri','btn-tab-testimoni','btn-tab-artikel'].forEach(id=>{if(gId(id)){gId(id).classList.remove('border-emerald-600','text-emerald-700','bg-white');gId(id).classList.add('border-transparent','text-slate-500');}});
+    gId(tId).classList.remove('hidden'); gId('btn-'+tId).classList.add('border-emerald-600','text-emerald-700','bg-white'); gId('btn-'+tId).scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    gId('global-publish-bar').classList.toggle('hidden', tId === 'tab-artikel');
+}
+
+function switchArticleView(v){
+    gId('view-daftar').classList.toggle('hidden', v!=='daftar'); gId('view-tulis').classList.toggle('hidden', v!=='tulis');
+    gId('btn-view-daftar').className = v==='daftar' ? "text-sm font-bold text-emerald-600 border-b-2 border-emerald-600 pb-1" : "text-sm font-bold text-slate-500 hover:text-emerald-600 pb-1";
+    gId('btn-view-tulis').className = v==='tulis' ? "text-sm font-bold text-emerald-600 border-b-2 border-emerald-600 pb-1" : "text-sm font-bold text-slate-500 hover:text-emerald-600 pb-1";
 }
 
 async function handleLogin(e){
-    e.preventDefault();
-    const u=document.getElementById('username').value, p=document.getElementById('password').value, err=document.getElementById('login-error'), btn=document.getElementById('btn-login-submit');
-    const orig=btn.innerHTML; btn.innerHTML='<i class="fas fa-spinner fa-spin mr-2"></i> Memeriksa data...'; btn.disabled=true;
+    e.preventDefault(); const u=gId('username').value, p=gId('password').value, err=gId('login-error'), btn=gId('btn-login-submit');
+    const orig=btn.innerHTML; btn.innerHTML='<i class="fas fa-spinner fa-spin mr-2"></i> Memeriksa...'; btn.disabled=true;
     try{
-        const res=await fetch(GOOGLE_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({username:u,password:p}),redirect:'follow'});
-        const data=await res.json();
-        if(data.success){
-            document.getElementById('login-section').classList.add('hidden');document.getElementById('dashboard-section').classList.remove('hidden');document.getElementById('dashboard-section').classList.add('flex');
-            initCMS();
-        }else{err.innerHTML=`<i class="fas fa-exclamation-circle mr-1"></i> ${data.message}`; err.classList.remove('hidden'); setTimeout(()=>err.classList.add('hidden'),3000);}
-    }catch(e){err.innerHTML='<i class="fas fa-exclamation-circle mr-1"></i> Kesalahan jaringan.'; err.classList.remove('hidden'); setTimeout(()=>err.classList.add('hidden'),3000);}
-    finally{btn.innerHTML=orig; btn.disabled=false;}
+        const res=await fetch(GOOGLE_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({username:u,password:p})});
+        const d=await res.json();
+        if(d.success){gId('login-section').classList.add('hidden');gId('dashboard-section').classList.remove('hidden');gId('dashboard-section').classList.add('flex');initCMS();}
+        else{err.innerHTML=`<i class="fas fa-exclamation-circle"></i> ${d.message}`;err.classList.remove('hidden');setTimeout(()=>err.classList.add('hidden'),3000);}
+    }catch(e){err.innerHTML='<i class="fas fa-exclamation-circle"></i> Jaringan error.';err.classList.remove('hidden');setTimeout(()=>err.classList.add('hidden'),3000);}finally{btn.innerHTML=orig;btn.disabled=false;}
 }
+function handleLogout(){if(confirm("Keluar?"))location.reload();}
+function log(msg,err=false){const b=gId('log-box');b.innerHTML+=`<span class="${err?'text-red-400':'text-green-400'}">[${new Date().toLocaleTimeString()}] ${msg}</span><br>`;b.scrollTop=b.scrollHeight;}
+function showToast(m,type='success'){const t=gId('toast'),i=gId('toast-icon');gId('toast-msg').innerText=m;i.className=type==='error'?'fas fa-times-circle text-red-400 mr-2 text-lg':'fas fa-check-circle text-emerald-400 mr-2 text-lg';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
-function handleLogout(){if(confirm("Keluar dari CMS?")){document.getElementById('username').value='';document.getElementById('password').value='';document.getElementById('dashboard-section').className='hidden flex-col min-h-screen';document.getElementById('login-section').classList.remove('hidden');}}
-function log(msg,err=false){const b=document.getElementById('log-box');b.innerHTML+=`<span class="${err?'text-red-400':'text-green-400'}">[${new Date().toLocaleTimeString()}] ${msg}</span><br>`;b.scrollTop=b.scrollHeight;}
 function initCMS(){
     const t=localStorage.getItem('gh_token'), r=localStorage.getItem('gh_repo');
-    if(t)document.getElementById('gh-token').value=t; if(r)document.getElementById('gh-repo').value=r;
-    ['primary','accent','link','card-hover'].forEach(c=>{document.getElementById(`color-${c}`).addEventListener('input',e=>document.getElementById(`hex-${c}`).value=e.target.value);document.getElementById(`hex-${c}`).addEventListener('input',e=>document.getElementById(`color-${c}`).value=e.target.value);});
+    if(t)gId('gh-token').value=t; if(r)gId('gh-repo').value=r;
+    ['primary','accent','link','card-hover'].forEach(c=>{if(gId(`color-${c}`)){gId(`color-${c}`).addEventListener('input',e=>gId(`hex-${c}`).value=e.target.value);gId(`hex-${c}`).addEventListener('input',e=>gId(`color-${c}`).value=e.target.value);}});
     renderCards();renderPrograms();renderGallery();renderTestimonials();
     if(t&&r)fetchCurrentTheme();
 }
 function saveCredentials(){
-    const t=document.getElementById('gh-token').value.trim(), r=document.getElementById('gh-repo').value.trim();
-    if(!t||!r)return alert("Token dan Repo wajib diisi!");
+    const t=gId('gh-token').value.trim(), r=gId('gh-repo').value.trim(); if(!t||!r)return alert("Wajib diisi!");
     localStorage.setItem('gh_token',t);localStorage.setItem('gh_repo',r);log("Kredensial tersimpan.");fetchCurrentTheme();
 }
-async function handleFileUpload(input,targetId,pId=null,gId=null,tId=null){
-    const f=input.files[0], t=localStorage.getItem('gh_token'), r=localStorage.getItem('gh_repo');
-    if(!f||!t||!r){if(!t||!r)alert("Simpan Koneksi GitHub dulu!"); input.value=''; return;}
-    const lbl=input.parentElement, origHtml=lbl.innerHTML; lbl.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
-    const reader=new FileReader();
-    reader.onload=async(e)=>{
+function getCfg(){const t=localStorage.getItem('gh_token'),r=localStorage.getItem('gh_repo');if(!t||!r)return null;const p=r.split('/');return{user:p[0],repo:p[1],token:t};}
+const authHdr=()=>({'Authorization':`token ${getCfg().token}`,'Content-Type':'application/json'});
+
+// UPLOAD FILE UMUM
+async function handleFileUpload(input,tgt,pId=null,gId=null,tId=null){
+    const f=input.files[0], c=getCfg(); if(!f)return; if(!c)return alert("Simpan Koneksi GitHub!");
+    const lbl=input.parentElement, orig=lbl.innerHTML; lbl.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
+    const r=new FileReader(); r.onload=async(e)=>{
         try{
             const b64=e.target.result.split(',')[1], fn=`${Date.now()}_${f.name.replace(/[^a-zA-Z0-9.\-]/g,'_')}`, path=`public/assets/uploads/${fn}`;
-            log(`Mengunggah ${f.name}...`);
-            const res=await fetch(`https://api.github.com/repos/${r}/contents/${path}`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify({message:`Upload ${f.name}`,content:b64})});
+            const res=await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/${path}`,{method:'PUT',headers:authHdr(),body:JSON.stringify({message:`Upload ${f.name}`,content:b64})});
             if(res.ok){
-                const url=`/assets/uploads/${fn}`;
-                if(document.getElementById(targetId))document.getElementById(targetId).value=url;
+                const url=`/assets/uploads/${fn}`; if(gId(tgt))gId(tgt).value=url;
                 if(pId!==null)updateProgram(pId,'image',url); else if(gId!==null)updateGalleryItem(gId,'url',url); else if(tId!==null)updateTestimonial(tId,'img',url);
-                log(`✅ Terunggah: ${fn}`);alert("Upload berhasil!");
-            }else{const err=await res.json(); log(`Gagal: ${err.message}`,true);alert(`Gagal: ${err.message}`);}
-        }catch(err){log(`Error: ${err.message}`,true);alert("Kesalahan saat mengunggah.");}
-        finally{if(document.body.contains(lbl))lbl.innerHTML=origHtml; else if(pId!==null)renderPrograms(); else if(gId!==null)renderGallery(); else if(tId!==null)renderTestimonials();}
-    };reader.readAsDataURL(f);
+                showToast("Upload berhasil!");
+            }else throw new Error((await res.json()).message);
+        }catch(e){alert("Error: "+e.message);}finally{if(document.body.contains(lbl))lbl.innerHTML=orig;else if(pId!==null)renderPrograms();else if(gId!==null)renderGallery();else if(tId!==null)renderTestimonials();}
+    };r.readAsDataURL(f);
 }
 
-function renderCards(){document.getElementById('cards-container').innerHTML=homeCards.map((c,i)=>`<div class="p-4 border border-slate-200 rounded-xl bg-white shadow-sm relative group transition hover:border-emerald-200"><button onclick="removeCard(${i})" class="absolute -top-3 -right-3 text-white hover:bg-red-600 bg-red-500 p-2 rounded-full shadow-lg transform scale-0 group-hover:scale-100 transition-transform"><i class="fas fa-trash text-xs"></i></button><div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3"><div><label class="block text-xs font-bold text-slate-600 mb-1">Nama Ikon (Lucide)</label><input type="text" value="${c.icon}" onchange="updateCard(${i},'icon',this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm font-mono outline-none focus:border-emerald-500"></div><div><label class="block text-xs font-bold text-slate-600 mb-1">Judul Card</label><input type="text" value="${c.title}" onchange="updateCard(${i},'title',this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500"></div></div><label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi</label><textarea onchange="updateCard(${i},'desc',this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500" rows="2">${c.desc}</textarea></div>`).join('');}
-function addCard(){homeCards.push({icon:'Star',title:'Fitur',desc:''});renderCards();}
-function removeCard(i){if(confirm("Hapus?")){homeCards.splice(i,1);renderCards();}}
-function updateCard(i,f,v){homeCards[i][f]=v;}
+// RENDERERS (Tema, Beranda, dll yang disingkat)
+function renderCards(){gId('cards-container').innerHTML=homeCards.map((c,i)=>`<div class="p-3 border rounded-xl bg-white relative group mb-3"><button onclick="removeCard(${i})" class="absolute -top-2 -right-2 bg-red-500 text-white p-1.5 rounded-full scale-0 group-hover:scale-100"><i class="fas fa-trash text-xs"></i></button><div class="flex gap-2 mb-2"><input value="${c.icon}" onchange="updateCard(${i},'icon',this.value)" class="w-1/3 p-1.5 border rounded text-xs" placeholder="Ikon"><input value="${c.title}" onchange="updateCard(${i},'title',this.value)" class="w-2/3 p-1.5 border rounded text-xs" placeholder="Judul"></div><textarea onchange="updateCard(${i},'desc',this.value)" class="w-full p-1.5 border rounded text-xs" rows="2">${c.desc}</textarea></div>`).join('');}
+function addCard(){homeCards.push({icon:'Star',title:'Fitur',desc:''});renderCards();} function removeCard(i){homeCards.splice(i,1);renderCards();} function updateCard(i,f,v){homeCards[i][f]=v;}
 
-function renderPrograms(){document.getElementById('programs-container').innerHTML=programs.map((p,i)=>`<div class="p-4 md:p-5 border border-slate-200 rounded-xl bg-white shadow-sm relative group mb-6 transition hover:border-emerald-200"><button onclick="removeProgram(${i})" class="absolute -top-3 -right-3 text-white hover:bg-red-600 bg-red-500 p-2 rounded-full shadow-lg transform scale-0 lg:group-hover:scale-100 scale-100 lg:scale-0 transition-transform"><i class="fas fa-trash text-xs"></i></button><div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4"><div><label class="block text-xs font-bold text-slate-600 mb-1">ID (Unik)</label><input type="text" value="${p.id}" onchange="updateProgram(${i},'id',this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm font-mono outline-none focus:border-emerald-500"></div><div><label class="block text-xs font-bold text-slate-600 mb-1">Judul Program</label><input type="text" value="${p.title}" onchange="updateProgram(${i},'title',this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500"></div></div><div class="mb-4"><label class="block text-xs font-bold text-slate-600 mb-1">URL Gambar</label><div class="flex space-x-2"><input type="text" id="prog-img-${i}" value="${p.image}" onchange="updateProgram(${i},'image',this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm font-mono outline-none focus:border-emerald-500"><label class="bg-emerald-100 text-emerald-700 font-bold py-2 px-3 rounded-lg cursor-pointer"><i class="fas fa-upload"></i><input type="file" class="hidden" accept="image/*" onchange="handleFileUpload(this,'prog-img-${i}',${i})"></label></div></div><div class="mb-4"><label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi Singkat</label><textarea onchange="updateProgram(${i},'desc',this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500" rows="2">${p.desc}</textarea></div><div class="mb-4"><label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi Penuh</label><textarea onchange="updateProgram(${i},'fullDesc',this.value)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-500" rows="4">${p.fullDesc}</textarea></div><div class="mt-4 pt-4 bg-slate-50 p-3 rounded-xl border border-slate-100"><div class="flex justify-between items-center mb-3"><label class="block text-xs font-bold text-slate-700">Benefit (Keunggulan)</label><button onclick="addProgramBenefit(${i})" class="bg-white border text-emerald-600 py-1 px-2 rounded text-xs font-bold shadow-sm"><i class="fas fa-plus"></i></button></div><div class="space-y-2">${p.benefits.map((b,bi)=>`<div class="flex space-x-2"><input type="text" value="${b}" onchange="updateProgramBenefit(${i},${bi},this.value)" class="flex-1 px-3 py-1.5 border rounded-lg text-sm outline-none focus:border-emerald-500"><button onclick="removeProgramBenefit(${i},${bi})" class="text-slate-300 hover:text-red-500 p-1.5"><i class="fas fa-times"></i></button></div>`).join('')}</div></div></div>`).join('');}
-function addProgram(){programs.push({id:`p-${Date.now()}`,title:'Baru',desc:'',image:'',fullDesc:'',benefits:['Benefit']});renderPrograms();}
-function removeProgram(i){if(confirm("Hapus?")){programs.splice(i,1);renderPrograms();}}
-function updateProgram(i,f,v){programs[i][f]=v;}
-function addProgramBenefit(i){programs[i].benefits.push('');renderPrograms();}
-function removeProgramBenefit(i,bi){programs[i].benefits.splice(bi,1);renderPrograms();}
-function updateProgramBenefit(i,bi,v){programs[i].benefits[bi]=v;}
+function renderPrograms(){gId('programs-container').innerHTML=programs.map((p,i)=>`<div class="p-3 border rounded-xl bg-white relative group mb-4"><button onclick="removeProgram(${i})" class="absolute -top-2 -right-2 bg-red-500 text-white p-1.5 rounded-full scale-0 group-hover:scale-100"><i class="fas fa-trash text-xs"></i></button><div class="flex gap-2 mb-2"><input value="${p.id}" onchange="updateProgram(${i},'id',this.value)" class="w-1/3 p-1.5 border rounded text-xs" placeholder="ID"><input value="${p.title}" onchange="updateProgram(${i},'title',this.value)" class="w-2/3 p-1.5 border rounded text-xs" placeholder="Judul"></div><div class="flex gap-2 mb-2"><input id="pi-${i}" value="${p.image}" onchange="updateProgram(${i},'image',this.value)" class="flex-1 p-1.5 border rounded text-xs"><label class="bg-emerald-100 text-emerald-700 px-2 py-1.5 rounded cursor-pointer text-xs"><i class="fas fa-upload"></i><input type="file" class="hidden" accept="image/*" onchange="handleFileUpload(this,'pi-${i}',${i})"></label></div><textarea onchange="updateProgram(${i},'desc',this.value)" class="w-full p-1.5 border rounded text-xs mb-2" rows="2" placeholder="Singkat">${p.desc}</textarea><textarea onchange="updateProgram(${i},'fullDesc',this.value)" class="w-full p-1.5 border rounded text-xs" rows="3" placeholder="Penuh">${p.fullDesc}</textarea><div class="mt-2 bg-slate-50 p-2 rounded"><button onclick="addProgramBenefit(${i})" class="text-xs text-emerald-600 font-bold mb-1"><i class="fas fa-plus"></i> Benefit</button>${p.benefits.map((b,bi)=>`<div class="flex gap-1 mb-1"><input value="${b}" onchange="programs[${i}].benefits[${bi}]=this.value" class="flex-1 p-1 border rounded text-xs"><button onclick="programs[${i}].benefits.splice(${bi},1);renderPrograms()" class="text-red-500 px-1"><i class="fas fa-times"></i></button></div>`).join('')}</div></div>`).join('');}
+function addProgram(){programs.push({id:`p${Date.now()}`,title:'Baru',desc:'',image:'',fullDesc:'',benefits:[]});renderPrograms();} function removeProgram(i){programs.splice(i,1);renderPrograms();} function updateProgram(i,f,v){programs[i][f]=v;} function addProgramBenefit(i){programs[i].benefits.push('');renderPrograms();}
 
-function renderGallery(){document.getElementById('gallery-container').innerHTML=galleryItems.map((g,i)=>`<div class="p-3 border border-slate-200 rounded-xl bg-white shadow-sm flex flex-col md:flex-row gap-4 relative group"><div class="flex flex-row md:flex-col justify-center items-center gap-1 absolute top-2 left-2 md:relative md:top-auto md:left-auto bg-white/90 md:bg-transparent p-1 rounded-lg z-10"><button onclick="moveGallery(${i},-1)" class="p-1 text-slate-400 hover:text-emerald-600 bg-slate-50 rounded" ${i===0?'disabled':''}><i class="fas fa-arrow-up"></i></button><span class="text-xs font-bold text-slate-400 w-4 text-center">${i+1}</span><button onclick="moveGallery(${i},1)" class="p-1 text-slate-400 hover:text-emerald-600 bg-slate-50 rounded" ${i===galleryItems.length-1?'disabled':''}><i class="fas fa-arrow-down"></i></button></div><div class="w-full md:w-32 h-32 md:h-24 bg-slate-100 rounded-lg overflow-hidden shrink-0 mt-8 md:mt-0"><img src="${g.url}" class="w-full h-full object-cover"></div><div class="flex-grow grid grid-cols-1 gap-2.5"><input type="text" value="${g.title}" onchange="updateGalleryItem(${i},'title',this.value)" class="w-full px-3 py-1.5 border rounded-lg text-sm outline-none focus:border-emerald-500" placeholder="Judul"><input type="text" value="${g.caption}" onchange="updateGalleryItem(${i},'caption',this.value)" class="w-full px-3 py-1.5 border rounded-lg text-sm outline-none focus:border-emerald-500" placeholder="Caption"><div class="flex space-x-2"><input type="text" id="gal-img-${i}" value="${g.url}" onchange="updateGalleryItem(${i},'url',this.value)" class="flex-grow px-3 py-1.5 border rounded-lg text-xs font-mono outline-none focus:border-emerald-500"><label class="bg-emerald-100 text-emerald-700 py-1.5 px-3 rounded-lg cursor-pointer"><i class="fas fa-upload text-xs"></i><input type="file" class="hidden" accept="image/*" onchange="handleFileUpload(this,'gal-img-${i}',null,${i})"></label></div></div><button onclick="removeGalleryItem(${i})" class="absolute -top-3 -right-3 text-white hover:bg-red-600 bg-red-500 p-2 rounded-full transform scale-0 md:group-hover:scale-100 lg:scale-0 scale-100 z-20"><i class="fas fa-trash text-xs"></i></button></div>`).join('');}
-function addGalleryItem(){galleryItems.unshift({url:'',title:'Baru',caption:''});renderGallery();document.getElementById('gallery-container').scrollTop=0;}
-function removeGalleryItem(i){if(confirm("Hapus?")){galleryItems.splice(i,1);renderGallery();}}
-function updateGalleryItem(i,f,v){galleryItems[i][f]=v;if(f==='url')renderGallery();}
-function moveGallery(i,dir){const ni=i+dir;if(ni>=0&&ni<galleryItems.length){const t=galleryItems[i];galleryItems[i]=galleryItems[ni];galleryItems[ni]=t;renderGallery();}}
+function renderGallery(){gId('gallery-container').innerHTML=galleryItems.map((g,i)=>`<div class="p-2 border rounded-xl bg-white flex gap-3 relative group"><div class="flex flex-col justify-center"><button onclick="moveGallery(${i},-1)" class="p-1 text-slate-400 hover:text-emerald-600"><i class="fas fa-caret-up"></i></button><button onclick="moveGallery(${i},1)" class="p-1 text-slate-400 hover:text-emerald-600"><i class="fas fa-caret-down"></i></button></div><img src="${g.url}" class="w-16 h-16 object-cover rounded"><div class="flex-1 space-y-1"><input value="${g.title}" onchange="updateGalleryItem(${i},'title',this.value)" class="w-full p-1 border rounded text-xs" placeholder="Judul"><input value="${g.caption}" onchange="updateGalleryItem(${i},'caption',this.value)" class="w-full p-1 border rounded text-xs" placeholder="Caption"><div class="flex gap-1"><input id="gi-${i}" value="${g.url}" onchange="updateGalleryItem(${i},'url',this.value)" class="flex-1 p-1 border rounded text-xs"><label class="bg-emerald-100 px-2 py-1 text-xs text-emerald-700 rounded cursor-pointer"><i class="fas fa-upload"></i><input type="file" class="hidden" accept="image/*" onchange="handleFileUpload(this,'gi-${i}',null,${i})"></label></div></div><button onclick="removeGalleryItem(${i})" class="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full scale-0 group-hover:scale-100"><i class="fas fa-times text-xs"></i></button></div>`).join('');}
+function addGalleryItem(){galleryItems.unshift({url:'',title:'',caption:''});renderGallery();} function removeGalleryItem(i){galleryItems.splice(i,1);renderGallery();} function updateGalleryItem(i,f,v){galleryItems[i][f]=v;if(f==='url')renderGallery();} function moveGallery(i,dir){const n=i+dir;if(n>=0&&n<galleryItems.length){const t=galleryItems[i];galleryItems[i]=galleryItems[n];galleryItems[n]=t;renderGallery();}}
 
-function renderTestimonials(){document.getElementById('testimonials-container').innerHTML=testimonials.map((t,i)=>`<div class="p-4 border border-slate-200 rounded-xl bg-white shadow-sm relative group mb-6"><button onclick="removeTestimonial(${i})" class="absolute -top-3 -right-3 text-white hover:bg-red-600 bg-red-500 p-2 rounded-full transform scale-0 md:group-hover:scale-100 lg:scale-0 scale-100 z-20"><i class="fas fa-trash text-xs"></i></button><div class="flex flex-col md:flex-row gap-4 mb-4 items-center md:items-start"><div class="w-20 h-20 rounded-full bg-slate-100 overflow-hidden shrink-0 border-2 border-slate-200 mx-auto md:mx-0"><img src="${t.img}" class="w-full h-full object-cover"></div><div class="flex-grow grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"><div><label class="block text-xs font-bold text-slate-600 mb-1">Nama Lengkap</label><input type="text" value="${t.name}" onchange="updateTestimonial(${i},'name',this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:border-emerald-500"></div><div><label class="block text-xs font-bold text-slate-600 mb-1">Status</label><input type="text" value="${t.role}" onchange="updateTestimonial(${i},'role',this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:border-emerald-500"></div><div class="sm:col-span-2"><label class="block text-xs font-bold text-slate-600 mb-1">URL Foto Profil</label><div class="flex space-x-2"><input type="text" id="tes-img-${i}" value="${t.img}" onchange="updateTestimonial(${i},'img',this.value)" class="flex-grow px-3 py-2 border rounded-lg text-xs font-mono outline-none focus:border-emerald-500"><label class="bg-emerald-100 text-emerald-700 py-1.5 px-3 rounded-lg cursor-pointer"><i class="fas fa-upload text-xs"></i><input type="file" class="hidden" accept="image/*" onchange="handleFileUpload(this,'tes-img-${i}',null,null,${i})"></label></div></div></div></div><div><label class="block text-xs font-bold text-slate-600 mb-1">Isi Testimoni</label><textarea onchange="updateTestimonial(${i},'content',this.value)" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:border-emerald-500" rows="3">${t.content}</textarea></div></div>`).join('');}
-function addTestimonial(){testimonials.unshift({id:Date.now(),name:"Baru",role:"",content:"",img:""});renderTestimonials();}
-function removeTestimonial(i){if(confirm("Hapus?")){testimonials.splice(i,1);renderTestimonials();}}
-function updateTestimonial(i,f,v){testimonials[i][f]=v;if(f==='img')renderTestimonials();}
+function renderTestimonials(){gId('testimonials-container').innerHTML=testimonials.map((t,i)=>`<div class="p-3 border rounded-xl bg-white flex gap-3 relative group"><img src="${t.img}" class="w-12 h-12 rounded-full object-cover border"><div class="flex-1 space-y-1"><div class="flex gap-2"><input value="${t.name}" onchange="updateTestimonial(${i},'name',this.value)" class="w-1/2 p-1 border rounded text-xs" placeholder="Nama"><input value="${t.role}" onchange="updateTestimonial(${i},'role',this.value)" class="w-1/2 p-1 border rounded text-xs" placeholder="Status"></div><div class="flex gap-1"><input id="ti-${i}" value="${t.img}" onchange="updateTestimonial(${i},'img',this.value)" class="flex-1 p-1 border rounded text-xs"><label class="bg-emerald-100 px-2 py-1 text-emerald-700 text-xs rounded cursor-pointer"><i class="fas fa-upload"></i><input type="file" class="hidden" accept="image/*" onchange="handleFileUpload(this,'ti-${i}',null,null,${i})"></label></div><textarea onchange="updateTestimonial(${i},'content',this.value)" class="w-full p-1 border rounded text-xs" rows="2">${t.content}</textarea></div><button onclick="removeTestimonial(${i})" class="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full scale-0 group-hover:scale-100"><i class="fas fa-times text-xs"></i></button></div>`).join('');}
+function addTestimonial(){testimonials.unshift({id:Date.now(),name:"",role:"",content:"",img:""});renderTestimonials();} function removeTestimonial(i){testimonials.splice(i,1);renderTestimonials();} function updateTestimonial(i,f,v){testimonials[i][f]=v;if(f==='img')renderTestimonials();}
 
+// TEMA
 async function fetchCurrentTheme(){
-    const t=localStorage.getItem('gh_token'), r=localStorage.getItem('gh_repo'); log(`Mengambil tema dari ${r}...`);
+    const c=getCfg();if(!c)return;
     try{
-        const res=await fetch(`https://api.github.com/repos/${r}/contents/public/theme.json`,{headers:{'Authorization':`token ${t}`}});
-        if(res.ok){
-            const c=JSON.parse(decodeURIComponent(escape(atob((await res.json()).content))));
-            ['primary','accent','link'].forEach(k=>{if(c[k]){document.getElementById(`color-${k}`).value=c[k];document.getElementById(`hex-${k}`).value=c[k];}});
-            if(c.beranda){if(c.beranda.daftarLink)document.getElementById('hero-link').value=c.beranda.daftarLink;if(c.beranda.cardHoverColor){document.getElementById('color-card-hover').value=c.beranda.cardHoverColor;document.getElementById('hex-card-hover').value=c.beranda.cardHoverColor;}if(c.beranda.cards){homeCards=c.beranda.cards;renderCards();}}
-            if(c.programs){if(c.programs.registerLink)document.getElementById('program-register-link').value=c.programs.registerLink;if(c.programs.brochureLink)document.getElementById('program-brochure-link').value=c.programs.brochureLink;if(c.programs.list){programs=c.programs.list;renderPrograms();}}
-            if(c.galeri){galleryItems=c.galeri;renderGallery();}
-            if(c.testimoni&&c.testimoni.testimonials){testimonials=c.testimoni.testimonials;renderTestimonials();}
-            log("Tema berhasil dimuat.");
-        }else log(res.status===404?"theme.json belum ada, siap buat baru.":`Gagal muat: ${res.statusText}`,res.status!==404);
-    }catch(e){log(`Error: ${e.message}`,true);}
+        const r=await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/public/theme.json`,{headers:authHdr()});
+        if(r.ok){
+            const d=JSON.parse(decodeURIComponent(escape(atob((await r.json()).content))));
+            ['primary','accent','link'].forEach(k=>{if(d[k]){gId(`color-${k}`).value=d[k];gId(`hex-${k}`).value=d[k];}});
+            if(d.beranda){if(d.beranda.daftarLink)gId('hero-link').value=d.beranda.daftarLink;if(d.beranda.cardHoverColor){gId('color-card-hover').value=d.beranda.cardHoverColor;gId('hex-card-hover').value=d.beranda.cardHoverColor;}if(d.beranda.cards){homeCards=d.beranda.cards;renderCards();}}
+            if(d.programs){if(d.programs.registerLink)gId('program-register-link').value=d.programs.registerLink;if(d.programs.brochureLink)gId('program-brochure-link').value=d.programs.brochureLink;if(d.programs.list){programs=d.programs.list;renderPrograms();}}
+            if(d.galeri){galleryItems=d.galeri;renderGallery();} if(d.testimoni&&d.testimoni.testimonials){testimonials=d.testimoni.testimonials;renderTestimonials();}
+            log("Tema dimuat.");
+        }
+    }catch(e){}
 }
 async function publishTheme(){
-    const t=localStorage.getItem('gh_token'), r=localStorage.getItem('gh_repo'), btn=document.getElementById('btn-publish');
-    if(!t||!r)return alert("Isi Koneksi GitHub dulu!");
-    const d={primary:document.getElementById('hex-primary').value,accent:document.getElementById('hex-accent').value,link:document.getElementById('hex-link').value,beranda:{daftarLink:document.getElementById('hero-link').value,cardHoverColor:document.getElementById('hex-card-hover').value,cards:homeCards},programs:{registerLink:document.getElementById('program-register-link').value,brochureLink:document.getElementById('program-brochure-link').value,list:programs},galeri:galleryItems,testimoni:{testimonials},updatedAt:new Date().toISOString()};
-    btn.disabled=true;btn.innerHTML=`<i class="fas fa-spinner fa-spin mr-2"></i> Memproses...`;log("Memulai komit...");
+    const c=getCfg(), btn=gId('btn-publish'); if(!c)return alert("Cek koneksi Github!");
+    const d={primary:gId('hex-primary').value,accent:gId('hex-accent').value,link:gId('hex-link').value,beranda:{daftarLink:gId('hero-link').value,cardHoverColor:gId('hex-card-hover').value,cards:homeCards},programs:{registerLink:gId('program-register-link').value,brochureLink:gId('program-brochure-link').value,list:programs},galeri:galleryItems,testimoni:{testimonials},updatedAt:new Date().toISOString()};
+    btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Proses...';
     try{
-        let sha=null; const gRes=await fetch(`https://api.github.com/repos/${r}/contents/public/theme.json`,{headers:{'Authorization':`token ${t}`}});
+        let sha=null; const gRes=await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/public/theme.json`,{headers:authHdr()});
         if(gRes.ok)sha=(await gRes.json()).sha;
-        const bData={message:"CMS: Update Tema Web",content:btoa(unescape(encodeURIComponent(JSON.stringify(d,null,2))))}; if(sha)bData.sha=sha;
-        const pRes=await fetch(`https://api.github.com/repos/${r}/contents/public/theme.json`,{method:'PUT',headers:{'Authorization':`token ${t}`,'Content-Type':'application/json'},body:JSON.stringify(bData)});
-        if(pRes.ok){log("✅ BERHASIL! Vercel memproses.");alert("Sukses! Tunggu 1-2 menit lalu refresh web.");}
-        else{const err=await pRes.json();log(`Gagal: ${err.message}`,true);alert("Gagal publish.");}
-    }catch(e){log(`Error: ${e.message}`,true);alert("Error jaringan.");}finally{btn.disabled=false;btn.innerHTML=`<i class="fas fa-cloud-upload-alt mr-2 text-xl"></i> Publish`;}
+        const body={message:"CMS: Update Web",content:btoa(unescape(encodeURIComponent(JSON.stringify(d,null,2))))}; if(sha)body.sha=sha;
+        const pRes=await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/public/theme.json`,{method:'PUT',headers:authHdr(),body:JSON.stringify(body)});
+        if(pRes.ok)showToast("Sukses Publish!");else alert("Gagal publish!");
+    }catch(e){}finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-cloud-upload-alt mr-2"></i> Simpan & Publish Tema';}
+}
+
+// ARTIKEL / BLOG LOGIC
+const safeSlug = t=>t.toString().toLowerCase().replace(/\s+/g,'-').replace(/[^\w\-]+/g,'').replace(/\-\-+/g,'-').replace(/^-+|-+$/g,'');
+function execCmd(c,v=null){document.execCommand(c,false,v);gId('editor').focus();}
+function insertLink(){const url=prompt("Link URL:");if(url)execCmd('createLink',url);}
+gId('editor').addEventListener('keydown',e=>{if(e.key==='Enter')document.execCommand('formatBlock',false,'p');});
+function saveSel(){const s=window.getSelection();if(s.getRangeAt&&s.rangeCount)savedEditorSelection=s.getRangeAt(0);}
+function restSel(){if(savedEditorSelection){const s=window.getSelection();s.removeAllRanges();s.addRange(savedEditorSelection);}}
+
+function toggleModal(id,sh){const m=gId(`${id}-modal`),b=gId(`${id}-box`);if(sh){m.classList.remove('hidden');setTimeout(()=>{b.classList.remove('scale-95','opacity-0');},10);}else{b.classList.add('scale-95','opacity-0');setTimeout(()=>m.classList.add('hidden'),200);}}
+function openInsertImageModal(){gId('editor').focus();saveSel();gId('inline-image-file').value='';gId('inline-image-url').value='';toggleModal('insert-image',true);}
+function closeInsertImageModal(){toggleModal('insert-image',false);}
+async function processInsertImage(){
+    const f=gId('inline-image-file'), btn=gId('btn-insert-img'), orig=btn.innerHTML; let url=gId('inline-image-url').value.trim();
+    if(f.files.length){
+        const c=getCfg();if(!c)return; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>'; btn.disabled=true;
+        try{
+            const b64=await new Promise(r=>{const rd=new FileReader();rd.onload=e=>r(e.target.result.split(',')[1]);rd.readAsDataURL(f.files[0]);});
+            const pth=`public/assets/uploads/${Date.now()}-inline-${f.files[0].name.replace(/[^a-zA-Z0-9.]/g,'-')}`;
+            const res=await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/${pth}`,{method:'PUT',headers:authHdr(),body:JSON.stringify({message:`Img inline`,content:b64})});
+            if(res.ok)url=`https://${c.user}.github.io/${c.repo.replace(c.user+'.github.io','')}/${pth.replace('public/','')}`.replace(/(https?:\/\/.*?)\/\//g,'$1/'); else throw Error();
+        }catch(e){showToast('Gagal unggah gambar','error');}finally{btn.innerHTML=orig;btn.disabled=false;}
+    }
+    if(!url)return showToast('Pilih gambar/URL','error');
+    closeInsertImageModal(); gId('editor').focus(); restSel(); document.execCommand('insertHTML',false,`<img src="${url}" alt="Gambar Artikel"/><br>`);
+}
+
+function openInsertYoutubeModal(){gId('editor').focus();saveSel();gId('inline-youtube-url').value='';toggleModal('insert-youtube',true);}
+function closeInsertYoutubeModal(){toggleModal('insert-youtube',false);}
+function processInsertYoutube(){
+    const url=gId('inline-youtube-url').value.trim(), m=url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+    if(m&&m[2].length===11){closeInsertYoutubeModal();gId('editor').focus();restSel();document.execCommand('insertHTML',false,`<br><iframe width="100%" height="315" src="https://www.youtube.com/embed/${m[2]}" frameborder="0" allowfullscreen style="border-radius:8px"></iframe><br>`);}else showToast('URL tidak valid','error');
+}
+
+async function handleArticleUpload(input,tgt){
+    const f=input.files[0], c=getCfg(); if(!f||!c)return;
+    const lbl=input.parentElement, orig=lbl.innerHTML; lbl.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
+    const r=new FileReader(); r.onload=async(e)=>{
+        try{
+            const b64=e.target.result.split(',')[1], fn=`${Date.now()}_${f.name.replace(/[^a-zA-Z0-9.\-]/g,'_')}`;
+            const res=await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/public/assets/uploads/${fn}`,{method:'PUT',headers:authHdr(),body:JSON.stringify({message:`Upload cover`,content:b64})});
+            if(res.ok){gId(tgt).value=`/assets/uploads/${fn}`;showToast("Cover diunggah!");}else throw Error();
+        }catch(e){showToast("Gagal upload","error");}finally{lbl.innerHTML=orig;}
+    };r.readAsDataURL(f);
+}
+
+async function fetchArticlesList(){
+    const c=getCfg();if(!c)return;
+    gId('article-list-body').innerHTML=`<tr><td colspan="5" class="p-6 text-center text-slate-400"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
+    try{
+        const r=await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/public/data/blog.json`,{headers:authHdr(),cache:'no-store'});
+        if(r.ok){const d=await r.json();let p=JSON.parse(decodeURIComponent(escape(atob(d.content))));if(!p.trash)p.trash=[];cachedBlogData=p;blogFileSha=d.sha;}
+        else if(r.status===404)cachedBlogData={items:[],trash:[]};
+        renderArticleList(currentListTab);
+    }catch(e){gId('article-list-body').innerHTML=`<tr><td colspan="5" class="p-6 text-center text-red-500">Gagal memuat</td></tr>`;}
+}
+
+function renderArticleList(tab){
+    currentListTab=tab;
+    gId('tab-published').className=tab==='published'?"px-3 py-1 rounded bg-white shadow-sm text-emerald-700":"px-3 py-1 rounded text-slate-500 hover:text-slate-700";
+    gId('tab-trash').className=tab==='trash'?"px-3 py-1 rounded bg-white shadow-sm text-red-600":"px-3 py-1 rounded text-slate-500 hover:text-slate-700";
+    const lst=tab==='published'?cachedBlogData.items:cachedBlogData.trash;
+    if(!lst||!lst.length)return gId('article-list-body').innerHTML=`<tr><td colspan="5" class="p-6 text-center text-slate-400">Belum ada artikel.</td></tr>`;
+    gId('article-list-body').innerHTML=lst.map((p,i)=>{
+        const s=`'${safeSlug(p.title).replace(/'/g,"\\'")}'`;
+        const acts=tab==='published'?`<button onclick="editArticle(${s})" class="bg-emerald-50 text-emerald-600 p-1.5 rounded mr-1"><i class="fas fa-pencil-alt"></i></button><button onclick="confirmAction('trash',${s})" class="bg-red-50 text-red-500 p-1.5 rounded"><i class="fas fa-trash"></i></button>`:`<button onclick="confirmAction('restore',${s})" class="bg-blue-50 text-blue-600 p-1.5 rounded mr-1"><i class="fas fa-undo"></i></button><button onclick="confirmAction('delete',${s})" class="bg-gray-100 text-gray-500 p-1.5 rounded"><i class="fas fa-times"></i></button>`;
+        return `<tr class="hover:bg-slate-50"><td class="p-3 text-center text-slate-400 text-xs">${i+1}</td><td class="p-3"><div class="font-bold text-slate-800 line-clamp-1">${p.title}</div></td><td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] bg-slate-100">${p.category||'Lain'}</span></td><td class="p-3 text-slate-500 text-xs whitespace-nowrap">${p.date}</td><td class="p-3 text-right whitespace-nowrap">${acts}</td></tr>`;
+    }).join('');
+}
+
+function editArticle(slug){
+    const a=cachedBlogData.items.find(x=>safeSlug(x.title)===slug);if(!a)return;
+    gId('post-title').value=a.title; gId('post-category').value=a.category; gId('post-cover-url').value=a.thumbnail; gId('editor').innerHTML=a.content;
+    editingOriginalSlug=slug; gId('publish-text').innerText="Update Artikel"; gId('btn-cancel-edit').classList.remove('hidden'); switchArticleView('tulis');
+}
+
+function cancelEdit(){editingOriginalSlug=null;['post-title','post-category','post-cover-url'].forEach(id=>gId(id).value='');gId('editor').innerHTML='';gId('publish-text').innerText="Publish Artikel";gId('btn-cancel-edit').classList.add('hidden');switchArticleView('daftar');}
+
+function showConfirmModal(t,m,fn){gId('confirm-title').innerText=t;gId('confirm-msg').innerText=m;gId('confirm-yes-btn').className="px-4 py-1.5 text-white rounded text-sm font-bold bg-red-600";gId('confirm-yes-btn').onclick=()=>{closeConfirm();fn();};toggleModal('confirm',true);}
+function closeConfirm(){toggleModal('confirm',false);}
+function confirmAction(type,s){
+    if(type==='trash')showConfirmModal('Buang','Yakin pindah ke tempat sampah?',()=>procAct(s,'trash'));
+    if(type==='restore')showConfirmModal('Pulihkan','Yakin kembalikan artikel?',()=>procAct(s,'restore'));
+    if(type==='delete')showConfirmModal('Hapus Permanen','Yakin hapus selamanya?',()=>procAct(s,'delete'));
+}
+
+async function procAct(slug,type){
+    const c=getCfg();if(!c)return; gId('article-list-body').innerHTML=`<tr><td colspan="5" class="p-6 text-center text-emerald-600"><i class="fas fa-spinner fa-spin"></i> Memproses...</td></tr>`;
+    try{
+        const b=cachedBlogData, s=t=>safeSlug(t.title)===slug;
+        if(type==='trash'){const i=b.items.findIndex(s);if(i>-1)b.trash.unshift(b.items.splice(i,1)[0]);}
+        else if(type==='restore'){const i=b.trash.findIndex(s);if(i>-1)b.items.unshift(b.trash.splice(i,1)[0]);}
+        else{const i=b.trash.findIndex(s);if(i>-1)b.trash.splice(i,1);}
+        await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/public/data/blog.json`,{method:'PUT',headers:authHdr(),body:JSON.stringify({message:`Action ${type}: ${slug}`,content:btoa(unescape(encodeURIComponent(JSON.stringify(b,null,2)))),sha:blogFileSha})});
+        showToast('Berhasil!');fetchArticlesList();
+    }catch(e){showToast('Gagal','error');fetchArticlesList();}
+}
+
+async function publishArticle(){
+    const tit=gId('post-title').value.trim(), cat=gId('post-category').value.trim()||'Lain-Lain', cov=gId('post-cover-url').value.trim(), htm=gId('editor').innerHTML;
+    if(!tit||!htm||htm==='<p><br></p>')return showToast('Judul & Isi wajib diisi!','error'); const c=getCfg();if(!c)return;
+    const btn=gId('btn-publish-artikel'), orig=btn.innerHTML; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Proses...'; btn.disabled=true;
+    try{
+        const slug=safeSlug(tit), b=cachedBlogData, exc=gId('editor').innerText.substring(0,120).replace(/\n/g,' ')+'...';
+        const newA={id:Date.now(),title:tit,category:cat,date:new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}),thumbnail:cov,excerpt:exc,content:htm};
+        const rm=b.items.findIndex(p=>safeSlug(p.title)===(editingOriginalSlug||slug));
+        if(rm>-1){newA.date=b.items[rm].date;b.items.splice(rm,1);} b.items.unshift(newA);
+        
+        await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/public/data/blog.json`,{method:'PUT',headers:authHdr(),body:JSON.stringify({message:`Artikel: ${tit}`,content:btoa(unescape(encodeURIComponent(JSON.stringify(b,null,2)))),sha:blogFileSha})});
+        
+        // Buat file HTML Cangkang untuk dibaca Bot WhatsApp
+        const htmlTpl=`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${tit} - Kampoeng Quran</title><meta property="og:title" content="${tit}"><meta property="og:description" content="${exc}"><meta property="og:image" content="${cov.startsWith('http')?cov:('https://'+c.user+'.github.io/'+c.repo+cov)}"><meta property="og:type" content="article"><meta http-equiv="refresh" content="0; url=../blog.html?artikel=${slug}"><script>window.location.replace("../blog.html?artikel=${slug}");<\/script></head><body style="text-align:center;padding-top:50px"><p>Mengalihkan...</p></body></html>`;
+        
+        let cSha=null; try{const r=await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/public/blog/${slug}.html`,{headers:authHdr()});if(r.ok)cSha=(await r.json()).sha;}catch(e){}
+        const shBody={message:`Cangkang: ${tit}`,content:btoa(unescape(encodeURIComponent(htmlTpl)))}; if(cSha)shBody.sha=cSha;
+        await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/public/blog/${slug}.html`,{method:'PUT',headers:authHdr(),body:JSON.stringify(shBody)});
+
+        showToast(editingOriginalSlug?'Diperbarui!':'Diterbitkan!'); cancelEdit(); fetchArticlesList();
+    }catch(e){showToast(`Gagal: ${e.message}`,'error');}finally{btn.innerHTML=orig;btn.disabled=false;}
 }
 </script>
 </body>
