@@ -544,7 +544,7 @@ function ViewTestimoni() {
                 <img 
                   src={item.img} 
                   alt={item.name} 
-                  className="w-12 h-12 rounded-full object-cover mr-4 border-2 border-green-200"
+                  className="w-12 h-12 rounded-full object-cover mr-4 border-2 border-green-200 shadow-sm"
                 />
                 <div>
                   <h4 className="font-bold text-slate-800">{item.name}</h4>
@@ -633,6 +633,32 @@ function ViewArtikel() {
 }
 
 function ViewKontak() {
+  const [showNotif, setShowNotif] = useState(false);
+
+  const handleKirimEmail = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const nama = form.nama.value;
+    const whatsapp = form.whatsapp.value;
+    const pesan = form.pesan.value;
+
+    // Mempersiapkan format data yang aman untuk link mailto
+    const subject = encodeURIComponent(`Pertanyaan Web: ${nama}`);
+    const body = encodeURIComponent(`Nama Lengkap: ${nama}\nNomor WhatsApp: ${whatsapp}\n\nIsi Pesan:\n${pesan}`);
+    
+    // Buka aplikasi email pengguna secara langsung (aman dari blokir browser)
+    window.location.href = `mailto:kampoengqurancendekia@gmail.com?subject=${subject}&body=${body}`;
+
+    // Tampilkan notifikasi sukses yang cantik
+    setShowNotif(true);
+    form.reset(); // Kosongkan formulir setelah dikirim
+
+    // Hilangkan notifikasi otomatis setelah 6 detik
+    setTimeout(() => {
+      setShowNotif(false);
+    }, 6000);
+  };
+
   return (
     <div className="w-full py-16 bg-white animate-fade-in">
       <div className="max-w-7xl mx-auto px-4">
@@ -685,10 +711,11 @@ function ViewKontak() {
             </div>
           </div>
 
-          {/* Form (Sekarang berfungsi dengan mailto) */}
+          {/* Form (Sekarang menggunakan JavaScript agar aman dari blokir browser) */}
           <div className="bg-slate-50 p-8 rounded-2xl border border-slate-100 shadow-sm">
             <h3 className="text-2xl font-bold text-slate-800 mb-6">Kirim Pesan</h3>
-            <form action="mailto:kampoengqurancendekia@gmail.com" method="post" encType="text/plain" className="space-y-4">
+            
+            <form onSubmit={handleKirimEmail} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
                 <input type="text" name="nama" required className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all" placeholder="Masukkan nama" />
@@ -701,11 +728,25 @@ function ViewKontak() {
                 <label className="block text-sm font-medium text-slate-700 mb-1">Pesan / Pertanyaan</label>
                 <textarea rows="4" name="pesan" required className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all" placeholder="Tulis pesan Anda di sini..."></textarea>
               </div>
-              <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors">
-                Kirim Pesan via Email
+              
+              <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors flex justify-center items-center">
+                <Mail size={18} className="mr-2"/> Kirim Pesan via Email
               </button>
-              <p className="text-xs text-slate-500 text-center mt-2">*Akan membuka aplikasi email Anda.</p>
             </form>
+
+            {/* Kotak Notifikasi Sukses */}
+            {showNotif && (
+              <div className="mt-6 p-4 bg-green-100 border border-green-300 rounded-lg animate-fade-in flex items-start">
+                <div className="text-green-600 mr-3 mt-0.5">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div>
+                  <h4 className="text-green-800 font-bold text-sm">Terima kasih sudah menghubungi kami!</h4>
+                  <p className="text-green-700 text-sm mt-1">Pesan Anda sedang dialihkan. Silakan tekan tombol "Kirim" pada aplikasi email Anda yang baru saja terbuka.</p>
+                </div>
+              </div>
+            )}
+            
           </div>
         </div>
       </div>
