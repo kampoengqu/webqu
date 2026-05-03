@@ -1,81 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, Phone, ChevronLeft, ChevronRight, MessageCircle, BookOpen, Lightbulb, Home, Download, MapPin, Mail, UserCircle, Share2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Menu, X, Phone, ChevronLeft, ChevronRight, MessageCircle, BookOpen, Lightbulb, Home, Download, MapPin, Mail } from 'lucide-react';
 
-const DiscussionEmbed = ({ shortname, config }) => {
-  useEffect(() => {
-    window.disqus_config = function () {
-      this.page.url = config.url; 
-      this.page.identifier = config.identifier;
-      this.page.title = config.title;
-      this.language = config.language || 'id';
-    };
-    const loadDisqus = () => {
-      const disqusContainer = document.getElementById('disqus_thread');
-      if (disqusContainer && !window.DISQUS) disqusContainer.innerHTML = ''; 
-      if (window.DISQUS) {
-        window.DISQUS.reset({ reload: true, config: window.disqus_config });
-      } else {
-        const d = document;
-        if (!d.getElementById('disqus-embed-script')) {
-          const s = d.createElement('script');
-          s.id = 'disqus-embed-script';
-          s.src = `https://${shortname}.disqus.com/embed.js`;
-          s.setAttribute('data-timestamp', +new Date());
-          (d.head || d.body).appendChild(s);
-        }
-      }
-    };
-    const timer = setTimeout(loadDisqus, 500);
-    return () => clearTimeout(timer);
-  }, [shortname, config.identifier, config.url, config.title, config.language]);
-
-  return <div className="w-full mt-4"><div id="disqus_thread" className="min-h-[300px] w-full"></div></div>;
-};
-
-const CommentCount = ({ shortname, config, children }) => {
-  useEffect(() => {
-    const initCount = () => {
-      if (window.DISQUSWIDGETS) {
-        window.DISQUSWIDGETS.getCount({ reset: true });
-      } else {
-        const d = document, scriptId = 'dsq-count-scr';
-        if (!d.getElementById(scriptId)) {
-          const s = d.createElement('script');
-          s.src = `https://${shortname}.disqus.com/count.js`; s.id = scriptId; s.async = true;
-          (d.head || d.body).appendChild(s);
-        }
-      }
-    };
-    const timer = setTimeout(initCount, 500);
-    return () => clearTimeout(timer);
-  }, [shortname, config.identifier]);
-  return <span className="disqus-comment-count" data-disqus-identifier={config.identifier}>{children || '0'}</span>;
-};
-
-// PERBAIKAN 1: Menggunakan Shortname asli Disqus milikmu
-const DISQUS_SHORTNAME = 'https-webqu-peach-vercel-app'; 
-
-// --- DATA DUMMY (Fallback jika gagal ambil dari Github/CMS) ---
-const articleImages = [
-  "https://images.unsplash.com/photo-1543857778-c4a1a3e0b2eb?auto=format&fit=crop&q=80&w=400&h=250", 
-  "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=400&h=250", 
-  "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&q=80&w=400&h=250"
-];
-
-const dummyArticles = Array.from({ length: 6 }, (_, i) => ({
-  id: i + 1, title: `Membangun Generasi Qur'ani di Era Digital (Bagian ${i + 1})`,
-  category: "Tips & Inspirasi", author: "Admin Kampoeng",
-  excerpt: `Pesantren Kampoeng Quran terus berinovasi dalam memadukan kurikulum diniyah dan perkembangan teknologi terkini untuk santri...`,
-  date: `${i + 1} Nov 2023`, thumbnail: articleImages[i % articleImages.length],
-  content: `
-    <p>Pendidikan karakter di era digital saat ini menghadapi tantangan yang tidak pernah terbayangkan sebelumnya. Arus informasi yang begitu deras seringkali membawa dampak negatif jika tidak diimbangi dengan pondasi keimanan yang kuat. Di Pesantren Kampoeng Quran, kami menyadari sepenuhnya kondisi ini.</p>
-    <p>Oleh karena itu, pendekatan yang kami terapkan tidak sekadar melarang penggunaan gadget dan teknologi, melainkan mengajarkan adab, batasan, dan literasi digital yang Islami. Para santri dibekali dengan pemahaman bahwa internet adalah alat (tools) yang harus dikendalikan oleh mereka, bukan sebaliknya.</p>
-  `
-}));
-
-// Tambahkan data dummy galeri agar lebih dari 12 untuk menguji paginasi
+// --- DATA DUMMY ---
 const dummyGallery = Array.from({ length: 25 }, (_, i) => ({
-  url: `https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800&h=600&sig=${i}`, // Menggunakan sig agar gambar unik jika API mendukung, atau biarkan sama untuk dummy
+  url: `https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800&h=600&sig=${i}`,
   title: `Kegiatan Pesantren ${i + 1}`,
   caption: `Deskripsi singkat untuk kegiatan pesantren ke-${i + 1} di Kampoeng Quran.`
 }));
@@ -97,79 +25,22 @@ export default function App() {
   const [currentView, setCurrentView] = useState('Beranda');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState(null);
-  
-  // STATE ARTIKEL DINAMIS DARI CMS
-  const [articlesData, setArticlesData] = useState([]);
-  const [selectedArticle, setSelectedArticle] = useState(null);
-  const [isLoadingArticles, setIsLoadingArticles] = useState(true);
-
   const [lightboxData, setLightboxData] = useState({ isOpen: false, currentIndex: 0 });
 
   const navItems = ['Beranda', 'Tentang', 'Program', 'Galeri', 'Testimoni', 'Artikel', 'Kontak'];
 
-  // Fungsi pembuat slug (sama dengan di CMS) untuk pencocokan URL
-  const createSafeSlug = (title) => title.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+|-+$/g, '');
-
-  useEffect(() => {
-    // 1. Mengambil data artikel dari file blog.json yang dihasilkan CMS
-    const fetchArticles = async () => {
-      try {
-        // Menghindari fetch relative path di dalam environment Sandbox/Blob untuk mencegah TypeError
-        if (window.location.protocol === 'blob:' || window.location.protocol === 'data:' || window.location.origin === 'null') {
-           throw new Error("Sandbox environment");
-        }
-        
-        const res = await fetch('/data/blog.json');
-        if (res.ok) {
-          const data = await res.json();
-          setArticlesData(data.items || []);
-          handleRouting(data.items || []);
-        } else {
-          setArticlesData(dummyArticles);
-          handleRouting(dummyArticles);
-        }
-      } catch (e) {
-        // Menggunakan data dummy secara diam-diam (tanpa console.error) saat dijalankan di Canvas
-        setArticlesData(dummyArticles);
-        handleRouting(dummyArticles);
-      }
-      setIsLoadingArticles(false);
-    };
-
-    // 2. Mengecek apakah ada parameter "?artikel=slug" di URL (Redirect dari WhatsApp)
-    const handleRouting = (articlesList) => {
-      const params = new URLSearchParams(window.location.search);
-      const slug = params.get('artikel');
-      
-      if (slug) {
-        const foundArticle = articlesList.find(a => createSafeSlug(a.title) === slug);
-        if (foundArticle) {
-          setCurrentView('DetailArtikel');
-          setSelectedArticle(foundArticle);
-        }
-      }
-    };
-
-    fetchArticles();
-  }, []);
-
   const changeView = (view, data = null) => {
+    // Pengalihan khusus untuk Artikel agar pindah ke file HTML terpisah
+    if (view === 'Artikel') {
+      window.location.href = '/blog.html';
+      return;
+    }
+    
     setCurrentView(view);
     
     if (view === 'DetailProgram' && data) {
       setSelectedProgram(data);
     } 
-    if (view === 'DetailArtikel' && data) {
-      setSelectedArticle(data);
-      // Ubah URL secara diam-diam agar jika di-copy langsung dari browser bar tetap ter-share dengan benar
-      const slug = createSafeSlug(data.title);
-      window.history.pushState({}, '', `?artikel=${slug}`);
-    } else if (['Beranda', 'Tentang', 'Program', 'Galeri', 'Testimoni', 'Artikel', 'Kontak'].includes(view)) {
-      // Bersihkan parameter ?artikel dari URL jika user pindah ke halaman utama lain
-      const url = new URL(window.location);
-      url.searchParams.delete('artikel');
-      window.history.pushState({}, '', url);
-    }
     
     setIsMenuOpen(false); 
     window.scrollTo(0, 0); 
@@ -227,8 +98,6 @@ export default function App() {
         {currentView === 'Program' && <ViewProgram changeView={changeView} />}
         {currentView === 'Galeri' && <ViewGaleri onImageClick={openLightbox} />}
         {currentView === 'Testimoni' && <ViewTestimoni />}
-        {currentView === 'Artikel' && <ViewArtikel changeView={changeView} articlesData={articlesData} isLoading={isLoadingArticles} />}
-        {currentView === 'DetailArtikel' && <ViewDetailArtikel article={selectedArticle} changeView={changeView} />}
         {currentView === 'Kontak' && <ViewKontak />}
         {currentView === 'DetailProgram' && <ViewDetailProgram program={selectedProgram} changeView={changeView} />}
       </main>
@@ -433,145 +302,6 @@ function ViewTestimoni() {
               </div>
             </div>
           ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ViewArtikel({ changeView, articlesData, isLoading }) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
-  
-  if (isLoading) {
-     return <div className="w-full py-20 text-center text-slate-500 animate-pulse">Memuat artikel...</div>;
-  }
-
-  const totalPages = Math.ceil(articlesData.length / itemsPerPage);
-  const currentArticles = articlesData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
-  return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-16 animate-fade-in">
-      <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold text-green-700 mb-4">Kabar & Artikel</h2><div className="w-24 h-1 bg-orange-500 mx-auto rounded-full mb-4"></div>
-        <p className="text-slate-500">Informasi terbaru seputar kegiatan pesantren dan tulisan Islami.</p>
-      </div>
-      
-      {articlesData.length === 0 ? (
-         <div className="text-center text-slate-500 py-10 bg-white rounded-2xl border border-slate-100">Belum ada artikel yang dipublikasikan.</div>
-      ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {currentArticles.map((article) => (
-            <div key={article.id} className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col h-full border border-slate-100">
-              
-              {/* PENAMBAHAN BADGE KATEGORI */}
-              <div className="relative">
-                <img src={article.thumbnail || article.image} alt={article.title} className="w-full h-48 object-cover" />
-                <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-emerald-700 shadow-sm border border-emerald-100">
-                  {article.category || 'Tips & Inspirasi'}
-                </div>
-              </div>
-
-              <div className="p-6 flex-grow flex flex-col">
-                <div className="flex items-center justify-between text-sm text-slate-500 mb-4">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center border border-emerald-200">
-                       <UserCircle size={16} className="text-emerald-600" />
-                    </div>
-                    <span className="font-semibold text-slate-700">{article.author || 'Admin'}</span>
-                  </div>
-                  <span className="text-orange-500 font-semibold">{article.date}</span>
-                </div>
-                <h3 className="text-xl font-bold text-slate-800 mb-3 leading-snug">{article.title}</h3>
-                <p className="text-slate-600 text-sm mb-6 flex-grow">{article.excerpt}</p>
-                <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
-                  <button onClick={() => changeView('DetailArtikel', article)} className="text-green-700 font-bold text-left hover:text-orange-500 transition-colors">Baca Selengkapnya &rarr;</button>
-                  <div className="text-slate-400 text-sm flex items-center bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                    <MessageCircle size={14} className="mr-1.5" />
-                    <CommentCount shortname={DISQUS_SHORTNAME} config={{ url: `https://webqu-peach.vercel.app/artikel/${article.id}`, identifier: `article-${article.id}`, title: article.title }}>0</CommentCount>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center space-x-2 mt-12">
-          <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className={`p-2 rounded-lg ${currentPage === 1 ? 'text-slate-300' : 'text-green-700 hover:bg-green-50'}`}><ChevronLeft size={24} /></button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-            <button key={page} onClick={() => setCurrentPage(page)} className={`w-10 h-10 rounded-lg font-bold transition-colors ${currentPage === page ? 'bg-green-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}>{page}</button>
-          ))}
-          <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className={`p-2 rounded-lg ${currentPage === totalPages ? 'text-slate-300' : 'text-green-700 hover:bg-green-50'}`}><ChevronRight size={24} /></button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function ViewDetailArtikel({ article, changeView }) {
-  if (!article) return null;
-  return (
-    <div className="w-full animate-fade-in bg-white pb-16 pt-8">
-      <div className="max-w-3xl mx-auto px-6 md:px-10">
-        <button onClick={() => changeView('Artikel')} className="flex items-center text-green-700 hover:text-orange-500 font-semibold mb-8 transition-colors group"><ChevronLeft size={20} className="mr-1 transform group-hover:-translate-x-1 transition-transform" /> Kembali ke Daftar Artikel</button>
-        
-        {/* Kategori Badge di Detail */}
-        <div className="inline-block bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full mb-4 border border-emerald-200">{article.category || 'Tips & Inspirasi'}</div>
-
-        <h1 className="text-3xl md:text-5xl font-bold text-slate-800 mb-4 leading-tight">{article.title}</h1>
-        <div className="flex items-center text-slate-500 mb-8 border-b border-slate-100 pb-4"><span className="text-orange-500 font-semibold mr-4">{article.date}</span><span>Ditulis oleh <strong>{article.author || 'Admin'}</strong></span></div>
-        
-        <img src={article.thumbnail || article.image} alt={article.title} className="w-full h-[300px] md:h-[500px] object-cover rounded-2xl mb-10 shadow-md" />
-        
-        {/* Fitur Audio Player (Mendukung file audio dari CMS) */}
-        {article.audio && (
-           <div className="mb-8 w-full bg-slate-50 p-4 rounded-xl border border-slate-200">
-             <audio controls className="w-full outline-none">
-               <source src={article.audio} type="audio/mpeg" />
-               Browser Anda tidak mendukung elemen pemutar audio.
-             </audio>
-           </div>
-        )}
-
-        {/* Konten Artikel dirender sebagai HTML asli (Dari Text Editor CMS) */}
-        <div className="prose prose-lg max-w-none text-slate-700 space-y-6 text-justify" dangerouslySetInnerHTML={{ __html: article.content }}></div>
-        
-        {/* BAGIAN SHARE SOCIAL MEDIA (Ditambahkan sesuai referensi) */}
-        <div className="mt-16 pt-8 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center mb-12 bg-slate-50 p-6 rounded-2xl">
-          <div className="flex items-center text-lg font-bold text-slate-800 mb-6 md:mb-0">
-             <Share2 className="mr-2 text-emerald-600" size={24} /> Bagikan Artikel Ini:
-          </div>
-          <div className="flex items-center space-x-3 sm:space-x-4">
-            
-            {/* Tombol WhatsApp */}
-            <a href={`https://wa.me/?text=${encodeURIComponent(article.title + ' - ' + window.location.href)}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-md" title="Bagikan ke WhatsApp">
-               <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.964 9.964 0 001.333 4.993L2 22l5.233-1.237a9.994 9.994 0 004.779 1.217h.004c5.505 0 9.988-4.478 9.989-9.984 0-2.669-1.037-5.176-2.926-7.066A9.94 9.94 0 0012.012 2zm5.826 14.21c-.246.696-1.438 1.341-1.986 1.411-.46.059-1.045.132-3.344-.82-2.94-1.217-4.81-4.225-4.956-4.422-.146-.197-1.183-1.576-1.183-3.003 0-1.427.738-2.133 1.002-2.428.264-.296.574-.37.766-.37.191 0 .383.002.551.01.197.01.464-.075.727.562.274.664.935 2.276 1.017 2.443.082.167.137.362.027.587-.11.226-.164.363-.328.555-.164.192-.345.419-.493.575-.164.175-.338.368-.148.667.191.299.849 1.365 1.82 2.221 1.255 1.107 2.298 1.448 2.599 1.589.301.141.476.12.656-.098.181-.219.782-.907.99-1.218.208-.311.416-.258.69-.153.274.104 1.733.818 2.035.965.301.146.503.219.574.34.071.121.071.706-.175 1.402z"/></svg>
-            </a>
-            
-            {/* Tombol Facebook */}
-            <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-md" title="Bagikan ke Facebook">
-               <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            </a>
-            
-            {/* Tombol X (Twitter) */}
-            <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(window.location.href)}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform shadow-md" title="Bagikan ke X (Twitter)">
-               <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.008 3.827H5.078z"/></svg>
-            </a>
-            
-            {/* Tombol Salin Tautan */}
-            <button onClick={() => {navigator.clipboard.writeText(window.location.href); alert('Tautan artikel berhasil disalin!');}} className="w-12 h-12 rounded-full bg-white border border-slate-300 text-slate-700 flex items-center justify-center hover:scale-110 transition-transform shadow-sm hover:bg-slate-100" title="Salin Tautan">
-               <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M13.791 10.533c.809-.809 2.119-.809 2.928 0l3.536 3.535c.809.809.809 2.119 0 2.928l-3.536 3.536c-.809.809-2.119.809-2.928 0a.75.75 0 011.061-1.061c.223.223.584.223.807 0l3.536-3.536c.223-.223.223-.584 0-.807l-3.536-3.535c-.223-.223-.584-.223-.807 0a.75.75 0 01-1.061-1.06z"/><path d="M10.209 13.467c-.809.809-2.119.809-2.928 0L3.745 9.932c-.809-.809-.809-2.119 0-2.928l3.536-3.536c.809-.809 2.119-.809 2.928 0a.75.75 0 01-1.061 1.061c-.223-.223-.584-.223-.807 0L4.805 8.064c-.223.223-.223.584 0 .807l3.536 3.535c.223.223.584.223.807 0a.75.75 0 011.061 1.061z"/><path d="M8.404 15.596a.75.75 0 010-1.061l7.192-7.192a.75.75 0 011.061 1.061l-7.192 7.192a.75.75 0 01-1.061 0z"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <div className="bg-slate-50 p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-sm mt-8">
-          <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center"><MessageCircle className="mr-3 text-green-600" />Tinggalkan Komentar</h3>
-          <div className="bg-white p-4 rounded-xl shadow-inner w-full min-h-[300px]">
-             <DiscussionEmbed shortname={DISQUS_SHORTNAME} config={{ url: `https://webqu-peach.vercel.app/artikel/${article.id}`, identifier: `article-${article.id}`, title: article.title, language: 'id' }} />
-          </div>
         </div>
       </div>
     </div>
