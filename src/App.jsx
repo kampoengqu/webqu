@@ -1,45 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, ChevronLeft, ChevronRight, MessageCircle, BookOpen, Lightbulb, Home, Download, MapPin, Mail, UserCircle } from 'lucide-react';
 
-// --- KOMPONEN DISQUS KUSTOM (MENGGUNAKAN UNIVERSAL CODE ANTI-BLANK) ---
+// --- KOMPONEN DISQUS KUSTOM (DIADAPTASI DARI KODE HTML YANG BERHASIL) ---
 const DiscussionEmbed = ({ shortname, config }) => {
   useEffect(() => {
-    // Siapkan konfigurasi untuk artikel yang sedang dibuka
-    window.disqus_config = function () {
-      this.page.url = config.url; 
-      this.page.identifier = config.identifier;
-      this.page.title = config.title;
-      this.language = config.language || 'id';
-    };
-
     const loadDisqus = () => {
       // Pastikan ada kotak penampung
-      const disqusContainer = document.getElementById('disqus_thread');
-      if (!disqusContainer) return;
+      if (!document.getElementById('disqus_thread')) return;
 
-      // Jika Disqus sudah pernah termuat, reset ulang untuk artikel baru
-      if (window.DISQUS) {
+      // Logika persis seperti di HTML-mu
+      if (typeof window.DISQUS !== 'undefined') {
         window.DISQUS.reset({
           reload: true,
-          config: window.disqus_config
+          config: function () {
+            this.page.identifier = config.identifier;
+            this.page.url = config.url;
+            this.page.title = config.title;
+            this.language = config.language || 'id';
+          }
         });
       } else {
-        // Jika ini pertama kali dimuat, panggil script bawaan Disqus
-        const d = document;
-        const scriptId = 'disqus-embed-script';
-        if (!d.getElementById(scriptId)) {
-          const s = d.createElement('script');
-          s.id = scriptId;
-          s.src = `https://${shortname}.disqus.com/embed.js`;
-          s.setAttribute('data-timestamp', +new Date());
-          s.async = true;
-          (d.head || d.body).appendChild(s);
-        }
+        window.disqus_config = function () {
+          this.page.identifier = config.identifier;
+          this.page.url = config.url;
+          this.page.title = config.title;
+          this.language = config.language || 'id';
+        };
+        const d = document, s = d.createElement('script');
+        s.id = 'disqus-embed-script';
+        s.src = `https://${shortname}.disqus.com/embed.js`;
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
       }
     };
 
-    // Jeda sedikit untuk memastikan div React terpasang sempurna di layar
-    const timer = setTimeout(loadDisqus, 300);
+    // Jeda 500ms persis seperti di kode HTML-mu agar DOM 100% siap
+    const timer = setTimeout(loadDisqus, 500);
     return () => clearTimeout(timer);
   }, [shortname, config.identifier, config.url, config.title, config.language]);
 
@@ -54,11 +50,10 @@ const DiscussionEmbed = ({ shortname, config }) => {
 const CommentCount = ({ shortname, config, children }) => {
   useEffect(() => {
     const initCount = () => {
-      if (window.DISQUSWIDGETS) {
+      if (typeof window.DISQUSWIDGETS !== 'undefined') {
         window.DISQUSWIDGETS.getCount({ reset: true });
       } else {
-        const d = document;
-        const scriptId = 'dsq-count-scr';
+        const d = document, scriptId = 'dsq-count-scr';
         if (!d.getElementById(scriptId)) {
           const s = d.createElement('script');
           s.src = `https://${shortname}.disqus.com/count.js`;
