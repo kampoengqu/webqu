@@ -1,49 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Phone, ChevronLeft, ChevronRight, MessageCircle, BookOpen, Lightbulb, Home, Download, MapPin, Mail, UserCircle } from 'lucide-react';
 
-// --- KOMPONEN DISQUS KUSTOM (Tanpa Ketergantungan Eksternal) ---
+// --- KOMPONEN DISQUS KUSTOM (MENGGUNAKAN UNIVERSAL CODE) ---
 const DiscussionEmbed = ({ shortname, config }) => {
   useEffect(() => {
+    // Definisi konfigurasi global sesuai instruksi Universal Code
+    window.disqus_config = function () {
+      this.page.url = config.url; 
+      this.page.identifier = config.identifier;
+      this.page.title = config.title;
+    };
+
     if (window.DISQUS) {
+      // Jika Disqus sudah pernah dimuat (user pindah artikel), cukup reset saja
       window.DISQUS.reset({
         reload: true,
-        config: function () {
-          this.page.identifier = config.identifier;
-          this.page.url = config.url;
-          this.page.title = config.title;
-          this.language = config.language || 'id';
-        }
+        config: window.disqus_config
       });
     } else {
-      window.disqus_config = function () {
-        this.page.url = config.url;
-        this.page.identifier = config.identifier;
-        this.page.title = config.title;
-        this.language = config.language || 'id';
-      };
-      const script = document.createElement('script');
-      script.src = `https://${shortname}.disqus.com/embed.js`;
-      script.setAttribute('data-timestamp', +new Date());
-      (document.head || document.body).appendChild(script);
+      // Jika pertama kali dimuat, jalankan Universal Code persis seperti instruksi
+      const d = document;
+      const s = d.createElement('script');
+      s.src = `https://${shortname}.disqus.com/embed.js`;
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
     }
-  }, [shortname, config.identifier, config.url, config.title, config.language]);
+  }, [shortname, config.identifier, config.url, config.title]);
 
-  return <div id="disqus_thread" className="w-full min-h-[200px]"></div>;
+  return (
+    <div className="w-full">
+      <div id="disqus_thread" className="min-h-[300px]"></div>
+    </div>
+  );
 };
 
+// --- KOMPONEN COMMENT COUNT KUSTOM (MENGGUNAKAN UNIVERSAL CODE) ---
 const CommentCount = ({ shortname, config, children }) => {
   useEffect(() => {
-    const scriptId = 'dsq-count-scr';
-    if (!document.getElementById(scriptId)) {
-      const script = document.createElement('script');
-      script.src = `https://${shortname}.disqus.com/count.js`;
-      script.id = scriptId;
-      script.async = true;
-      (document.head || document.body).appendChild(script);
-    } else if (window.DISQUSWIDGETS) {
+    if (window.DISQUSWIDGETS) {
       window.DISQUSWIDGETS.getCount({ reset: true });
+    } else {
+      const d = document;
+      const scriptId = 'dsq-count-scr';
+      if (!d.getElementById(scriptId)) {
+        const s = d.createElement('script');
+        s.src = `https://${shortname}.disqus.com/count.js`;
+        s.id = scriptId;
+        s.async = true;
+        (d.head || d.body).appendChild(s);
+      }
     }
-  }, [shortname]);
+  }, [shortname, config.identifier]);
 
   return (
     <span className="disqus-comment-count" data-disqus-identifier={config.identifier}>
