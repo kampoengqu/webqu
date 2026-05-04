@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Menu, X, Phone, ChevronLeft, ChevronRight, MessageCircle, 
-  BookOpen, Lightbulb, Home, Download, MapPin, Mail, 
-  Facebook, Instagram, Youtube, Star 
+  BookOpen, Lightbulb, Home, Download, MapPin, Mail, Star 
 } from 'lucide-react';
+
+// --- SVG IKON SOSIAL MEDIA MANUAL (Karena Lucide menghapus ikon brand) ---
+const FacebookIcon = ({ size = 24, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+);
+const InstagramIcon = ({ size = 24, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+);
+const YoutubeIcon = ({ size = 24, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2C5.12 19.5 12 19.5 12 19.5s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+);
 
 // --- DATA DUMMY (FALLBACK JIKA CMS KOSONG/GAGAL LOAD) ---
 const defaultHomeCards = [
@@ -42,10 +52,9 @@ export default function App() {
 
   const navItems = ['Beranda', 'Tentang', 'Program', 'Galeri', 'Testimoni', 'Artikel', 'Kontak'];
 
-  // MENGAMBIL DATA CMS SAAT WEB DIMUAT & MENYIAPKAN META TAGS (DENGAN PENGECEKAN KEAMANAN SSR/VERCEL)
+  // MENGAMBIL DATA CMS SAAT WEB DIMUAT & MENYIAPKAN META TAGS
   useEffect(() => {
     // 1. Injeksi Dinamis Meta Tag Sosial Media
-    // PENTING: Pengecekan typeof window !== 'undefined' mencegah Vercel SSR Crash (Mencegah Layar Blank!)
     if (typeof window !== 'undefined') {
         const setMetaTag = (attrName, attrValue, content) => {
           let element = document.querySelector(`meta[${attrName}="${attrValue}"]`);
@@ -78,7 +87,7 @@ export default function App() {
           setCmsData(data);
         }
       } catch (e) {
-        console.log("Menggunakan data dummy default (CMS belum disetel/sedang di Sandbox)");
+        console.log("Menggunakan data dummy default");
       }
     };
     fetchCmsData();
@@ -145,9 +154,10 @@ export default function App() {
               ))}
               <div className="flex items-center space-x-3 ml-4 border-l pl-4 border-slate-200">
                  <div className="flex space-x-3 text-slate-400">
-                    <Facebook size={18} className="cursor-pointer hover:text-orange-500" />
-                    <Instagram size={18} className="cursor-pointer hover:text-orange-500" />
-                    <Youtube size={18} className="cursor-pointer hover:text-orange-500" />
+                    {/* Menggunakan ikon yang kita buat secara manual */}
+                    <FacebookIcon size={18} className="cursor-pointer hover:text-orange-500" />
+                    <InstagramIcon size={18} className="cursor-pointer hover:text-orange-500" />
+                    <YoutubeIcon size={18} className="cursor-pointer hover:text-orange-500" />
                  </div>
               </div>
             </div>
