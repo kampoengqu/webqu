@@ -43,7 +43,7 @@
                 <div class="col-span-full py-20 text-center text-slate-500 animate-pulse">Memuat artikel...</div>
             </div>
 
-            <!-- Kontrol Paginasi (Ditampilkan lewat JS) -->
+            <!-- Kontrol Paginasi -->
             <div id="pagination-controls" class="flex justify-center items-center space-x-2 mt-12 hidden"></div>
         </div>
 
@@ -104,6 +104,7 @@
     </footer>
 
     <script>
+        // Gunakan Shortname Disqus-mu di sini
         const disqusShortname = 'https-webqu-peach-vercel-app'; 
         
         // State Management
@@ -122,13 +123,11 @@
             content: `<p>Pendidikan karakter di era digital saat ini menghadapi tantangan yang tidak pernah terbayangkan sebelumnya. Arus informasi yang begitu deras seringkali membawa dampak negatif jika tidak diimbangi dengan pondasi keimanan yang kuat.</p><p>Pendekatan yang kami terapkan tidak sekadar melarang penggunaan gadget, melainkan mengajarkan adab, batasan, dan literasi digital yang Islami.</p>`
         }));
 
-        // Fungsi pembuat slug (persis seperti CMS)
         const createSafeSlug = (title) => title.toString().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+|-+$/g, '');
 
         // Inisialisasi awal
         async function initBlog() {
             try {
-                // Jangan panggil fetch saat di Canvas Preview untuk menghindari error Sandbox
                 if (window.location.protocol === 'blob:' || window.location.protocol === 'data:' || window.location.origin === 'null') {
                     throw new Error("Sandbox env");
                 }
@@ -143,28 +142,34 @@
                 allArticles = dummyArticles;
             }
 
-            // Memastikan setiap artikel memiliki property "slug" untuk referensi link
             allArticles.forEach(a => {
                 if (!a.slug) a.slug = createSafeSlug(a.title);
-                if (!a.id) a.id = Date.now() + Math.floor(Math.random() * 1000); // Fallback ID
+                if (!a.id) a.id = Date.now() + Math.floor(Math.random() * 1000); 
             });
 
-            // Cek apakah ada parameter ?artikel=slug (Redirect dari URL WA)
+            // Cek URL saat ini
             const urlParams = new URLSearchParams(window.location.search);
             const slugParam = urlParams.get('artikel');
+            
+            // Jika pengunjung datang melalui file cangkang WA (misal: /blog/slug-artikel.html)
+            // Namun URL diredirect secara SPA oleh Vercel
+            const pathSegments = window.location.pathname.split('/');
+            let directSlug = null;
+            if(pathSegments.length > 2 && pathSegments[1] === 'blog' && pathSegments[2].endsWith('.html')) {
+                directSlug = pathSegments[2].replace('.html', '');
+            }
 
-            if (slugParam) {
-                const article = allArticles.find(a => a.slug === slugParam);
+            const targetSlug = slugParam || directSlug;
+
+            if (targetSlug) {
+                const article = allArticles.find(a => a.slug === targetSlug);
                 if (article) {
                     openArticle(article.slug);
-                    return; // Stop di sini, jangan render list
+                    return; 
                 }
             }
 
-            // Jika tidak ada parameter slug, render daftar artikel
             renderBlogList();
-            
-            // Muat script penghitung Disqus
             loadDisqusCountScript();
         }
 
@@ -183,14 +188,10 @@
 
             container.innerHTML = currentPosts.map(post => `
                 <div class="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col h-full border border-slate-100 relative">
-                    
-                    <!-- Badge Kategori -->
                     <div class="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-emerald-700 shadow-sm border border-emerald-100 z-10">
                         ${post.category || 'Tips & Inspirasi'}
                     </div>
-
                     <img src="${post.thumbnail || post.image || 'https://via.placeholder.com/400x250?text=No+Image'}" class="w-full h-48 object-cover">
-                    
                     <div class="p-6 flex-grow flex flex-col">
                         <div class="flex items-center justify-between text-sm text-slate-500 mb-4">
                             <div class="flex items-center space-x-2">
@@ -203,7 +204,6 @@
                         </div>
                         <h3 class="text-xl font-bold text-slate-800 mb-3 leading-snug">${post.title}</h3>
                         <p class="text-slate-600 text-sm mb-6 flex-grow">${post.excerpt}</p>
-                        
                         <div class="mt-auto pt-4 border-t border-slate-100 flex justify-between items-center">
                             <button onclick="openArticle('${post.slug}')" class="text-green-700 font-bold hover:text-orange-500 transition-colors">Baca Selengkapnya &rarr;</button>
                             <div class="text-slate-400 text-sm flex items-center bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
@@ -217,7 +217,6 @@
 
             renderPagination(totalPages);
 
-            // Memicu ulang sistem penghitung komentar Disqus
             setTimeout(() => {
                 if (typeof window.DISQUSWIDGETS !== 'undefined') {
                     window.DISQUSWIDGETS.getCount({ reset: true });
@@ -235,32 +234,13 @@
             paginationContainer.classList.remove('hidden');
             let paginationHtml = '';
             
-            // Tombol Prev
-            paginationHtml += `
-                <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} 
-                    class="p-2 rounded-lg ${currentPage === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-green-700 hover:bg-green-50'}">
-                    <i class="fas fa-chevron-left text-lg"></i>
-                </button>
-            `;
+            paginationHtml += `<button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="p-2 rounded-lg ${currentPage === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-green-700 hover:bg-green-50'}"><i class="fas fa-chevron-left text-lg"></i></button>`;
 
-            // Angka Halaman
             for (let i = 1; i <= totalPages; i++) {
-                paginationHtml += `
-                    <button onclick="changePage(${i})" 
-                        class="w-10 h-10 rounded-lg font-bold transition-colors ${currentPage === i ? 'bg-green-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}">
-                        ${i}
-                    </button>
-                `;
+                paginationHtml += `<button onclick="changePage(${i})" class="w-10 h-10 rounded-lg font-bold transition-colors ${currentPage === i ? 'bg-green-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}">${i}</button>`;
             }
 
-            // Tombol Next
-            paginationHtml += `
-                <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} 
-                    class="p-2 rounded-lg ${currentPage === totalPages ? 'text-slate-300 cursor-not-allowed' : 'text-green-700 hover:bg-green-50'}">
-                    <i class="fas fa-chevron-right text-lg"></i>
-                </button>
-            `;
-
+            paginationHtml += `<button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="p-2 rounded-lg ${currentPage === totalPages ? 'text-slate-300 cursor-not-allowed' : 'text-green-700 hover:bg-green-50'}"><i class="fas fa-chevron-right text-lg"></i></button>`;
             paginationContainer.innerHTML = paginationHtml;
         }
 
@@ -293,32 +273,35 @@
                 audioContainer.classList.add('hidden');
             }
 
-            // Ubah URL secara diam-diam tanpa reload agar bisa dishare
-            const newUrl = window.location.pathname + '?artikel=' + post.slug;
-            window.history.pushState({ path: newUrl }, '', newUrl);
+            // MENGUBAH URL ADDRESS BAR MENJADI LINK CANGKANG HTML (SUPER TRICK!)
+            // Agar jika dikopi dari address bar, WA langsung membaca file cangkangnya.
+            const baseUrl = window.location.origin;
+            const standardShareUrl = `${baseUrl}/blog/${post.slug}.html`;
+            
+            // Push State mengelabui URL tanpa me-refresh browser
+            window.history.pushState({ path: standardShareUrl }, '', standardShareUrl);
 
-            // Generate Tombol Share
-            generateShareButtons(post.title, window.location.href);
+            // Generate Tombol Share (Memberikan URL cangkang agar thumbnail WA terbaca)
+            generateShareButtons(post.title, standardShareUrl);
 
             // Transisi View
             document.getElementById('blog-list-view').classList.add('hidden');
             document.getElementById('blog-detail-view').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            loadDisqus(post);
+            // Panggil Disqus menggunakan URL cangkang agar konsisten
+            loadDisqus(post, standardShareUrl);
         }
 
         function closeArticle() {
-            // Hapus parameter artikel dari URL saat ditutup
-            window.history.pushState({ path: window.location.pathname }, '', window.location.pathname);
+            // Hapus parameter artikel dari URL dan kembalikan ke format awal saat ditutup
+            window.history.pushState({ path: '/blog.html' }, '', '/blog.html');
             
-            // Hentikan audio jika sedang main
             document.getElementById('detail-audio').pause();
-
             document.getElementById('blog-detail-view').classList.add('hidden');
             document.getElementById('blog-list-view').classList.remove('hidden');
             
-            renderBlogList(); // Render ulang agar halaman/posisi ter-refresh
+            renderBlogList(); 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -350,9 +333,9 @@
             `;
         }
 
-        function loadDisqus(post) {
+        function loadDisqus(post, shareUrl) {
             const identifier = `article-${post.id || post.slug}`;
-            const url = window.location.href; // Menggunakan URL saat ini yang sudah dimodifikasi dengan parameter
+            const url = shareUrl; // Gunakan URL cangkang standar agar link Disqus konsisten
 
             if (window.DISQUS) {
                 window.DISQUS.reset({
@@ -389,7 +372,7 @@
         // Mulai aplikasi
         document.addEventListener('DOMContentLoaded', initBlog);
 
-        // Menangani tombol back/forward di browser agar perpindahan dari detail ke list (atau sebaliknya) berjalan mulus
+        // Menangani tombol back/forward di browser
         window.addEventListener('popstate', function(event) {
             const urlParams = new URLSearchParams(window.location.search);
             const slugParam = urlParams.get('artikel');
