@@ -14,6 +14,9 @@ const InstagramIcon = ({ size = 24, className = "" }) => (
 const YoutubeIcon = ({ size = 24, className = "" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2C5.12 19.5 12 19.5 12 19.5s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
 );
+const TiktokIcon = ({ size = 24, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+);
 
 // --- DATA DUMMY (FALLBACK JIKA CMS KOSONG/GAGAL LOAD) ---
 const defaultHomeCards = [
@@ -154,10 +157,10 @@ export default function App() {
               ))}
               <div className="flex items-center space-x-3 ml-4 border-l pl-4 border-slate-200">
                  <div className="flex space-x-3 text-slate-400">
-                    {/* Menggunakan ikon yang kita buat secara manual */}
                     <FacebookIcon size={18} className="cursor-pointer hover:text-orange-500" />
                     <InstagramIcon size={18} className="cursor-pointer hover:text-orange-500" />
                     <YoutubeIcon size={18} className="cursor-pointer hover:text-orange-500" />
+                    <TiktokIcon size={18} className="cursor-pointer hover:text-orange-500" />
                  </div>
               </div>
             </div>
