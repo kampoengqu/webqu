@@ -42,31 +42,34 @@ export default function App() {
 
   const navItems = ['Beranda', 'Tentang', 'Program', 'Galeri', 'Testimoni', 'Artikel', 'Kontak'];
 
-  // MENGAMBIL DATA CMS SAAT WEB DIMUAT & MENYIAPKAN META TAGS
+  // MENGAMBIL DATA CMS SAAT WEB DIMUAT & MENYIAPKAN META TAGS (DENGAN PENGECEKAN KEAMANAN SSR/VERCEL)
   useEffect(() => {
-    // 1. Injeksi Dinamis Meta Tag Sosial Media (Untuk Bot yang mendukung JS)
-    const setMetaTag = (attrName, attrValue, content) => {
-      let element = document.querySelector(`meta[${attrName}="${attrValue}"]`);
-      if (!element) {
-        element = document.createElement('meta');
-        element.setAttribute(attrName, attrValue);
-        document.head.appendChild(element);
-      }
-      element.setAttribute('content', content);
-    };
+    // 1. Injeksi Dinamis Meta Tag Sosial Media
+    // PENTING: Pengecekan typeof window !== 'undefined' mencegah Vercel SSR Crash (Mencegah Layar Blank!)
+    if (typeof window !== 'undefined') {
+        const setMetaTag = (attrName, attrValue, content) => {
+          let element = document.querySelector(`meta[${attrName}="${attrValue}"]`);
+          if (!element) {
+            element = document.createElement('meta');
+            element.setAttribute(attrName, attrValue);
+            document.head.appendChild(element);
+          }
+          element.setAttribute('content', content);
+        };
 
-    document.title = "Kampoeng Quran - Pesantren Pilihan Keluarga";
-    setMetaTag('name', 'description', 'Kawasan pesantren dan pendidikan islam berbasis quran dengan konsep lingkungan yang asri dan kondusif. Menyediakan fasilitas belajar terpadu untuk mendukung kenyamanan santri dalam menghafal dan memahami Al-Quran.');
-    setMetaTag('property', 'og:title', 'Kampoeng Quran - Pesantren Pilihan Keluarga');
-    setMetaTag('property', 'og:description', 'Kawasan pesantren dan pendidikan islam berbasis quran dengan konsep lingkungan yang asri dan kondusif. Menyediakan fasilitas belajar terpadu untuk mendukung kenyamanan santri dalam menghafal dan memahami Al-Quran.');
-    setMetaTag('property', 'og:image', 'https://lh3.googleusercontent.com/pw/AP1GczPRCX3LqYXjMAmbBbHo7zGYhCnrG0XY3Q8I98R7vKtSVyld05VD3fP1Z526ytfo20K2VoqzGs-Stg_SgVy8d71od0UOfLvzk8lZTJJYHlbZCHjDVO81b_rRkRYnLhKqE20iehEZRKa4inzxUdJgo1UO=w512-h512-s-no-gm?authuser=0');
-    setMetaTag('property', 'og:url', 'https://webqu-peach.vercel.app/');
-    setMetaTag('property', 'og:type', 'website');
+        document.title = "Kampoeng Quran - Pesantren Pilihan Keluarga";
+        setMetaTag('name', 'description', 'Kawasan pesantren dan pendidikan islam berbasis quran dengan konsep lingkungan yang asri dan kondusif. Menyediakan fasilitas belajar terpadu untuk mendukung kenyamanan santri dalam menghafal dan memahami Al-Quran.');
+        setMetaTag('property', 'og:title', 'Kampoeng Quran - Pesantren Pilihan Keluarga');
+        setMetaTag('property', 'og:description', 'Kawasan pesantren dan pendidikan islam berbasis quran dengan konsep lingkungan yang asri dan kondusif. Menyediakan fasilitas belajar terpadu untuk mendukung kenyamanan santri dalam menghafal dan memahami Al-Quran.');
+        setMetaTag('property', 'og:image', 'https://lh3.googleusercontent.com/pw/AP1GczPRCX3LqYXjMAmbBbHo7zGYhCnrG0XY3Q8I98R7vKtSVyld05VD3fP1Z526ytfo20K2VoqzGs-Stg_SgVy8d71od0UOfLvzk8lZTJJYHlbZCHjDVO81b_rRkRYnLhKqE20iehEZRKa4inzxUdJgo1UO=w512-h512-s-no-gm?authuser=0');
+        setMetaTag('property', 'og:url', 'https://webqu-peach.vercel.app/');
+        setMetaTag('property', 'og:type', 'website');
+    }
 
     // 2. Fetch Data CMS
     const fetchCmsData = async () => {
       try {
-        if (window.location.protocol === 'blob:' || window.location.protocol === 'data:' || window.location.origin === 'null') {
+        if (typeof window !== 'undefined' && (window.location.protocol === 'blob:' || window.location.protocol === 'data:' || window.location.origin === 'null')) {
             throw new Error("Sandbox env");
         }
         const res = await fetch('/theme.json');
