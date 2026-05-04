@@ -382,7 +382,11 @@ async function publishArticle(){
         await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/public/data/blog.json`,{method:'PUT',headers:authHdr(),body:JSON.stringify({message:`Artikel: ${tit}`,content:btoa(unescape(encodeURIComponent(JSON.stringify(b,null,2)))),sha:blogFileSha})});
         
         // Buat file HTML Cangkang untuk dibaca Bot WhatsApp
-        const htmlTpl=`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${tit} - Kampoeng Quran</title><meta property="og:title" content="${tit}"><meta property="og:description" content="${exc}"><meta property="og:image" content="${cov.startsWith('http')?cov:('https://'+c.user+'.github.io/'+c.repo+cov)}"><meta property="og:type" content="article"><meta http-equiv="refresh" content="0; url=../blog.html?artikel=${slug}"><script>window.location.replace("../blog.html?artikel=${slug}");<\/script></head><body style="text-align:center;padding-top:50px"><p>Mengalihkan...</p></body></html>`;
+        const baseUrl = window.location.origin;
+        const absoluteCover = cov.startsWith('http') ? cov : (baseUrl + (cov.startsWith('/') ? '' : '/') + cov);
+        const articleUrl = baseUrl + '/blog/' + slug + '.html';
+        
+        const htmlTpl=`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${tit} - Kampoeng Quran</title><meta property="og:title" content="${tit}"><meta property="og:description" content="${exc}"><meta property="og:image" content="${absoluteCover}"><meta property="og:url" content="${articleUrl}"><meta property="og:type" content="article"><meta http-equiv="refresh" content="0; url=../blog.html?artikel=${slug}"><script>window.location.replace("../blog.html?artikel=${slug}");<\/script></head><body style="text-align:center;padding-top:50px"><p>Mengalihkan...</p></body></html>`;
         
         let cSha=null; try{const r=await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/public/blog/${slug}.html`,{headers:authHdr()});if(r.ok)cSha=(await r.json()).sha;}catch(e){}
         const shBody={message:`Cangkang: ${tit}`,content:btoa(unescape(encodeURIComponent(htmlTpl)))}; if(cSha)shBody.sha=cSha;
