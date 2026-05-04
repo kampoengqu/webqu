@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import * as Icons from 'lucide-react'; // Import semua ikon agar bisa dipanggil dinamis dari CMS
+import { 
+  Menu, X, Phone, ChevronLeft, ChevronRight, MessageCircle, 
+  BookOpen, Lightbulb, Home, Download, MapPin, Mail, 
+  Facebook, Instagram, Youtube, Star 
+} from 'lucide-react';
 
 // --- DATA DUMMY (FALLBACK JIKA CMS KOSONG/GAGAL LOAD) ---
 const defaultHomeCards = [
@@ -137,17 +141,16 @@ export default function App() {
                 <button key={item} onClick={() => changeView(item)} className={`text-sm font-semibold transition-colors duration-200 ${currentView === item ? 'text-green-600 border-b-2 border-orange-500 pb-1' : 'text-slate-600 hover:text-green-600'}`}>{item}</button>
               ))}
               <div className="flex items-center space-x-3 ml-4 border-l pl-4 border-slate-200">
-                 {/* Ikon sosial media placeholder */}
                  <div className="flex space-x-3 text-slate-400">
-                    <Icons.Facebook size={18} className="cursor-pointer hover:text-orange-500" />
-                    <Icons.Instagram size={18} className="cursor-pointer hover:text-orange-500" />
-                    <Icons.Youtube size={18} className="cursor-pointer hover:text-orange-500" />
+                    <Facebook size={18} className="cursor-pointer hover:text-orange-500" />
+                    <Instagram size={18} className="cursor-pointer hover:text-orange-500" />
+                    <Youtube size={18} className="cursor-pointer hover:text-orange-500" />
                  </div>
               </div>
             </div>
             <div className="flex items-center md:hidden">
               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-slate-500 hover:text-green-600 focus:outline-none">
-                {isMenuOpen ? <Icons.X size={28} /> : <Icons.Menu size={28} />}
+                {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
               </button>
             </div>
           </div>
@@ -176,12 +179,12 @@ export default function App() {
       {/* Lightbox Galeri */}
       {lightboxData.isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm animate-fade-in">
-          <button onClick={closeLightbox} className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-50"><Icons.X size={36} /></button>
-          <button onClick={prevImage} className="absolute left-4 md:left-10 text-white/50 hover:text-white transition-colors p-2 z-50"><Icons.ChevronLeft size={48} /></button>
+          <button onClick={closeLightbox} className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-50"><X size={36} /></button>
+          <button onClick={prevImage} className="absolute left-4 md:left-10 text-white/50 hover:text-white transition-colors p-2 z-50"><ChevronLeft size={48} /></button>
           <div className="relative flex flex-col items-center justify-center max-h-[80vh] w-full px-16">
             <img src={activeGallery[lightboxData.currentIndex].url} alt={activeGallery[lightboxData.currentIndex].title} className="max-h-[65vh] max-w-full object-contain shadow-2xl rounded-sm mb-6" />
           </div>
-          <button onClick={nextImage} className="absolute right-4 md:right-10 text-white/50 hover:text-white transition-colors p-2 z-50"><Icons.ChevronRight size={48} /></button>
+          <button onClick={nextImage} className="absolute right-4 md:right-10 text-white/50 hover:text-white transition-colors p-2 z-50"><ChevronRight size={48} /></button>
           <div className="absolute bottom-0 left-0 right-0 pt-20 pb-8 px-4 bg-gradient-to-t from-black via-black/80 to-transparent text-center">
             <h3 className="text-white font-bold text-2xl mb-2 drop-shadow-md">{activeGallery[lightboxData.currentIndex].title}</h3>
             <p className="text-white/80 text-base md:text-lg max-w-3xl mx-auto mb-3">{activeGallery[lightboxData.currentIndex].caption}</p>
@@ -202,15 +205,17 @@ export default function App() {
           </div>
         </div>
       </footer>
-      <a href="https://wa.me/6281214880408?text=Assalamu'alaikum..." target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl transition-transform hover:scale-110 z-50 flex items-center justify-center"><Icons.MessageCircle size={28} /></a>
+      <a href="https://wa.me/6281214880408?text=Assalamu'alaikum..." target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl transition-transform hover:scale-110 z-50 flex items-center justify-center"><MessageCircle size={28} /></a>
     </div>
   );
 }
 
 function ViewBeranda({ cmsData, changeView }) {
-  // Integrasi Link Daftar dan Data Cards dari CMS
   const heroLink = cmsData?.beranda?.daftarLink || "#";
   const featureCards = cmsData?.beranda?.cards || defaultHomeCards;
+
+  // Memetakan string ikon dari CMS ke Komponen Ikon secara aman
+  const DynamicIconsMap = { BookOpen, Lightbulb, Home, Star };
 
   const handleDaftarClick = () => {
       if (heroLink.startsWith('http')) window.open(heroLink, '_blank');
@@ -231,8 +236,7 @@ function ViewBeranda({ cmsData, changeView }) {
       <div className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center items-stretch">
           {featureCards.map((item, i) => {
-            // Render ikon dinamis dari library Lucide
-            const IconComponent = Icons[item.icon] || Icons.Star;
+            const IconComponent = DynamicIconsMap[item.icon] || Star;
             return (
               <div key={i} className="p-8 border border-slate-100 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center group dynamic-card-hover">
                  <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 bg-green-100 text-green-600">
@@ -261,8 +265,8 @@ function ViewTentang() {
           <h3 className="text-2xl font-bold text-slate-800 mb-4">Sejarah & Visi</h3>
           <p className="text-slate-600 leading-relaxed mb-6">Berdiri sejak tahun [Tahun], Kampoeng Quran hadir dari sebuah cita-cita mulia untuk membumikan Al-Quran di tengah masyarakat modern.</p>
           <ul className="space-y-4">
-            <li className="flex items-start"><span className="bg-green-100 text-green-600 p-1 rounded-full mr-3 mt-1"><Icons.ChevronRight size={16}/></span><p className="text-slate-700"><strong>Visi:</strong> Menjadi pusat peradaban Islam yang mencetak cendekiawan muslim berkarakter Qur'ani.</p></li>
-            <li className="flex items-start"><span className="bg-orange-100 text-orange-600 p-1 rounded-full mr-3 mt-1"><Icons.ChevronRight size={16}/></span><p className="text-slate-700"><strong>Misi:</strong> Menyelenggarakan pendidikan Islam terpadu, membina akhlakul karimah, dan mengembangkan kemandirian umat.</p></li>
+            <li className="flex items-start"><span className="bg-green-100 text-green-600 p-1 rounded-full mr-3 mt-1"><ChevronRight size={16}/></span><p className="text-slate-700"><strong>Visi:</strong> Menjadi pusat peradaban Islam yang mencetak cendekiawan muslim berkarakter Qur'ani.</p></li>
+            <li className="flex items-start"><span className="bg-orange-100 text-orange-600 p-1 rounded-full mr-3 mt-1"><ChevronRight size={16}/></span><p className="text-slate-700"><strong>Misi:</strong> Menyelenggarakan pendidikan Islam terpadu, membina akhlakul karimah, dan mengembangkan kemandirian umat.</p></li>
           </ul>
         </div>
       </div>
@@ -271,7 +275,6 @@ function ViewTentang() {
 }
 
 function ViewProgram({ cmsData, changeView }) {
-  // Integrasi Data Program dari CMS
   const programs = cmsData?.programs?.list || programData;
 
   return (
@@ -332,11 +335,11 @@ function ViewGaleri({ activeGallery, onImageClick }) {
 
         {totalPages > 1 && (
           <div className="flex justify-center items-center space-x-2 mt-12">
-            <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className={`p-2 rounded-lg ${currentPage === 1 ? 'text-slate-300' : 'text-green-700 hover:bg-green-50'}`}><Icons.ChevronLeft size={24} /></button>
+            <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className={`p-2 rounded-lg ${currentPage === 1 ? 'text-slate-300' : 'text-green-700 hover:bg-green-50'}`}><ChevronLeft size={24} /></button>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
               <button key={page} onClick={() => setCurrentPage(page)} className={`w-10 h-10 rounded-lg font-bold transition-colors ${currentPage === page ? 'bg-green-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}>{page}</button>
             ))}
-            <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className={`p-2 rounded-lg ${currentPage === totalPages ? 'text-slate-300' : 'text-green-700 hover:bg-green-50'}`}><Icons.ChevronRight size={24} /></button>
+            <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className={`p-2 rounded-lg ${currentPage === totalPages ? 'text-slate-300' : 'text-green-700 hover:bg-green-50'}`}><ChevronRight size={24} /></button>
           </div>
         )}
       </div>
@@ -345,7 +348,6 @@ function ViewGaleri({ activeGallery, onImageClick }) {
 }
 
 function ViewTestimoni({ cmsData }) {
-  // Integrasi Data Testimoni dari CMS
   const testimonials = cmsData?.testimoni?.testimonials || dummyTestimonials;
 
   return (
@@ -387,9 +389,9 @@ function ViewKontak() {
           <div>
             <div className="bg-slate-200 w-full h-80 rounded-2xl mb-8 overflow-hidden shadow-inner"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.2764320553165!2d107.56505519999999!3d-6.8574344!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e41b035ceedd%3A0xd1f374b4afdb93f0!2sPesantren%20Tahfidz%20Kampoeng%20Qur'an%20Cendekia!5e0!3m2!1sid!2sid!4v1777771661849!5m2!1sid!2sid" width="100%" height="100%" style={{ border: 0 }} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Peta Lokasi Kampoeng Quran"></iframe></div>
             <div className="space-y-6">
-              <div><h3 className="text-lg font-bold text-slate-800 flex items-center mb-2"><Icons.MapPin size={20} className="text-green-600 mr-2" /> Alamat Kampus</h3><p className="text-slate-600 ml-7 leading-relaxed">Perum. Lembah Hijau, Jl. Cihanjuang Jl. Cibaligo 5, Cihanjuang, Kec. Parongpong, Kabupaten Bandung Barat, Jawa Barat 40559</p></div>
-              <div><h3 className="text-lg font-bold text-slate-800 flex items-center mb-2"><Icons.Phone size={20} className="text-green-600 mr-2" /> Kontak & WhatsApp</h3><p className="text-slate-600 ml-7 font-semibold">0812-1488-0408</p></div>
-              <div><h3 className="text-lg font-bold text-slate-800 flex items-center mb-2"><Icons.Mail size={20} className="text-green-600 mr-2" /> Email</h3><p className="text-slate-600 ml-7">kampoengqurancendekia@gmail.com</p></div>
+              <div><h3 className="text-lg font-bold text-slate-800 flex items-center mb-2"><MapPin size={20} className="text-green-600 mr-2" /> Alamat Kampus</h3><p className="text-slate-600 ml-7 leading-relaxed">Perum. Lembah Hijau, Jl. Cihanjuang Jl. Cibaligo 5, Cihanjuang, Kec. Parongpong, Kabupaten Bandung Barat, Jawa Barat 40559</p></div>
+              <div><h3 className="text-lg font-bold text-slate-800 flex items-center mb-2"><Phone size={20} className="text-green-600 mr-2" /> Kontak & WhatsApp</h3><p className="text-slate-600 ml-7 font-semibold">0812-1488-0408</p></div>
+              <div><h3 className="text-lg font-bold text-slate-800 flex items-center mb-2"><Mail size={20} className="text-green-600 mr-2" /> Email</h3><p className="text-slate-600 ml-7">kampoengqurancendekia@gmail.com</p></div>
             </div>
           </div>
           <div className="bg-slate-50 p-8 rounded-2xl border border-slate-100 shadow-sm">
@@ -398,7 +400,7 @@ function ViewKontak() {
               <div><label className="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label><input type="text" name="nama" required className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all" placeholder="Masukkan nama" /></div>
               <div><label className="block text-sm font-medium text-slate-700 mb-1">Nomor WhatsApp</label><input type="tel" name="whatsapp" required className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all" placeholder="08xx..." /></div>
               <div><label className="block text-sm font-medium text-slate-700 mb-1">Pesan / Pertanyaan</label><textarea rows="4" name="pesan" required className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all" placeholder="Tulis pesan Anda di sini..."></textarea></div>
-              <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors flex justify-center items-center"><Icons.Mail size={18} className="mr-2"/> Kirim Pesan via Email</button>
+              <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors flex justify-center items-center"><Mail size={18} className="mr-2"/> Kirim Pesan via Email</button>
             </form>
             {showNotif && <div className="mt-6 p-4 bg-green-100 border border-green-300 rounded-lg animate-fade-in flex items-start"><div className="text-green-600 mr-3 mt-0.5"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div><div><h4 className="text-green-800 font-bold text-sm">Terima kasih sudah menghubungi kami!</h4><p className="text-green-700 text-sm mt-1">Pesan Anda sedang dialihkan. Silakan tekan tombol "Kirim" pada aplikasi email Anda yang baru saja terbuka.</p></div></div>}
           </div>
@@ -411,9 +413,7 @@ function ViewKontak() {
 function ViewDetailProgram({ program, changeView, cmsData }) {
   if (!program) return null;
 
-  // Tombol Pendaftaran Dinamis
   const registerLink = cmsData?.programs?.registerLink || "https://wa.me/6281214880408";
-  // Tombol Download Brosur Dinamis
   const brochureLink = cmsData?.programs?.brochureLink || "#";
 
   const handleDaftarClick = () => window.open(registerLink, '_blank');
@@ -434,7 +434,7 @@ function ViewDetailProgram({ program, changeView, cmsData }) {
         </div>
       </div>
       <div className="max-w-4xl mx-auto px-4 mt-8">
-        <button onClick={() => changeView('Program')} className="flex items-center text-green-700 hover:text-orange-500 font-semibold mb-8 transition-colors group"><Icons.ChevronLeft size={20} className="mr-1 transform group-hover:-translate-x-1 transition-transform" /> Kembali ke Daftar Program</button>
+        <button onClick={() => changeView('Program')} className="flex items-center text-green-700 hover:text-orange-500 font-semibold mb-8 transition-colors group"><ChevronLeft size={20} className="mr-1 transform group-hover:-translate-x-1 transition-transform" /> Kembali ke Daftar Program</button>
         <div className="prose prose-lg max-w-none text-slate-600">
           <p className="text-lg leading-relaxed mb-6">{program.fullDesc}</p>
           <div className="bg-green-50 p-6 sm:p-8 rounded-2xl border border-green-100 my-8 shadow-sm">
@@ -450,8 +450,8 @@ function ViewDetailProgram({ program, changeView, cmsData }) {
           <h4 className="text-xl font-bold text-slate-800 mb-2">Tertarik dengan {program.title}?</h4>
           <p className="text-slate-500 mb-6">Jangan ragu untuk bertanya terkait biaya, jadwal masuk, atau kurikulum secara mendetail.</p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <button onClick={handleDaftarClick} className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full shadow-md transition-all inline-flex items-center justify-center w-full sm:w-auto">Hubungi Bagian Pendaftaran <Icons.ChevronRight size={18} className="ml-1" /></button>
-            <button onClick={handleBrosurClick} className="bg-white hover:bg-green-50 text-green-700 border-2 border-green-600 font-bold py-3 px-8 rounded-full shadow-sm transition-all inline-flex items-center justify-center w-full sm:w-auto"><Icons.Download size={18} className="mr-2" /> Download Brosur</button>
+            <button onClick={handleDaftarClick} className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full shadow-md transition-all inline-flex items-center justify-center w-full sm:w-auto">Hubungi Bagian Pendaftaran <ChevronRight size={18} className="ml-1" /></button>
+            <button onClick={handleBrosurClick} className="bg-white hover:bg-green-50 text-green-700 border-2 border-green-600 font-bold py-3 px-8 rounded-full shadow-sm transition-all inline-flex items-center justify-center w-full sm:w-auto"><Download size={18} className="mr-2" /> Download Brosur</button>
           </div>
         </div>
       </div>
