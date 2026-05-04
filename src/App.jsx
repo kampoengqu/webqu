@@ -151,26 +151,40 @@ export default function App() {
             <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => changeView('Beranda')}>
               <img src="https://lh3.googleusercontent.com/pw/AP1GczP_Kfkdxc3bS41NKjvCOUb3WzLL7EXJN7KkNZRrTRW7xI5kWbHCfEqTl4ID0zHV68jHAbZioXa4dytdtBqQaNYrzclMrLqZVh94NVJb0HNty5y0L6l33W_DrtGdxVr5LuCd2OQ7QZapLDPhYSQJgV1w=w435-h100-s-no-gm?authuser=0" alt="Logo" className="h-12 w-auto object-contain" />
             </div>
+            
+            {/* MENU DESKTOP */}
             <div className="hidden md:flex md:items-center md:space-x-6">
               {navItems.map((item) => (
                 <button key={item} onClick={() => changeView(item)} className={`text-sm font-semibold transition-colors duration-200 ${currentView === item ? 'text-green-600 border-b-2 border-orange-500 pb-1' : 'text-slate-600 hover:text-green-600'}`}>{item}</button>
               ))}
               <div className="flex items-center space-x-3 ml-4 border-l pl-4 border-slate-200">
                  <div className="flex space-x-3 text-slate-400">
-                    <FacebookIcon size={18} className="cursor-pointer hover:text-orange-500" />
-                    <InstagramIcon size={18} className="cursor-pointer hover:text-orange-500" />
-                    <YoutubeIcon size={18} className="cursor-pointer hover:text-orange-500" />
-                    <TiktokIcon size={18} className="cursor-pointer hover:text-orange-500" />
+                    <a href="https://www.facebook.com/kampoengqurancendekia" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                      <FacebookIcon size={18} className="cursor-pointer hover:text-orange-500 transition-colors" />
+                    </a>
+                    <a href="https://www.instagram.com/kampoengquran.id/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                      <InstagramIcon size={18} className="cursor-pointer hover:text-orange-500 transition-colors" />
+                    </a>
+                    <a href="https://www.youtube.com/@KQCBandung" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                      <YoutubeIcon size={18} className="cursor-pointer hover:text-orange-500 transition-colors" />
+                    </a>
+                    <a href="https://www.tiktok.com/@kampoengquran.id" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                      <TiktokIcon size={18} className="cursor-pointer hover:text-orange-500 transition-colors" />
+                    </a>
                  </div>
               </div>
             </div>
+
+            {/* TOMBOL MENU MOBILE */}
             <div className="flex items-center md:hidden">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-slate-500 hover:text-green-600 focus:outline-none">
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-slate-500 hover:text-green-600 focus:outline-none" aria-label="Toggle menu">
                 {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
               </button>
             </div>
           </div>
         </div>
+
+        {/* MENU MOBILE DROPDOWN */}
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t border-slate-100">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
@@ -178,11 +192,20 @@ export default function App() {
                 <button key={item} onClick={() => changeView(item)} className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${currentView === item ? 'text-green-600 bg-green-50' : 'text-slate-600 hover:text-green-600 hover:bg-slate-50'}`}>{item}</button>
               ))}
             </div>
+            {/* IKON SOSMED MOBILE */}
             <div className="px-4 pb-4 pt-2 border-t border-slate-100 flex space-x-6 text-slate-400 justify-center sm:justify-start">
-               <FacebookIcon size={20} className="cursor-pointer hover:text-orange-500" />
-               <InstagramIcon size={20} className="cursor-pointer hover:text-orange-500" />
-               <YoutubeIcon size={20} className="cursor-pointer hover:text-orange-500" />
-               <TiktokIcon size={20} className="cursor-pointer hover:text-orange-500" />
+               <a href="https://www.facebook.com/kampoengqurancendekia" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                 <FacebookIcon size={20} className="cursor-pointer hover:text-orange-500 transition-colors" />
+               </a>
+               <a href="https://www.instagram.com/kampoengquran.id/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                 <InstagramIcon size={20} className="cursor-pointer hover:text-orange-500 transition-colors" />
+               </a>
+               <a href="https://www.youtube.com/@KQCBandung" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                 <YoutubeIcon size={20} className="cursor-pointer hover:text-orange-500 transition-colors" />
+               </a>
+               <a href="https://www.tiktok.com/@kampoengquran.id" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                 <TiktokIcon size={20} className="cursor-pointer hover:text-orange-500 transition-colors" />
+               </a>
             </div>
           </div>
         )}
