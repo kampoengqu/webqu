@@ -347,7 +347,7 @@ function editArticle(slug){
     editingOriginalSlug=slug; gId('publish-text').innerText="Update Artikel"; gId('btn-cancel-edit').classList.remove('hidden'); switchArticleView('tulis');
 }
 
-function cancelEdit(){editingOriginalSlug=null;['post-title','post-category','post-cover-url'].forEach(id=>gId(id).value='');gId('editor').innerHTML='';gId('publish-text').innerText="Publish Artikel";gId('btn-cancel-edit').classList.add('hidden');switchArticleView('daftar');}
+function cancelEdit(){editingOriginalSlug=null;['post-title','post-category','post-cover-url'].forEach(id=>gId(id).value='');gId('editor').innerHTML='';const pText=gId('publish-text');if(pText)pText.innerText="Publish Artikel";gId('btn-cancel-edit').classList.add('hidden');switchArticleView('daftar');}
 
 function showConfirmModal(t,m,fn){gId('confirm-title').innerText=t;gId('confirm-msg').innerText=m;gId('confirm-yes-btn').className="px-4 py-1.5 text-white rounded text-sm font-bold bg-red-600";gId('confirm-yes-btn').onclick=()=>{closeConfirm();fn();};toggleModal('confirm',true);}
 function closeConfirm(){toggleModal('confirm',false);}
