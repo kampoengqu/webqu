@@ -8,6 +8,8 @@
 .tab-content{transition:opacity .3s ease-in-out}.scrollbar-hide::-webkit-scrollbar{display:none}.scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
 .custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:#f1f5f9;border-radius:8px}.custom-scrollbar::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:#94a3b8}
 #editor{min-height:300px;outline:none}#editor p{margin-bottom:1em;line-height:1.6}#editor h2{font-size:1.5em;font-weight:bold;margin-top:1em;margin-bottom:.5em}#editor blockquote{border-left:4px solid #cbd5e1;padding-left:1rem;color:#64748b;font-style:italic}#editor img{max-width:100%;height:auto;border-radius:.5rem;margin:1.5rem auto;display:block}
+/* PERBAIKAN BULLET & NUMBERING DI EDITOR (Membatalkan Reset Tailwind) */
+#editor ul{list-style-type:disc;padding-left:1.5rem;margin-bottom:1em}#editor ol{list-style-type:decimal;padding-left:1.5rem;margin-bottom:1em}#editor li{margin-bottom:0.25em}
 .toast{transition:all .3s ease;transform:translateY(100%);opacity:0}.toast.show{transform:translateY(0);opacity:1}
 </style>
 </head>
@@ -103,6 +105,15 @@
                 <button onclick="execCmd('bold')" class="w-7 h-7 rounded hover:bg-slate-200 font-bold">B</button>
                 <button onclick="execCmd('italic')" class="w-7 h-7 rounded hover:bg-slate-200 italic">I</button>
                 <button onclick="execCmd('underline')" class="w-7 h-7 rounded hover:bg-slate-200 underline">U</button>
+                
+                <!-- FITUR BARU: Warna Teks -->
+                <div class="relative flex items-center mx-1">
+                    <button onclick="document.getElementById('textColorPicker').click()" class="w-7 h-7 rounded hover:bg-slate-200 flex items-center justify-center font-serif font-bold text-slate-800" title="Warna Teks">
+                        <span class="border-b-[3px] border-slate-800 leading-none pb-[1px]">A</span>
+                    </button>
+                    <input type="color" id="textColorPicker" class="absolute opacity-0 w-0 h-0" onchange="execCmd('foreColor', this.value)">
+                </div>
+
                 <div class="w-px h-5 bg-slate-300 mx-1"></div>
                 <button onclick="execCmd('justifyLeft')" class="w-7 h-7 rounded hover:bg-slate-200"><i class="fas fa-align-left"></i></button>
                 <button onclick="execCmd('justifyCenter')" class="w-7 h-7 rounded hover:bg-slate-200"><i class="fas fa-align-center"></i></button>
@@ -112,8 +123,8 @@
                 <button onclick="openInsertImageModal()" class="w-7 h-7 rounded hover:bg-slate-200"><i class="far fa-image"></i></button>
                 <button onclick="openInsertYoutubeModal()" class="w-7 h-7 rounded hover:bg-slate-200 text-red-600"><i class="fab fa-youtube"></i></button>
                 <div class="w-px h-5 bg-slate-300 mx-1"></div>
-                <button onclick="execCmd('insertUnorderedList')" class="w-7 h-7 rounded hover:bg-slate-200"><i class="fas fa-list-ul"></i></button>
-                <button onclick="execCmd('insertOrderedList')" class="w-7 h-7 rounded hover:bg-slate-200"><i class="fas fa-list-ol"></i></button>
+                <button onclick="execCmd('insertUnorderedList')" class="w-7 h-7 rounded hover:bg-slate-200" title="Bullet"><i class="fas fa-list-ul"></i></button>
+                <button onclick="execCmd('insertOrderedList')" class="w-7 h-7 rounded hover:bg-slate-200" title="Numbering"><i class="fas fa-list-ol"></i></button>
             </div>
             <div id="editor" class="p-4 overflow-y-auto custom-scrollbar text-sm text-slate-700" contenteditable="true"></div>
         </div>
@@ -223,7 +234,7 @@ async function handleFileUpload(input,tgt,pId=null,gId=null,tId=null){
             const b64=e.target.result.split(',')[1], fn=`${Date.now()}_${f.name.replace(/[^a-zA-Z0-9.\-]/g,'_')}`, path=`public/assets/uploads/${fn}`;
             const res=await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/${path}`,{method:'PUT',headers:authHdr(),body:JSON.stringify({message:`Upload ${f.name}`,content:b64})});
             if(res.ok){
-                const url=`/assets/uploads/${fn}`; if(gId(tgt))gId(tgt).value=url;
+                const url=`/assets/uploads/${fn}`; if(document.getElementById(tgt))document.getElementById(tgt).value=url;
                 if(pId!==null)updateProgram(pId,'image',url); else if(gId!==null)updateGalleryItem(gId,'url',url); else if(tId!==null)updateTestimonial(tId,'img',url);
                 showToast("Upload berhasil!");
             }else throw new Error((await res.json()).message);

@@ -11,6 +11,11 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Mengembalikan style list (bullet & numbering) bawaan browser yang direset Tailwind */
+        #detail-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1em; }
+        #detail-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1em; }
+        #detail-content li { display: list-item; margin-bottom: 0.25em; }
     </style>
 </head>
 <body class="text-slate-800 bg-slate-50 font-sans antialiased flex flex-col min-h-screen">
@@ -400,9 +405,12 @@
             // Proses isi konten, deteksi dan ubah tulisan [BACA_JUGA] menjadi kotak rekomendasi
             let rawContent = post.content || '';
             if (rawContent.includes('[BACA_JUGA]')) {
-                // Regex ini mendeteksi [BACA_JUGA] meskipun terbungkus oleh <p> secara tidak sengaja oleh editor CMS
                 rawContent = rawContent.replace(/(<p>)?\s*\[BACA_JUGA\]\s*(<\/p>)?/gi, generateInlineRelatedPosts(post));
             }
+            
+            // Pastikan format warna (foreColor) dari CMS tidak ditimpa oleh Tailwind
+            rawContent = rawContent.replace(/<font\s+color="([^"]+)">/gi, '<span style="color: $1;">').replace(/<\/font>/gi, '</span>');
+            
             document.getElementById('detail-content').innerHTML = rawContent;
 
             const audioContainer = document.getElementById('detail-audio-container');
