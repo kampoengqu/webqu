@@ -114,6 +114,7 @@
 
         // Data Dummy (Jadi 7 Artikel agar paginasi terlihat)
         const dummyArticles = Array.from({ length: 7 }, (_, i) => ({
+            id: i + 1, // KUNCI PERBAIKAN: Menambahkan ID statis agar komentar lama yang sudah ada di Disqus kembali muncul dan terhubung.
             title: `Membangun Generasi Qur'ani di Era Digital (Bagian ${i + 1})`,
             category: i % 2 === 0 ? "Tips & Inspirasi" : "Fiqih",
             excerpt: `Pesantren Kampoeng Quran terus berinovasi dalam memadukan kurikulum diniyah dan perkembangan teknologi terkini...`,
@@ -144,7 +145,8 @@
 
             allArticles.forEach(a => {
                 if (!a.slug) a.slug = createSafeSlug(a.title);
-                if (!a.id) a.id = Date.now() + Math.floor(Math.random() * 1000); 
+                // KUNCI PERBAIKAN: Gunakan slug sebagai ID permanen jika belum ada ID dari CMS, bukan random time!
+                if (!a.id) a.id = a.slug; 
             });
 
             // Cek URL saat ini
