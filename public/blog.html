@@ -91,6 +91,16 @@
                     </div>
                 </div>
 
+                <!-- ==================== FITUR BACA JUGA / RELATED POSTS ==================== -->
+                <div id="related-posts-section" class="mb-12 hidden">
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-800 mb-6 flex items-center"><i class="fas fa-book-reader mr-3 text-emerald-600"></i>Baca Juga:</h3>
+                    <!-- Scroll Horizontal (Slide di HP) -->
+                    <div id="related-posts-container" class="flex overflow-x-auto gap-4 md:gap-6 pb-4 snap-x snap-mandatory scrollbar-hide">
+                        <!-- Konten di-generate lewat JS -->
+                    </div>
+                </div>
+                <!-- ========================================================================= -->
+
                 <!-- Bagian Disqus -->
                 <div class="bg-slate-50 p-4 md:p-10 rounded-2xl md:rounded-3xl border border-slate-200 shadow-sm mt-8">
                     <h3 class="text-xl md:text-2xl font-bold text-slate-800 mb-4 md:mb-6 flex items-center"><i class="far fa-comments mr-3 text-green-600"></i>Tinggalkan Komentar</h3>
@@ -404,6 +414,36 @@
             document.getElementById('blog-list-view').scrollIntoView({ behavior: 'smooth' });
         }
 
+        // Fungsi Generate Postingan Terkait (Baca Juga)
+        function renderRelatedPosts(currentPost) {
+            const section = document.getElementById('related-posts-section');
+            const container = document.getElementById('related-posts-container');
+            
+            // Filter artikel dengan kategori sama, tapi jangan tampilkan artikel yang sedang dibaca
+            const relatedPosts = allArticles.filter(p => p.category === currentPost.category && p.slug !== currentPost.slug);
+            
+            if (relatedPosts.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+
+            // Ambil maksimal 5 artikel terkait saja
+            const maxRelated = relatedPosts.slice(0, 5);
+            
+            container.innerHTML = maxRelated.map(post => `
+                <div onclick="openArticle('${post.slug}')" class="min-w-[260px] md:min-w-[280px] max-w-[280px] flex-shrink-0 snap-start bg-white rounded-xl shadow-sm border border-slate-200 cursor-pointer group hover:shadow-md hover:border-emerald-200 transition-all overflow-hidden flex flex-col">
+                    <img src="${post.thumbnail || post.image || 'https://via.placeholder.com/400x250?text=No+Image'}" class="w-full h-32 object-cover transition-transform duration-500 group-hover:scale-105">
+                    <div class="p-4 flex flex-col flex-grow bg-white relative z-10">
+                        <h4 class="font-bold text-slate-800 text-sm md:text-base mb-2 line-clamp-2 group-hover:text-emerald-700 transition-colors">${post.title}</h4>
+                        <p class="text-slate-500 text-xs line-clamp-2 mb-3 flex-grow">${post.excerpt || ''}</p>
+                        <span class="text-orange-500 text-xs font-semibold mt-auto"><i class="far fa-calendar-alt mr-1"></i> ${post.date}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            section.classList.remove('hidden');
+        }
+
         function openArticle(slug) {
             const post = allArticles.find(a => a.slug === slug);
             if(!post) return;
@@ -436,6 +476,9 @@
 
             // Generate Tombol Share
             generateShareButtons(post.title, standardShareUrl);
+
+            // Render Postingan Terkait (Baca Juga)
+            renderRelatedPosts(post);
 
             // Transisi View
             document.getElementById('blog-list-view').classList.add('hidden');
