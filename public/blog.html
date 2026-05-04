@@ -94,8 +94,9 @@
                 <!-- ==================== FITUR BACA JUGA / RELATED POSTS ==================== -->
                 <div id="related-posts-section" class="mb-12 hidden">
                     <h3 class="text-xl md:text-2xl font-bold text-slate-800 mb-6 flex items-center"><i class="fas fa-book-reader mr-3 text-emerald-600"></i>Baca Juga:</h3>
-                    <!-- Scroll Horizontal (Slide di HP) -->
-                    <div id="related-posts-container" class="flex overflow-x-auto gap-4 md:gap-6 pb-4 snap-x snap-mandatory scrollbar-hide">
+                    
+                    <!-- Mobile: Slide Horizontal | Desktop: Grid 3 Kolom 2 Baris -->
+                    <div id="related-posts-container" class="flex md:grid md:grid-cols-3 overflow-x-auto md:overflow-x-visible gap-4 md:gap-6 pb-4 md:pb-0 snap-x snap-mandatory md:snap-none scrollbar-hide">
                         <!-- Konten di-generate lewat JS -->
                     </div>
                 </div>
@@ -427,16 +428,21 @@
                 return;
             }
 
-            // Ambil maksimal 5 artikel terkait saja
-            const maxRelated = relatedPosts.slice(0, 5);
+            // Ambil maksimal 6 artikel terkait saja untuk mengisi 3 kolom 2 baris
+            const maxRelated = relatedPosts.slice(0, 6);
             
             container.innerHTML = maxRelated.map(post => `
-                <div onclick="openArticle('${post.slug}')" class="min-w-[260px] md:min-w-[280px] max-w-[280px] flex-shrink-0 snap-start bg-white rounded-xl shadow-sm border border-slate-200 cursor-pointer group hover:shadow-md hover:border-emerald-200 transition-all overflow-hidden flex flex-col">
-                    <img src="${post.thumbnail || post.image || 'https://via.placeholder.com/400x250?text=No+Image'}" class="w-full h-32 object-cover transition-transform duration-500 group-hover:scale-105">
+                <div onclick="openArticle('${post.slug}')" class="min-w-[240px] w-[75%] md:w-auto md:min-w-0 flex-shrink-0 md:flex-shrink snap-start md:snap-align-none bg-white rounded-xl shadow-sm border border-slate-100 cursor-pointer group hover:shadow-md hover:border-emerald-200 transition-all overflow-hidden flex flex-col">
+                    <div class="overflow-hidden">
+                        <img src="${post.thumbnail || post.image || 'https://via.placeholder.com/400x250?text=No+Image'}" class="w-full h-36 md:h-32 object-cover transition-transform duration-500 group-hover:scale-105">
+                    </div>
                     <div class="p-4 flex flex-col flex-grow bg-white relative z-10">
-                        <h4 class="font-bold text-slate-800 text-sm md:text-base mb-2 line-clamp-2 group-hover:text-emerald-700 transition-colors">${post.title}</h4>
-                        <p class="text-slate-500 text-xs line-clamp-2 mb-3 flex-grow">${post.excerpt || ''}</p>
-                        <span class="text-orange-500 text-xs font-semibold mt-auto"><i class="far fa-calendar-alt mr-1"></i> ${post.date}</span>
+                        <div class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex flex-wrap items-center">
+                            <span>${post.category || 'Tips & Inspirasi'}</span>
+                            <span class="mx-1.5 text-slate-300">&bull;</span>
+                            <span>${post.date}</span>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm md:text-base leading-snug group-hover:text-emerald-700 transition-colors line-clamp-2">${post.title}</h4>
                     </div>
                 </div>
             `).join('');
