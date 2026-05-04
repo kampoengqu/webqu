@@ -178,6 +178,12 @@ export default function App() {
                 <button key={item} onClick={() => changeView(item)} className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${currentView === item ? 'text-green-600 bg-green-50' : 'text-slate-600 hover:text-green-600 hover:bg-slate-50'}`}>{item}</button>
               ))}
             </div>
+            <div className="px-4 pb-4 pt-2 border-t border-slate-100 flex space-x-6 text-slate-400 justify-center sm:justify-start">
+               <FacebookIcon size={20} className="cursor-pointer hover:text-orange-500" />
+               <InstagramIcon size={20} className="cursor-pointer hover:text-orange-500" />
+               <YoutubeIcon size={20} className="cursor-pointer hover:text-orange-500" />
+               <TiktokIcon size={20} className="cursor-pointer hover:text-orange-500" />
+            </div>
           </div>
         )}
       </nav>
