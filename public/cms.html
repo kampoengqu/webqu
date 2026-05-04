@@ -294,19 +294,25 @@ function restSel(){if(savedEditorSelection){const s=window.getSelection();s.remo
 function toggleModal(id,sh){const m=gId(`${id}-modal`),b=gId(`${id}-box`);if(sh){m.classList.remove('hidden');setTimeout(()=>{b.classList.remove('scale-95','opacity-0');},10);}else{b.classList.add('scale-95','opacity-0');setTimeout(()=>m.classList.add('hidden'),200);}}
 function openInsertImageModal(){gId('editor').focus();saveSel();gId('inline-image-file').value='';gId('inline-image-url').value='';toggleModal('insert-image',true);}
 function closeInsertImageModal(){toggleModal('insert-image',false);}
+
 async function processInsertImage(){
     const f=gId('inline-image-file'), btn=gId('btn-insert-img'), orig=btn.innerHTML; let url=gId('inline-image-url').value.trim();
     if(f.files.length){
         const c=getCfg();if(!c)return; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>'; btn.disabled=true;
         try{
             const b64=await new Promise(r=>{const rd=new FileReader();rd.onload=e=>r(e.target.result.split(',')[1]);rd.readAsDataURL(f.files[0]);});
-            const pth=`public/assets/uploads/${Date.now()}-inline-${f.files[0].name.replace(/[^a-zA-Z0-9.]/g,'-')}`;
+            const fn = `${Date.now()}-inline-${f.files[0].name.replace(/[^a-zA-Z0-9.]/g,'-')}`;
+            const pth=`public/assets/uploads/${fn}`;
             const res=await fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/${pth}`,{method:'PUT',headers:authHdr(),body:JSON.stringify({message:`Img inline`,content:b64})});
-            if(res.ok)url=`https://${c.user}.github.io/${c.repo.replace(c.user+'.github.io','')}/${pth.replace('public/','')}`.replace(/(https?:\/\/.*?)\/\//g,'$1/'); else throw Error();
+            if(res.ok) {
+                url = `/assets/uploads/${fn}`;
+                showToast('Gambar diunggah! Tunggu Vercel merender...');
+            } else throw Error();
         }catch(e){showToast('Gagal unggah gambar','error');}finally{btn.innerHTML=orig;btn.disabled=false;}
     }
     if(!url)return showToast('Pilih gambar/URL','error');
-    closeInsertImageModal(); gId('editor').focus(); restSel(); document.execCommand('insertHTML',false,`<img src="${url}" alt="Gambar Artikel"/><br>`);
+    closeInsertImageModal(); gId('editor').focus(); restSel(); 
+    document.execCommand('insertHTML',false,`<br><img src="${url}" alt="[Gambar diproses Vercel, akan muncul sebentar lagi]"/><br>`);
 }
 
 function openInsertYoutubeModal(){gId('editor').focus();saveSel();gId('inline-youtube-url').value='';toggleModal('insert-youtube',true);}
